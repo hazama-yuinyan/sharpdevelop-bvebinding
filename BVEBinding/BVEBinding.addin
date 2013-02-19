@@ -1,0 +1,38 @@
+﻿<AddIn name        = "BVEBinding"
+       author      = "HAZAMA"
+       url         = "http://funprogramming.ojaru.jp/"
+       description = "BVE language binding for SharpDevelop">
+	
+	<Manifest>
+		<Identity name="ICSharpCode.BVE5Binding"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly=":ICSharpCode.SharpDevelop"/>
+		<Import assembly = "BVEBinding.dll"/>
+	</Runtime>
+	
+	<!-- Extend the SharpDevelop AddIn-Tree like this:
+	<Path name = ...>
+		<.../>
+	</Path>
+	-->
+	
+	<Path name="/SharpDevelop/ViewContent/AvalonEdit/SyntaxModes">
+		<SyntaxMode id="BVE5.SyntaxMode"
+		            extensions=".txt"
+		            name="BVE5"
+		            resource="BVEBinding.Resources.BVE5.xshd"/>
+	</Path>
+	
+	<Path name="/SharpDevelop/BackendBinding/Templates">
+		<Directory id="BVE5Templates" path="./Templates"/>
+	</Path>
+	
+	<Path name="/SharpDevelop/Workbench/LanguageBindings/">
+		<LanguageBinding
+			id="BVE5"
+			class="BVEBinding.BVE5LanguageBinding"
+			extensions=".txt"/>
+	</Path>
+</AddIn>

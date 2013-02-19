@@ -1,0 +1,54 @@
+﻿<SyntaxDefinition name="BVE5" extensions=".txt" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+	<Color name="PositionStatement" foreground="DarkBlue" exampleText="1000;" />
+	<Color name="LineComment" foreground="Green" exampleText="// comment" />
+	<Color name="String" foreground="Blue" exampleText='name = "Joe"' />
+	<Color name="Char" foreground="Magenta" exampleText="char linefeed = '\n'" />
+	<Color name="Punctuation" exampleText="a(b.c);" />
+	<Color name="MethodCall" fontWeight="bold" foreground="MidnightBlue" exampleText="method(" />
+	<Color name="BuiltInTypes" fontWeight="bold" foreground="Blue" exampleText="Track." />
+
+	<Property name="LineComment" value="//"/>
+
+	<RuleSet ignoreCase="false">
+			
+		<Span color="LineComment">
+			<Begin>//</Begin>
+		</Span>
+		
+		<Keywords color="BuiltInTypes">
+			<Word>Curve</Word>
+			<Word>Gradient</Word>
+			<Word>Track</Word>
+			<Word>Structure</Word>
+			<Word>Repeater</Word>
+			<Word>Background</Word>
+			<Word>Station</Word>
+			<Word>Signal</Word>
+			<Word>Section</Word>
+			<Word>Beacon</Word>
+			<Word>SpeedLimit</Word>
+			<Word>PreTrain</Word>
+			<Word>Light</Word>
+			<Word>Fog</Word>
+			<Word>CabIlluminance</Word>
+			<Word>Irregularity</Word>
+			<Word>Adhesion</Word>
+			<Word>Sound</Word>
+			<Word>Sound3D</Word>
+			<Word>RollingNoise</Word>
+			<Word>FlangeNoise</Word>
+			<Word>JointNoise</Word>
+			<Word>Train</Word>
+			<Word>Section</Word>
+			<Word>Legacy</Word>
+		</Keywords>
+		
+		<Rule color="MethodCall">\b[\d\w_]+(?=(\s*\())</Rule>
+		<Rule color="PositionStatement">^[1-9][0-9]*;</Rule>
+		
+		<Rule color="Punctuation">
+			[?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+
+		</Rule>
+	</RuleSet>
+</SyntaxDefinition>

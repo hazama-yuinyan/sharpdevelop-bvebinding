@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{22139DB6-1CBF-400C-8C80-7DEDA9278989}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>BVE5Language</RootNamespace>
+    <AssemblyName>BVE5Language</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.NRefactory, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ICSharpCode.NRefactory.5.3.0\lib\Net40\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.CSharp">
+      <HintPath>..\packages\Mono.CSharp.4.0\Lib\net40\Mono.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\bin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Ast\AstNode.cs" />
+    <Compile Include="Ast\DepthFirstAstWalker.cs" />
+    <Compile Include="Ast\SyntaxTree.cs" />
+    <Compile Include="Ast\TimeFormatLiteral.cs" />
+    <Compile Include="Ast\AstWalker.cs" />
+    <Compile Include="Ast\InvocationExpression.cs" />
+    <Compile Include="Ast\Expression.cs" />
+    <Compile Include="Ast\LiteralExpression.cs" />
+    <Compile Include="Ast\MemberReferenceExpression.cs" />
+    <Compile Include="Ast\IndexerExpression.cs" />
+    <Compile Include="BVE5RouteFileParser.cs" />
+    <Compile Include="Ast\Statement.cs" />
+    <Compile Include="Resolver\BVE5AstResolver.cs" />
+    <Compile Include="BVE5RouteFileLexer.cs" />
+    <Compile Include="BVE5ParserException.cs" />
+    <Compile Include="Resolver\BVE5Resolver.cs" />
+    <Compile Include="Resolver\IResolveVisitorNavigator.cs" />
+    <Compile Include="Resolver\NodeListResolveVisitorNavigator.cs" />
+    <Compile Include="TypeSystem\BVE5Assembly.cs" />
+    <Compile Include="TypeSystem\BVE5Compilation.cs" />
+    <Compile Include="TypeSystem\BVE5ProjectContent.cs" />
+    <Compile Include="TypeSystem\BVE5UnresolvedFile.cs" />
+    <Compile Include="Resolver\BVE5SemanticInfo.cs" />
+    <Compile Include="Resolver\ResolveVisitor.cs" />
+    <Compile Include="Resolver\Log.cs" />
+    <Compile Include="TypeSystem\BVE5NameResolveContext.cs" />
+    <Compile Include="TypeSystem\BVEPrimitiveTypeCode.cs" />
+    <Compile Include="TypeSystem\PositionStatementResolveResult.cs" />
+    <Compile Include="TypeSystem\BVEBuiltins.cs" />
+    <Compile Include="TypeSystem\PrimitiveTypeCache.cs" />
+    <Compile Include="TypeSystem\PrimitiveTypeReference.cs" />
+    <Compile Include="TypeSystem\TypeSystemConvertWalker.cs" />
+    <Compile Include="Ast\Identifier.cs" />
+    <Compile Include="Resolver\MethodGroupResolveResult.cs" />
+    <Compile Include="Ast\NodeType.cs" />
+    <Compile Include="Token.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <Compile Include="Resolver\OverloadResolution.cs" />
+    <Compile Include="Resolver\OverloadResolutionErrors.cs" />
+  </ItemGroup>
+</Project>

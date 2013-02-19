@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.3
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BVEBinding", "BVEBinding\BVEBinding.csproj", "{195805F7-6B96-42A2-A60A-412F589AD0E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BVE5Language", "BVE5Parser\BVE5Language.csproj", "{22139DB6-1CBF-400C-8C80-7DEDA9278989}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BVE5Tests", "BVE5Tests\BVE5Tests.csproj", "{1DBBEDC1-9E99-4733-89F2-55A71AE108DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{195805F7-6B96-42A2-A60A-412F589AD0E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{195805F7-6B96-42A2-A60A-412F589AD0E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{195805F7-6B96-42A2-A60A-412F589AD0E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{195805F7-6B96-42A2-A60A-412F589AD0E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22139DB6-1CBF-400C-8C80-7DEDA9278989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22139DB6-1CBF-400C-8C80-7DEDA9278989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22139DB6-1CBF-400C-8C80-7DEDA9278989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22139DB6-1CBF-400C-8C80-7DEDA9278989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DBBEDC1-9E99-4733-89F2-55A71AE108DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DBBEDC1-9E99-4733-89F2-55A71AE108DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DBBEDC1-9E99-4733-89F2-55A71AE108DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DBBEDC1-9E99-4733-89F2-55A71AE108DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+EndGlobal
