@@ -27,7 +27,7 @@ namespace BVE5Language.Resolver
 		private static readonly Dictionary<string, string[]> MethodNames;
 		private readonly BVE5Compilation compilation;
 		
-		public class BuiltinsDefinition
+		class BuiltinsDefinition
 		{
 			public string[] TypeNames{get; set;}
 			public Dictionary<string, string[]> Methods{get; set;}
@@ -82,11 +82,23 @@ namespace BVE5Language.Resolver
             return MethodNames[builtinTypeName].Contains(methodName, StringComparer.OrdinalIgnoreCase);
         }
         #endregion
+        
+        private IType GetBuitlinTypeDefinition(string typeName)
+        {
+        	var type_name = new TopLevelTypeName("global", typeName);
+        	foreach(var asm in compilation.Assemblies){
+        		var type_def = asm.GetTypeDefinition(type_name);
+        		if(type_def != null)
+        			return type_def;
+        	}
+        	
+        	return SpecialType.UnknownType;
+        }
 
         public ResolveResult LookupMethodName(TypeResolveResult typeResolveResult, string typeName, string name)
         {
             if(!BuiltinTypeHasMethod(typeName, name))
-            	return new UnknownMemberResolveResult(compilation.MainAssembly.GetTypeDefinition(new TopLevelTypeName("global", typeName)), name, EmptyList<IType>.Instance);
+            	return new UnknownMemberResolveResult(GetBuitlinTypeDefinition(typeName), name, EmptyList<IType>.Instance);
 
             var type_def = typeResolveResult.Type as ITypeDefinition;
             if(type_def == null)
@@ -133,7 +145,7 @@ namespace BVE5Language.Resolver
 
             UnknownMemberResolveResult umrr = targetResult as UnknownMemberResolveResult;
             if(umrr != null)
-                return new UnknownMethodResolveResult(umrr.Type, umrr.MemberName, EmptyList<IType>.Instance, CreateParameters(arguments));
+                return new UnknownMethodResolveResult(umrr.TargetType, umrr.MemberName, EmptyList<IType>.Instance, CreateParameters(arguments));
             else
                 return ErrorResult;
         }

@@ -34,32 +34,32 @@ namespace BVE5Language.Ast
 	{
 		//protected virtual bool Walk(AstNode node){return true;}
 
-		public virtual bool Walk(Expression node){return true;}
-		public virtual void PostWalk(Expression node){}
+		public virtual bool Walk(Expression expr){return true;}
+		public virtual void PostWalk(Expression expr){}
 
-		public virtual bool Walk(Identifier node){return true;}
-		public virtual void PostWalk(Identifier node){}
+		public virtual bool Walk(Identifier ident){return true;}
+		public virtual void PostWalk(Identifier ident){}
 
-		public virtual bool Walk(IndexerExpression node){return true;}
-		public virtual void PostWalk(IndexerExpression node){}
+		public virtual bool Walk(IndexerExpression indexingExpr){return true;}
+		public virtual void PostWalk(IndexerExpression indexingExpr){}
 
-		public virtual bool Walk(InvocationExpression node){return true;}
-		public virtual void PostWalk(InvocationExpression node){}
+		public virtual bool Walk(InvocationExpression invocation){return true;}
+		public virtual void PostWalk(InvocationExpression invocation){}
 
-		public virtual bool Walk(LiteralExpression node){return true;}
-		public virtual void PostWalk(LiteralExpression node){}
+		public virtual bool Walk(LiteralExpression literal){return true;}
+		public virtual void PostWalk(LiteralExpression literal){}
 
-		public virtual bool Walk(MemberReferenceExpression node){return true;}
-		public virtual void PostWalk(MemberReferenceExpression node){}
+		public virtual bool Walk(MemberReferenceExpression memRef){return true;}
+		public virtual void PostWalk(MemberReferenceExpression memRef){}
 
-		public virtual bool Walk(Statement node){return true;}
-		public virtual void PostWalk(Statement node){}
+		public virtual bool Walk(Statement stmt){return true;}
+		public virtual void PostWalk(Statement stmt){}
 
-		public virtual bool Walk(SyntaxTree node){return true;}
-		public virtual void PostWalk(SyntaxTree node){}
+		public virtual bool Walk(SyntaxTree unit){return true;}
+		public virtual void PostWalk(SyntaxTree unit){}
 
-		public virtual bool Walk(TimeFormatLiteral node){return true;}
-		public virtual void PostWalk(TimeFormatLiteral node){}
+		public virtual bool Walk(TimeFormatLiteral timeLiteral){return true;}
+		public virtual void PostWalk(TimeFormatLiteral timeLiteral){}
 	}
 
 	public interface IAstWalker<TResult>

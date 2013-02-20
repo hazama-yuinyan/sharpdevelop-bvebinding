@@ -432,20 +432,20 @@ namespace BVE5Language.Resolver
 				best_candidate = candidate;
 				best_candidate_was_validated = false;
 			}else{
-				switch(/*BetterFunctionMember(candidate, best_candidate)*/1){
+				/*switch(/*BetterFunctionMember(candidate, best_candidate)1){
 				case 0:
 					// Overwrite 'bestCandidateAmbiguousWith' so that API users can
 					// detect the set of all ambiguous methods if they look at
 					// bestCandidateAmbiguousWith after each step.
 					best_candidate_ambiguous_with = candidate;
 					break;
-				case 1:
+				case 1:*/
 					best_candidate = candidate;
 					best_candidate_was_validated = false;
 					best_candidate_ambiguous_with = null;
-					break;
+					/*break;
 					// case 2: best candidate stays best
-				}
+				}*/
 			}
 		}
         #endregion

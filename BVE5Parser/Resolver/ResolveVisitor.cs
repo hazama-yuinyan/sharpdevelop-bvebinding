@@ -38,19 +38,19 @@ namespace BVE5Language.Resolver
 	/// </remarks>
 	internal sealed class ResolveVisitor : IAstWalker<ResolveResult>
 	{
-		private static readonly ResolveResult errorResult = ErrorResolveResult.UnknownError;
+		private static readonly ResolveResult RrrorResult = ErrorResolveResult.UnknownError;
 		
 		private BVE5Resolver resolver;
 		private readonly BVE5UnresolvedFile unresolved_file;
-		private readonly Dictionary<AstNode, ResolveResult> resolveResultCache = new Dictionary<AstNode, ResolveResult>();
-		private readonly Dictionary<AstNode, BVE5Resolver> resolverBeforeDict = new Dictionary<AstNode, BVE5Resolver>();
-		private readonly Dictionary<AstNode, BVE5Resolver> resolverAfterDict = new Dictionary<AstNode, BVE5Resolver>();
+		private readonly Dictionary<AstNode, ResolveResult> resolve_result_cache = new Dictionary<AstNode, ResolveResult>();
+		private readonly Dictionary<AstNode, BVE5Resolver> resolver_before_dict = new Dictionary<AstNode, BVE5Resolver>();
+		private readonly Dictionary<AstNode, BVE5Resolver> resolver_after_dict = new Dictionary<AstNode, BVE5Resolver>();
 
         IResolveVisitorNavigator navigator;
 		bool resolver_enabled;
 		internal CancellationToken cancellation_token;
 
-        static readonly IResolveVisitorNavigator skipAllNavigator = new ConstantModeResolveVisitorNavigator(ResolveVisitorNavigationMode.Skip, null);
+        private static readonly IResolveVisitorNavigator SkipAllNavigator = new ConstantModeResolveVisitorNavigator(ResolveVisitorNavigationMode.Skip, null);
 		
 		#region Constructor
 		/// <summary>
@@ -63,12 +63,12 @@ namespace BVE5Language.Resolver
 
 			resolver = inputResolver;
 			unresolved_file = unresolvedFile;
-			navigator = skipAllNavigator;
+			navigator = SkipAllNavigator;
 		}
 
         internal void SetNavigator(IResolveVisitorNavigator navigator)
         {
-            this.navigator = navigator ?? skipAllNavigator;
+            this.navigator = navigator ?? SkipAllNavigator;
         }
 
         ResolveResult VoidResult{
@@ -84,16 +84,16 @@ namespace BVE5Language.Resolver
 		/// </summary>
 		void ResetContext(BVE5Resolver storedContext, Action action)
 		{
-			var oldResolverEnabled = resolver_enabled;
-			var oldResolver = this.resolver;
+			var old_resolver_enabled = resolver_enabled;
+			var old_resolver = this.resolver;
 			try{
 				resolver_enabled = false;
 				this.resolver = storedContext;
 				
 				action();
 			}finally{
-				resolver_enabled = oldResolverEnabled;
-				this.resolver = oldResolver;
+				resolver_enabled = old_resolver_enabled;
+				this.resolver = old_resolver;
 			}
 		}
 		#endregion
@@ -103,7 +103,7 @@ namespace BVE5Language.Resolver
 			// It's possible that we re-visit an expression that we scanned over earlier,
 			// so we might have to overwrite an existing state.
 			
-			resolverBeforeDict[node] = resolver;
+			resolver_before_dict[node] = resolver;
 		}
 		
 		private void StoreResult(AstNode node, ResolveResult result)
@@ -112,10 +112,10 @@ namespace BVE5Language.Resolver
 			Log.WriteLine("Resolved '{0}' to {1}", node, result);
 			Debug.Assert(!BVE5AstResolver.IsUnresolvableNode(node));
 			// The state should be stored before the result is.
-			Debug.Assert(resolverBeforeDict.ContainsKey(node));
+			Debug.Assert(resolver_before_dict.ContainsKey(node));
 			// Don't store results twice.
-			Debug.Assert(!resolveResultCache.ContainsKey(node));
-			resolveResultCache[node] = result;
+			Debug.Assert(!resolve_result_cache.ContainsKey(node));
+			resolve_result_cache[node] = result;
 		}
 		
 		#region Scan / Resolve
@@ -128,10 +128,10 @@ namespace BVE5Language.Resolver
 				return;
 
 			// don't Scan again if the node was already resolved
-			if(resolveResultCache.ContainsKey(node)){
+			if(resolve_result_cache.ContainsKey(node)){
 				// Restore state change caused by this node:
 				BVE5Resolver new_resolver;
-				if(resolverAfterDict.TryGetValue(node, out new_resolver))
+				if(resolver_after_dict.TryGetValue(node, out new_resolver))
 					resolver = new_resolver;
 
 				return;
@@ -158,7 +158,7 @@ namespace BVE5Language.Resolver
                     StoreResult(node, result);
                     if(resolver != oldResolver){
                         // The node changed the resolver state:
-                        resolverAfterDict.Add(node, resolver);
+                        resolver_after_dict.Add(node, resolver);
                     }
                     cancellation_token.ThrowIfCancellationRequested();
                 }
@@ -187,21 +187,21 @@ namespace BVE5Language.Resolver
 		internal ResolveResult Resolve(AstNode node)
 		{
 			if(node == null)
-				return errorResult;
+				return RrrorResult;
 
 			bool oldResolverEnabled = resolver_enabled;
 			resolver_enabled = true;
 			ResolveResult result;
 
-			if(!resolveResultCache.TryGetValue(node, out result)){
+			if(!resolve_result_cache.TryGetValue(node, out result)){
 				cancellation_token.ThrowIfCancellationRequested();
 				StoreCurrentState(node);
 				var oldResolver = resolver;
-				result = node.AcceptWalker(this) ?? errorResult;
+				result = node.AcceptWalker(this) ?? RrrorResult;
 				StoreResult(node, result);
 				if(resolver != oldResolver){
 					// The node changed the resolver state:
-					resolverAfterDict.Add(node, resolver);
+					resolver_after_dict.Add(node, resolver);
 				}
 			}
 			resolver_enabled = oldResolverEnabled;
@@ -218,7 +218,7 @@ namespace BVE5Language.Resolver
 			Debug.Assert(!BVE5AstResolver.IsUnresolvableNode(node));
 			
 			ResolveResult result;
-			if(resolveResultCache.TryGetValue(node, out result))
+			if(resolve_result_cache.TryGetValue(node, out result))
 				return result;
 			
 			AstNode parent;
@@ -229,20 +229,20 @@ namespace BVE5Language.Resolver
                     navigator = new NodeListResolveVisitorNavigator(node);
 				    Debug.Assert(!resolver_enabled);
 				    Scan(parent);
-                    navigator = skipAllNavigator;
+                    navigator = SkipAllNavigator;
                 });
 			
-			return resolveResultCache[node];
+			return resolve_result_cache[node];
 		}
 
 		BVE5Resolver GetPreviouslyScannedContext(AstNode node, out AstNode parent)
 		{
 			parent = node;
 			BVE5Resolver stored_resolver;
-			while(!resolverBeforeDict.TryGetValue(parent, out stored_resolver)){
+			while(!resolver_before_dict.TryGetValue(parent, out stored_resolver)){
 				parent = parent.Parent;
 				if(parent == null)
-					throw new InvalidOperationException("Could not find a resolver state for any parent of the specified node. Are you trying to resolve a node that is not a descendant of the CSharpAstResolver's root node?");
+					throw new InvalidOperationException("Could not find a resolver state for any parent of the specified node. Are you trying to resolve a node that is not a descendant of the BVE5AstResolver's root node?");
 			}
 			return stored_resolver;
 		}
@@ -254,13 +254,13 @@ namespace BVE5Language.Resolver
         }
 
 		#region AstWalker members
-		public ResolveResult Walk(IndexerExpression node)
+		public ResolveResult Walk(IndexerExpression indexingExpr)
 		{
-            ResolveResult target_rr = node.Target.AcceptWalker(this);
+            ResolveResult target_rr = indexingExpr.Target.AcceptWalker(this);
             if(target_rr != null){
-            	StoreCurrentState(node);
-                var result = resolver.ResolveIndexer(target_rr, node.Index.Name);
-                StoreResult(node, result);
+            	StoreCurrentState(indexingExpr);
+                var result = resolver.ResolveIndexer(target_rr, indexingExpr.Index.Name);
+                StoreResult(indexingExpr, result);
                 return result;
             }
 
@@ -268,18 +268,39 @@ namespace BVE5Language.Resolver
 		}
 
         #region Invocation
-        public ResolveResult Walk(InvocationExpression node)
+        public ResolveResult Walk(InvocationExpression invocation)
 		{
-            ResolveResult target_rr = node.Target.AcceptWalker(this);
-            if(target_rr != null && target_rr is MethodGroupResolveResult){
-                StoreCurrentState(node);
-                ResolveResult[] args = GetArguments(node.Arguments);
-                var result = resolver.ResolveInvocation(target_rr, args);
-                return result;
-            }else{
-                return new ErrorResolveResult(SpecialType.UnknownType, "The target expression doesn't seem to be an invocable.", node.StartLocation);
+            var mre = invocation.Target as MemberReferenceExpression;
+            var identifier = mre.Target as Identifier;
+            
+            if(identifier != null){
+            	StoreCurrentState(identifier);
+                StoreCurrentState(mre);
+                
+                var id_rr = resolver.ResolveTypeName(identifier.Name);
+                var target_rr = ResolveMemberReferenceOnGivenTarget(id_rr, mre);
+                Log.WriteLine("Member reference '{0}' on potentially-ambiguous simple-name was resolved to {1}", mre, target_rr);
+                StoreResult(mre, target_rr);
+                
+                Log.WriteLine("Simple name '{0}' was resolved to {1}", identifier, id_rr);
+                StoreResult(identifier, id_rr);
+                return ResolveInvocationOnGivenTarget(target_rr, invocation);
+            }else{	//regular code path
+            	if(resolver_enabled){
+            		var target = Resolve(invocation.Target);
+            		return ResolveInvocationOnGivenTarget(target, invocation);
+            	}else{
+            		ScanChildren(invocation);
+            		return null;
+            	}
             }
 		}
+        
+        private ResolveResult ResolveInvocationOnGivenTarget(ResolveResult target, InvocationExpression invocation)
+        {
+        	ResolveResult[] args = GetArguments(invocation.Arguments);
+        	return resolver.ResolveInvocation(target, args);
+        }
 
         /// <summary>
 		/// Gets and resolves the arguments.
@@ -295,9 +316,9 @@ namespace BVE5Language.Resolver
         }
         #endregion
 
-        public ResolveResult Walk(LiteralExpression node)
+        public ResolveResult Walk(LiteralExpression literal)
 		{
-            return resolver.ResolvePrimitive(node.Value);
+            return resolver.ResolvePrimitive(literal.Value);
 		}
 
         #region Member reference
@@ -323,20 +344,27 @@ namespace BVE5Language.Resolver
 		
 		private ResolveResult ResolveMemberReferenceOnGivenTarget(ResolveResult target, MemberReferenceExpression memRef)
 		{
-			return resolver.ResolveMemberAccess(target, memRef.Reference.Name);
+			StoreCurrentState(memRef.Reference);
+			var result = resolver.ResolveMemberAccess(target, memRef.Reference.Name);
+			StoreResult(memRef.Reference, result);
+			return result;
 		}
 		#endregion
 
 		public ResolveResult Walk(Statement stmt)
 		{
-            var child_rr = stmt.Expr.AcceptWalker(this);
+            var child_rr = stmt.Expr.AcceptWalker(this);	//manually call the AcceptWalker method so that literal expressions that is the only child of statements
+            StoreCurrentState(stmt.Expr);					//will be resolved to position statements
+            
             if(child_rr is ConstantResolveResult){  //Statements consisting only of a literal expression are considered to representing a route location
-                if(!(child_rr.ConstantValue is int))
-                    return new ErrorResolveResult(child_rr.Type, "A position statement must consist only of an integer literal", stmt.StartLocation);
-
-                return resolver.ResolvePositionStatement((int)child_rr.ConstantValue, child_rr.Type);
+            	var result = (child_rr.ConstantValue is int) ? resolver.ResolvePositionStatement((int)child_rr.ConstantValue, child_rr.Type) :
+            		new ErrorResolveResult(child_rr.Type, "A position statement must consist only of an integer literal", stmt.StartLocation);
+                StoreResult(stmt.Expr, result);
+                return result;
+            }else{
+            	StoreResult(stmt.Expr, child_rr);
+            	return null;
             }
-			return null;
 		}
 
 		public ResolveResult Walk(SyntaxTree unit)

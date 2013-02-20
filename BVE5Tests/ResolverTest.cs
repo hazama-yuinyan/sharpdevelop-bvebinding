@@ -101,16 +101,28 @@ namespace BVE5Language
 		[TestCase]
 		public void MethodCall()
 		{
-			var rr = Resolve<InvocationResolveResult>("Sound.$Load$(sound.txt);");
+			var rr = Resolve<InvocationResolveResult>("$Sound.Load(sound.txt)$;");
 			Assert.AreEqual("global.Sound.Load", rr.Member.FullName);
 			Assert.AreEqual("global.void", rr.Type.FullName);
 		}
 		
 		[TestCase]
+		public void UnknownMethodCall()
+		{
+			var result = Resolve<UnknownMethodResolveResult>("$Sound.CallUnknownMethod(1)$;");
+			Assert.AreEqual("CallUnknownMethod", result.MemberName);
+			Assert.AreEqual("global.Sound", result.TargetType.FullName);
+			Assert.AreEqual(1, result.Parameters.Count);
+			Assert.AreEqual("global.int", result.Parameters[0].Type.ReflectionName);
+			
+			Assert.AreSame(SpecialType.UnknownType, result.Type);
+		}
+		
+		[TestCase]
 		public void PositionStatement()
 		{
-			var rr = Resolve<ConstantResolveResult>("$1000$;");
-			Assert.AreEqual("1000", rr.ConstantValue);
+			var rr = Resolve<PositionStatementResolveResult>("$1000$;");
+			Assert.AreEqual(1000, rr.ConstantValue);
 			Assert.IsFalse(rr.IsError);
 		}
 		

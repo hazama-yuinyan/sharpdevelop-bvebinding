@@ -85,11 +85,11 @@ using Mono.CSharp;
  */
  
 /** TODO: プリプロセッサライクな変数(というか値のエイリアス定義機能)の実装
-  * 例： let a = 1;
-  * 	Track[Rail1].Put(a, a, a);
-  * 	=>	保存時に以下のように置換される
-  * 	Track[Rail1].Put(1, 1, 1);
-  */
+ * 例： let a = 1;
+ * 	Track[Rail1].Put(a, a, a);
+ * 	=>	保存時に以下のように置換される
+ * 	Track[Rail1].Put(1, 1, 1);
+ */
 
 
 namespace BVE5Language.Parser

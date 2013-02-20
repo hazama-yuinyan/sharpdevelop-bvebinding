@@ -29,7 +29,7 @@
 		<Directory id="BVE5Templates" path="./Templates"/>
 	</Path>
 	
-	<Path name="/SharpDevelop/Workbench/LanguageBindings/">
+	<Path name="/SharpDevelop/Workbench/LanguageBindings">
 		<LanguageBinding
 			id="BVE5"
 			class="BVEBinding.BVE5LanguageBinding"

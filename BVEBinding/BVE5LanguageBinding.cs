@@ -11,6 +11,8 @@ using System;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor;
 
+using BVEBinding.Formatting;
+
 namespace BVEBinding
 {
 	/// <summary>
@@ -18,9 +20,12 @@ namespace BVEBinding
 	/// </summary>
 	public class BVE5LanguageBinding : DefaultLanguageBinding
 	{
+		private IFormattingStrategy formatting_strategy = new BVE5FormattingStrategy();
+		private IBracketSearcher bracket_searcher = new BVE5BracketSearcher();
+		
 		public override IFormattingStrategy FormattingStrategy {
 			get {
-				throw new NotImplementedException();
+				return formatting_strategy;
 			}
 		}
 		
@@ -32,7 +37,7 @@ namespace BVEBinding
 		
 		public override IBracketSearcher BracketSearcher {
 			get {
-				throw new NotImplementedException();
+				return bracket_searcher;
 			}
 		}
 		

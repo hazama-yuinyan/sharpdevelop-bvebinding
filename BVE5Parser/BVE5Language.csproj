@@ -105,7 +105,6 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <None Include="packages.config" />
     <Compile Include="Resolver\OverloadResolution.cs" />
     <Compile Include="Resolver\OverloadResolutionErrors.cs" />
   </ItemGroup>

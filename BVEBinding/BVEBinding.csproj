@@ -87,6 +87,7 @@
     <None Include="Templates\BVE5RouteFile.xft" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BVE5BracketSearcher.cs" />
     <Compile Include="BVE5LanguageBinding.cs" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="Formatting\BVE5FormattingStrategy.cs" />
