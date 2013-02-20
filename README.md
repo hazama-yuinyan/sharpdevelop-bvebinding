@@ -1,4 +1,4 @@
-#BVE Language Binding for MonoDevelop
+#BVE Language Binding for SharpDevelop
 
 This addin adds support for BVE, which is a free-of-charge train simulator running on Windows.
 
