@@ -347,7 +347,7 @@ namespace BVE5Language.Ast
         }
         
         /// <summary>
-        /// Iterates over each child and try to find the first match to the predicate.
+        /// Iterates over each child and tries to find the first match to the predicate.
         /// </summary>
         /// <param name="pred">A delegate that determines which node is searched for.</param>
         /// <returns>The found node, or null if none is found.</returns>
@@ -374,6 +374,32 @@ namespace BVE5Language.Ast
         	}
         	
         	return result;
+        }
+        
+        /// <summary>
+        /// Iterates over each node and finds all matches to the predicate.
+        /// </summary>
+        /// <remarks>
+        /// This method traverses all the sibling and child nodes rooted at this one.
+        /// </remarks>
+        /// <param name="pred">A delegate that determines which node should be included in the result.</param>
+        /// <returns>An IEnumerable that enumerates the matched nodes.</returns>
+        public IEnumerable<AstNode> FindNodes(Predicate<AstNode> pred)
+        {
+        	AstNode node = this;
+        	var queue = new Queue<AstNode>();
+        	while(node != null){
+        		if(pred(node))
+        			yield return node;
+        		
+        		if(node.next_sibling != null){
+        			queue.Enqueue(node);
+        			node = node.next_sibling;
+        		}else{
+        			var next_parent = queue.Any() ? queue.Dequeue() : node;
+        			node = next_parent.first_child;
+        		}
+        	}
         }
         #endregion
 
@@ -490,12 +516,36 @@ namespace BVE5Language.Ast
 		{
 			return new LiteralExpression(value, start, end);
 		}
+		
+		internal static DefinitionExpression MakeDefinition(Identifier lhs, Expression rhs, TextLocation start, TextLocation end)
+		{
+			var res = new DefinitionExpression(lhs, rhs, start, end);
+			res.AddChild(lhs);
+			res.AddChild(rhs);
+			return res;
+		}
 
 		internal static MemberReferenceExpression MakeMemRef(Expression target, Identifier reference, TextLocation start, TextLocation end)
 		{
 			var res = new MemberReferenceExpression(target, reference, start, end);
 			res.AddChild(target);
 			res.AddChild(reference);
+			return res;
+		}
+		
+		internal static SectionStatement MakeSectionStatement(Identifier ident, TextLocation start, TextLocation end)
+		{
+			var res = new SectionStatement(ident, start, end);
+			res.AddChild(ident);
+			return res;
+		}
+		
+		internal static SequenceExpression MakeSequence(List<Expression> exprs, TextLocation start, TextLocation end)
+		{
+			var res = new SequenceExpression(exprs.ToArray(), start, end);
+			foreach(var child in exprs)
+				res.AddChild(child);
+			
 			return res;
 		}
 

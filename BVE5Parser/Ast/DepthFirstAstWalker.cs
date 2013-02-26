@@ -23,6 +23,11 @@ namespace BVE5Language.Ast
         }
 
         #region IAstWalker<T> members
+        public virtual T Walk(DefinitionExpression def)
+        {
+        	return WalkChildren(def);
+        }
+        
         public virtual T Walk(Identifier node)
         {
             return WalkChildren(node);
@@ -46,6 +51,16 @@ namespace BVE5Language.Ast
         public virtual T Walk(MemberReferenceExpression node)
         {
             return WalkChildren(node);
+        }
+        
+        public virtual T Walk(SectionStatement secStmt)
+        {
+        	return WalkChildren(secStmt);
+        }
+        
+        public virtual T Walk(SequenceExpression sequence)
+        {
+        	return WalkChildren(sequence);
         }
 
         public virtual T Walk(Statement node)

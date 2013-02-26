@@ -50,6 +50,9 @@
       <HintPath>..\..\SharpDevelop\bin\ICSharpCode.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ICSharpCode.NRefactory">
+      <HintPath>..\BVE5Parser\bin\Debug\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpDevelop">
       <HintPath>..\..\SharpDevelop\bin\ICSharpCode.SharpDevelop.dll</HintPath>
       <Private>False</Private>
@@ -57,6 +60,9 @@
     <Reference Include="ICSharpCode.SharpDevelop.Dom">
       <HintPath>..\..\SharpDevelop\bin\ICSharpCode.SharpDevelop.Dom.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpDevelop.Widgets">
+      <HintPath>..\..\SharpDevelop\bin\ICSharpCode.SharpDevelop.Widgets.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -85,17 +91,37 @@
     <None Include="license.txt" />
     <EmbeddedResource Include="Resources\BVE5.xshd" />
     <None Include="Templates\BVE5RouteFile.xft" />
+    <None Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BVE5BracketSearcher.cs" />
     <Compile Include="BVE5LanguageBinding.cs" />
+    <None Include="Completion\BVE5CompletionBinding.cs" />
+    <Compile Include="Commands\ShiftPositions.cs" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
+    <Compile Include="Dialogs\ShiftPositionDialog.xaml.cs">
+      <DependentUpon>ShiftPositionDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Formatting\BVE5FormattingStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Formatting" />
+    <Folder Include="Completion" />
+    <Folder Include="Commands" />
+    <Folder Include="Dialogs" />
+    <Folder Include="Refactoring" />
     <Folder Include="Resources" />
     <Folder Include="Templates" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BVE5Parser\BVE5Language.csproj">
+      <Project>{22139DB6-1CBF-400C-8C80-7DEDA9278989}</Project>
+      <Name>BVE5Language</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Dialogs\ShiftPositionDialog.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

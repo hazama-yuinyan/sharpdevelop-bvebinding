@@ -35,4 +35,16 @@
 			class="BVEBinding.BVE5LanguageBinding"
 			extensions=".txt"/>
 	</Path>
+
+	<Path name="/SharpDevelop/Workbench/MainMenu">
+		<Condition name="ActiveContentExtension" activeextension=".txt">
+			<MenuItem id="BVE5Route" label="BVE5" type="Menu">
+				<Condition name = "WindowActive" activewindow="ICSharpCode.SharpDevelop.Editor.ITextEditorProvider" action="Disable">
+					<MenuItem id="ShiftPositions"
+							  label="ShiftPositions"
+							  class="BVEBinding.Commands.ShiftPositionsCommand"/>
+				</Condition>
+			</MenuItem>
+		</Condition>
+	</Path>
 </AddIn>

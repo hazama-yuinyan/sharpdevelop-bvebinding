@@ -37,15 +37,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil.Mdb">
-      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb">
-      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks">
-      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.CSharp">
       <HintPath>..\packages\Mono.CSharp.4.0\Lib\net40\Mono.CSharp.dll</HintPath>
     </Reference>
@@ -54,11 +45,15 @@
       <HintPath>..\bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Ast\AstNode.cs" />
+    <Compile Include="Ast\DefinitionExpression.cs" />
     <Compile Include="Ast\DepthFirstAstWalker.cs" />
+    <Compile Include="Ast\SectionStatement.cs" />
+    <Compile Include="Ast\SequenceExpression.cs" />
     <Compile Include="Ast\SyntaxTree.cs" />
     <Compile Include="Ast\TimeFormatLiteral.cs" />
     <Compile Include="Ast\AstWalker.cs" />
@@ -67,10 +62,15 @@
     <Compile Include="Ast\LiteralExpression.cs" />
     <Compile Include="Ast\MemberReferenceExpression.cs" />
     <Compile Include="Ast\IndexerExpression.cs" />
-    <Compile Include="BVE5RouteFileParser.cs" />
+    <Compile Include="BVE5ResourceManager.cs" />
     <Compile Include="Ast\Statement.cs" />
+    <Compile Include="Parser\BVE5CommonLexer.cs" />
+    <Compile Include="Parser\BVE5CommonParser.cs" />
+    <Compile Include="Parser\BVE5RouteFileLexer.cs" />
+    <Compile Include="Parser\BVE5RouteFileParser.cs" />
+    <Compile Include="Parser\InitFileLexer.cs" />
+    <Compile Include="Parser\InitFileParser.cs" />
     <Compile Include="Resolver\BVE5AstResolver.cs" />
-    <Compile Include="BVE5RouteFileLexer.cs" />
     <Compile Include="BVE5ParserException.cs" />
     <Compile Include="Resolver\BVE5Resolver.cs" />
     <Compile Include="Resolver\IResolveVisitorNavigator.cs" />
@@ -82,7 +82,6 @@
     <Compile Include="Resolver\BVE5SemanticInfo.cs" />
     <Compile Include="Resolver\ResolveVisitor.cs" />
     <Compile Include="Resolver\Log.cs" />
-    <Compile Include="TypeSystem\BVE5NameResolveContext.cs" />
     <Compile Include="TypeSystem\BVEPrimitiveTypeCode.cs" />
     <Compile Include="TypeSystem\PositionStatementResolveResult.cs" />
     <Compile Include="TypeSystem\BVEBuiltins.cs" />
@@ -107,5 +106,16 @@
   <ItemGroup>
     <Compile Include="Resolver\OverloadResolution.cs" />
     <Compile Include="Resolver\OverloadResolutionErrors.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Parser" />
+    <Folder Include="Resources" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\BVE5BuiltinNames.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BVE5Documentation.xml" />
+    <None Include="Resources\BVE5SematicInfos.xml" />
   </ItemGroup>
 </Project>

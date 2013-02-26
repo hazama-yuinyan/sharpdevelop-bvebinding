@@ -12,7 +12,10 @@ namespace BVE5Language.Ast
 		MemRef,
 		Statement,
 		Tree,
-		TimeLiteral
+		TimeLiteral,
+		Definition,
+		SectionStmt,
+		Sequence
 	}
 }
 

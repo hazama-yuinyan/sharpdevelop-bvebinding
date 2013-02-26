@@ -111,7 +111,7 @@ namespace BVE5Language.Resolver
 			Debug.Assert(result != null);
 			Log.WriteLine("Resolved '{0}' to {1}", node, result);
 			Debug.Assert(!BVE5AstResolver.IsUnresolvableNode(node));
-			// The state should be stored before the result is.
+			// The state should be stored before the result would be.
 			Debug.Assert(resolver_before_dict.ContainsKey(node));
 			// Don't store results twice.
 			Debug.Assert(!resolve_result_cache.ContainsKey(node));
@@ -254,6 +254,11 @@ namespace BVE5Language.Resolver
         }
 
 		#region AstWalker members
+		public ResolveResult Walk(DefinitionExpression def)
+		{
+			return null; //TODO: implement it
+		}
+		
 		public ResolveResult Walk(IndexerExpression indexingExpr)
 		{
             ResolveResult target_rr = indexingExpr.Target.AcceptWalker(this);
@@ -351,6 +356,16 @@ namespace BVE5Language.Resolver
 		}
 		#endregion
 
+		public ResolveResult Walk(SectionStatement secStmt)
+		{
+			return null; //TODO: implement it
+		}
+		
+		public ResolveResult Walk(SequenceExpression sequence)
+		{
+			return null; //TODO: implement it
+		}
+		
 		public ResolveResult Walk(Statement stmt)
 		{
             var child_rr = stmt.Expr.AcceptWalker(this);	//manually call the AcceptWalker method so that literal expressions that is the only child of statements

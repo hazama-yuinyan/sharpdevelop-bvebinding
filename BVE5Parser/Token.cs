@@ -10,7 +10,9 @@ namespace BVE5Language.Parser
 		Identifier,
 		IntegerLiteral,
 		FloatLiteral,
+		StringLiteral,
 		Comment,
+		EOL,
 		EOF
 	}
 	
@@ -51,6 +53,17 @@ namespace BVE5Language.Parser
 			column = columnNum;
 			token_literal = literal;
 			kind = tokenKind;
+		}
+		
+		public override string ToString()
+		{
+			return string.Format("[Token Kind={0}, Literal={1}]", kind, token_literal);
+		}
+
+		
+		internal static Token GetEOLToken(int lineNum, int columnNum)
+		{
+			return new Token(lineNum, columnNum, "<EOL>", TokenKind.EOL);
 		}
 	}
 }

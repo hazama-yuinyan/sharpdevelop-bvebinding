@@ -2,7 +2,7 @@
 	<Config name      = "BVE5 Route file"
 		  icon        = "Python.Template.Form"
 		  category    = "BVE5"
-		  defaultname = "route.txt"
+		  defaultname = "map.txt"
 		  language    = "BVE5"/>
 	 
 	<Description>Empty route file</Description>

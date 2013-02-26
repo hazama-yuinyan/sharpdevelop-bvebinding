@@ -62,7 +62,7 @@ namespace BVE5Language.Ast
 	}
 
 	[TestFixture]
-	public class ParserTest
+	public class RouteParserTest
 	{
 		[TestCase]
 		public void Basics()
@@ -101,14 +101,102 @@ namespace BVE5Language.Ast
                             }),
                             TypeDescriber.Create(NodeType.Identifier, null)
                         }),
-                        TypeDescriber.Create(NodeType.Literal, null),   //arguments
-                        TypeDescriber.Create(NodeType.Literal, null),
-                        TypeDescriber.Create(NodeType.Literal, null),
-                        TypeDescriber.Create(NodeType.Literal, null)
+                        TypeDescriber.Create(NodeType.Literal, null),   //9.7
+                        TypeDescriber.Create(NodeType.Literal, null),	//0
+                        TypeDescriber.Create(NodeType.Literal, null),	//300
+                        TypeDescriber.Create(NodeType.Literal, null)	//0
                     })
                 })
             };
             Helpers.TestStructualEqual(expected3.GetEnumerator(), stmt3);
+		}
+	}
+	
+	[TestFixture]
+	public class CommonParserTest
+	{
+		[TestCase]
+		public void CommonParser()
+		{
+			var parser = new BVE5CommonParser("BveTs Station List 1.01", "Station list");
+			var stmt = parser.ParseOneStatement("staA, A, 10:30:00, 10:30:30, 20, 10:30:00, 0, 10, 0.3, soundStaA, soundStaADeperture, 0.05, 5\n");
+			var expected1 = new List<TypeDescriber>{
+				TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+					TypeDescriber.Create(NodeType.Sequence, new List<TypeDescriber>{
+				    	TypeDescriber.Create(NodeType.Literal, null),		//staA
+				        TypeDescriber.Create(NodeType.Literal, null),		//A
+				        TypeDescriber.Create(NodeType.TimeLiteral, null),	//10:30:00
+				        TypeDescriber.Create(NodeType.TimeLiteral, null),	//10:30:30
+				        TypeDescriber.Create(NodeType.Literal, null),		//20
+				        TypeDescriber.Create(NodeType.TimeLiteral, null),	//10:30:00
+				        TypeDescriber.Create(NodeType.Literal, null),		//0
+				        TypeDescriber.Create(NodeType.Literal, null),		//10
+				        TypeDescriber.Create(NodeType.Literal, null),		//0.3
+				        TypeDescriber.Create(NodeType.Literal, null),		//soundStaA
+				        TypeDescriber.Create(NodeType.Literal, null),		//soundStaADeperture
+				        TypeDescriber.Create(NodeType.Literal, null),		//0.05
+				        TypeDescriber.Create(NodeType.Literal, null)		//5
+				    })
+				})
+			};
+			Helpers.TestStructualEqual(expected1.GetEnumerator(), stmt);
+		}
+	}
+	
+	[TestFixture]
+	public class InitFileParserTest
+	{
+		[TestCase]
+		public void InitFileParser()
+		{
+			var parser = new InitFileParser("BveTs Vehicle Parameters 1.01", "Vehicle parameters");
+			var stmt = parser.ParseOneStatement("[Cab]");
+			var expected1 = new List<TypeDescriber>{
+				TypeDescriber.Create(NodeType.SectionStmt, new List<TypeDescriber>{
+					TypeDescriber.Create(NodeType.Identifier, null)
+				})
+			};
+			Helpers.TestStructualEqual(expected1.GetEnumerator(), stmt);
+			
+			var stmt2 = parser.ParseOneStatement("driver = 100\n");
+			var expected2 = new List<TypeDescriber>{
+				TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+					TypeDescriber.Create(NodeType.Definition, new List<TypeDescriber>{
+				    	TypeDescriber.Create(NodeType.Identifier, null),
+				        TypeDescriber.Create(NodeType.Literal, null)
+				    })
+				})
+			};
+			Helpers.TestStructualEqual(expected2.GetEnumerator(), stmt2);
+			
+			var stmt3 = parser.Parse(@"color = #33ffbb
+;This is a comment
+MotorcarCount = 4
+DayTimeImage = imgs\test.png",
+			                         "<string>");
+			var expected3 = new List<TypeDescriber>{
+				TypeDescriber.Create(NodeType.Tree, new List<TypeDescriber>{
+					TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+						TypeDescriber.Create(NodeType.Definition, new List<TypeDescriber>{
+					    	TypeDescriber.Create(NodeType.Identifier, null),
+					        TypeDescriber.Create(NodeType.Literal, null)
+					    })
+					}),
+					TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+						TypeDescriber.Create(NodeType.Definition, new List<TypeDescriber>{
+					    	TypeDescriber.Create(NodeType.Identifier, null),
+					        TypeDescriber.Create(NodeType.Literal, null)
+					    })
+					}),
+				    TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+				    	TypeDescriber.Create(NodeType.Definition, new List<TypeDescriber>{
+				        	TypeDescriber.Create(NodeType.Identifier, null),
+				            TypeDescriber.Create(NodeType.Literal, null)
+				        })
+				    })
+				})
+			};
+			Helpers.TestStructualEqual(expected3.GetEnumerator(), stmt3);
 		}
 	}
 }

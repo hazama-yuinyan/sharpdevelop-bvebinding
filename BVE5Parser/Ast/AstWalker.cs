@@ -33,6 +33,9 @@ namespace BVE5Language.Ast
 	public class AstWalker
 	{
 		//protected virtual bool Walk(AstNode node){return true;}
+		
+		public virtual bool Walk(DefinitionExpression def){return true;}
+		public virtual void PostWalk(DefinitionExpression def){}
 
 		public virtual bool Walk(Expression expr){return true;}
 		public virtual void PostWalk(Expression expr){}
@@ -51,6 +54,12 @@ namespace BVE5Language.Ast
 
 		public virtual bool Walk(MemberReferenceExpression memRef){return true;}
 		public virtual void PostWalk(MemberReferenceExpression memRef){}
+		
+		public virtual bool Walk(SectionStatement secStmt){return true;}
+		public virtual void PostWalk(SectionStatement secStmt){}
+		
+		public virtual bool Walk(SequenceExpression sequence){return true;}
+		public virtual void PostWalk(SequenceExpression sequence){}
 
 		public virtual bool Walk(Statement stmt){return true;}
 		public virtual void PostWalk(Statement stmt){}
@@ -64,11 +73,14 @@ namespace BVE5Language.Ast
 
 	public interface IAstWalker<TResult>
 	{
+		TResult Walk(DefinitionExpression def);
 		TResult Walk(Identifier node);
 		TResult Walk(IndexerExpression node);
 		TResult Walk(InvocationExpression node);
 		TResult Walk(LiteralExpression node);
 		TResult Walk(MemberReferenceExpression node);
+		TResult Walk(SectionStatement secStmt);
+		TResult Walk(SequenceExpression sequence);
 		TResult Walk(Statement node);
 		TResult Walk(SyntaxTree node);
 		TResult Walk(TimeFormatLiteral node);

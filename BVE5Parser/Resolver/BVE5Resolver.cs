@@ -23,16 +23,8 @@ namespace BVE5Language.Resolver
 	public class BVE5Resolver
 	{
 		private static readonly ResolveResult ErrorResult = ErrorResolveResult.UnknownError;
-		private static readonly string[] TypeNames;
-		private static readonly Dictionary<string, string[]> MethodNames;
 		private readonly BVE5Compilation compilation;
 		
-		class BuiltinsDefinition
-		{
-			public string[] TypeNames{get; set;}
-			public Dictionary<string, string[]> Methods{get; set;}
-		}
-
 		public BVE5Compilation Compilation{
 			get{return compilation;}
 		}
@@ -42,13 +34,6 @@ namespace BVE5Language.Resolver
 		}
 		
 		#region Constructor
-		static BVE5Resolver()
-		{
-			var builtin_names = JsonConvert.DeserializeObject<BuiltinsDefinition>(File.ReadAllText("../../../resources/BVE5BuiltinNames.json"));
-			TypeNames = builtin_names.TypeNames;
-			MethodNames = builtin_names.Methods;
-		}
-		
 		public BVE5Resolver(BVE5Compilation compilation)
 		{
 			if(compilation == null)
@@ -58,31 +43,6 @@ namespace BVE5Language.Resolver
 		}
 		#endregion
 
-        #region Static Methods
-        /// <summary>
-        /// Tests whether the name is a builtin type name.
-        /// </summary>
-        /// <remarks>Case is insignificant when comparing names</remarks>
-        /// <param name="name"></param>
-        /// <returns>true, if it is; otherwise false</returns>
-        public static bool IsBuiltinTypeName(string name)
-        {
-            return TypeNames.Contains(name, StringComparer.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// Tests whether the specified builtin type has the method.
-        /// </summary>
-        /// <remarks>Case is insignificant when comparing names</remarks>
-        /// <param name="builtinTypeName"></param>
-        /// <param name="methodName"></param>
-        /// <returns>true, if it has; otherwise false</returns>
-        public static bool BuiltinTypeHasMethod(string builtinTypeName, string methodName)
-        {
-            return MethodNames[builtinTypeName].Contains(methodName, StringComparer.OrdinalIgnoreCase);
-        }
-        #endregion
-        
         private IType GetBuitlinTypeDefinition(string typeName)
         {
         	var type_name = new TopLevelTypeName("global", typeName);
@@ -97,7 +57,7 @@ namespace BVE5Language.Resolver
 
         public ResolveResult LookupMethodName(TypeResolveResult typeResolveResult, string typeName, string name)
         {
-            if(!BuiltinTypeHasMethod(typeName, name))
+            if(!BVE5ResourceManager.BuiltinTypeHasMethod(typeName, name))
             	return new UnknownMemberResolveResult(GetBuitlinTypeDefinition(typeName), name, EmptyList<IType>.Instance);
 
             var type_def = typeResolveResult.Type as ITypeDefinition;
@@ -200,7 +160,7 @@ namespace BVE5Language.Resolver
         
         public ResolveResult ResolveTypeName(string typeName)
         {
-        	if(!TypeNames.Contains(typeName) && !IsBuiltinTypeName(typeName))	//First try to match in case-sensitive way and then in case-insensitive way
+        	if(!BVE5ResourceManager.IsBuiltinTypeName(typeName) && !BVE5ResourceManager.IsBuiltinTypeName(typeName))	//First try to match in case-sensitive way and then in case-insensitive way
         		return ErrorResult;
         	
         	var type_name = new TopLevelTypeName("global", typeName, 0);
