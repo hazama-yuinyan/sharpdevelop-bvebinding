@@ -170,9 +170,12 @@ namespace BVE5Language.Parser
 		/// <param name='fileName'>
 		/// File name. This is used for the SyntaxTree node.
 		/// </param>
-		public SyntaxTree Parse(string programSrc, string fileName = "")
+		/// <param name='parseHeader'>
+		/// Whether it should parse the header.
+		/// </param>
+		public SyntaxTree Parse(string programSrc, string fileName = "", bool parseHeader = false)
 		{
-			return ParseImpl(programSrc.Replace(Environment.NewLine, "\n"), fileName, false);
+			return ParseImpl(programSrc.Replace(Environment.NewLine, "\n"), fileName, parseHeader);
 		}
 
 		/// <summary>
@@ -205,8 +208,8 @@ namespace BVE5Language.Parser
 		{
 			var tree = ParseImpl(src.Replace(Environment.NewLine, "\n"), "<string>", false);
             if(!returnAsSyntaxTree){
-                var res = tree.Body[0];
-                res.ResetParent();
+				var res = tree.Body.First();
+                res.Remove();
                 return res;
             }else{
                 return tree;
@@ -220,18 +223,18 @@ namespace BVE5Language.Parser
 			lock(parse_lock){
 				using(var reader = new StringReader(src)){
 					var lexer = new BVE5RouteFileLexer(reader);
+					lexer.Advance();
+					
 					if(parseHeader){
 						int cur_line = lexer.CurrentLine;
 						var tokens = new List<Token>();
 						while(lexer.Current != Token.EOF && lexer.CurrentLine == cur_line){
-							lexer.Advance();
 							tokens.Add(lexer.Current);
+							lexer.Advance();
 						}
 						if(tokens.Count != 3 || tokens[0].Literal != "BveTs" || tokens[1].Literal != "Map" ||
 						   tokens[2].Literal != "1.00")
 							throw new BVE5ParserException(1, 1, "Invalid Map file!");
-					}else{
-						lexer.Advance();
 					}
 
 					BVE5Language.Ast.Statement stmt = null;
@@ -282,30 +285,30 @@ namespace BVE5Language.Parser
 		// any-character-except-(-)-.-;-[-]
 		private Identifier ParseIdent(BVE5RouteFileLexer lexer)
 		{
-			Debug.Assert(lexer.Current.Kind == TokenKind.Identifier, "Really meant an identifier?");
 			Token token = lexer.Current;
+			Debug.Assert(token.Kind == TokenKind.Identifier, "Really meant an identifier?");
 			lexer.Advance();
 			return AstNode.MakeIdent(token.Literal, token.StartLoc, lexer.Current.StartLoc);
 		}
-
+		
 		// ident '[' ident ']'
 		private IndexerExpression ParseIndexExpr(BVE5RouteFileLexer lexer, BVE5Language.Ast.Expression target)
 		{
 			Debug.Assert(lexer.Current.Literal == "[", "Really meant an index reference?");
 			lexer.Advance();
 			Token token = lexer.Current;
-			if(token.Kind != TokenKind.Identifier){
+			if(token.Kind != TokenKind.Identifier && token.Kind != TokenKind.IntegerLiteral){
 				throw new BVE5ParserException(token.Line, token.Column, "Unexpected token: " + token.Literal +
-                    "; The operator '[]' can only take an identifier as its argument.");
+                    "; The operator '[]' can only take a string or an index as its argument.");
             }
 
-			Identifier ident = ParseIdent(lexer);
+			LiteralExpression literal = ParseLiteral(lexer);
 			token = lexer.Current;
 			if(token.Literal != "]")
 				throw new BVE5ParserException(token.Line, token.Column, "Expected ']' but got " + token.Literal);
 
 			lexer.Advance();
-			return AstNode.MakeIndexExpr(target, ident, target.StartLocation, token.EndLoc);
+			return AstNode.MakeIndexExpr(target, literal, target.StartLocation, token.EndLoc);
 		}
 
 		// ident '.' ident
@@ -386,16 +389,20 @@ namespace BVE5Language.Parser
             return AstNode.MakeLiteral(sb.ToString(), start_loc, token.StartLoc);
         }
 
-		// number
+		// number | any-string
 		private LiteralExpression ParseLiteral(BVE5RouteFileLexer lexer)
 		{
 			Token token = lexer.Current;
-			Debug.Assert(token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral, "Really meant a literal?");
+			Debug.Assert(token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral ||
+			             token.Kind == TokenKind.Identifier, "Really meant a literal?");
 			lexer.Advance();
+			
 			if(token.Kind == TokenKind.FloatLiteral)
 				return AstNode.MakeLiteral(Convert.ToDouble(token.Literal), token.StartLoc, token.EndLoc);
-			else
+			else if(token.Kind == TokenKind.IntegerLiteral)
 				return AstNode.MakeLiteral(Convert.ToInt32(token.Literal), token.StartLoc, token.EndLoc);
+			else
+				return AstNode.MakeLiteral(token.Literal, token.StartLoc, token.EndLoc);
 		}
 
 		// number ':' number ':' number

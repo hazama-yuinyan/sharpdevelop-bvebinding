@@ -28,12 +28,10 @@ namespace BVEBinding.Commands
 	{
 		public override void Run()
 		{
-			using(var dialog = new ShiftPositionDialog()){
-				var result = dialog.ShowDialog();
-				if(result.HasValue && result.Value){
-					ShiftPositions(dialog);
-				}
-			}
+			var dialog = new ShiftPositionDialog();
+			var result = dialog.ShowDialog();
+			if(result.HasValue && result.Value)
+				ShiftPositions(dialog.AmountOfShift);
 		}
 		
 		private void ShiftPositions(int amountShift)
@@ -42,17 +40,18 @@ namespace BVEBinding.Commands
 			if(provider == null)
 				return;
 			
+			var doc = provider.TextEditor.Document;
 			int begin_line = 1;
-			int end_line = provider.TextEditor.Document.TotalNumberOfLines;
+			int end_line = doc.TotalNumberOfLines;
 			
 			if(provider.TextEditor.SelectionLength != 0){
-				begin_line = provider.TextEditor.Document.GetLineForOffset(provider.TextEditor.SelectionStart).LineNumber;
-				end_line = provider.TextEditor.Document.GetLineForOffset(provider.TextEditor.SelectionStart + provider.TextEditor.SelectionLength).LineNumber;
+				begin_line = doc.GetLineForOffset(provider.TextEditor.SelectionStart).LineNumber;
+				end_line = doc.GetLineForOffset(provider.TextEditor.SelectionStart + provider.TextEditor.SelectionLength).LineNumber;
 			}
 			
 			using(provider.TextEditor.Document.OpenUndoGroup()){	//do the real work
 				var content_text = provider.TextEditor.Document.Text;
-				var tree = new BVE5RouteFileParser().Parse(content_text, provider.TextEditor.FileName);
+				var tree = new BVE5RouteFileParser().Parse(content_text, provider.TextEditor.FileName, true);
 				foreach(var stmt in tree.FindNodes(n => begin_line <= n.StartLocation.Line && n.EndLocation.Line <= end_line &&
 				                                   n.Type == NodeType.Statement && ((Statement)n).Expr.Type == NodeType.Literal)
 				                                   .OfType<Statement>()){
@@ -60,7 +59,8 @@ namespace BVEBinding.Commands
 					int original_value = (int)literal_expr.Value, modified_value = original_value + amountShift;
 					literal_expr.ReplaceWith(new LiteralExpression(modified_value, literal_expr.StartLocation,
 					                                               new TextLocation(literal_expr.EndLocation.Line,
-					                                                                literal_expr.EndLocation.Column + modified_value.ToString().Length));
+					                                                                literal_expr.StartLocation.Column + modified_value.ToString().Length)));
+					doc.SmartReplaceLine(doc.GetLine(stmt.StartLocation.Line), stmt.GetText());
 				}
 			}
 		}

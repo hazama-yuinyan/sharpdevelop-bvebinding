@@ -50,6 +50,9 @@
       <HintPath>..\..\SharpDevelop\bin\ICSharpCode.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ICSharpCode.Core.Presentation">
+      <HintPath>..\..\SharpDevelop\bin\ICSharpCode.Core.Presentation.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.NRefactory">
       <HintPath>..\BVE5Parser\bin\Debug\ICSharpCode.NRefactory.dll</HintPath>
     </Reference>

@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.Generic;
 using System.Text;
 using ICSharpCode.NRefactory;
 
@@ -17,15 +18,17 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class SequenceExpression : Expression
 	{
-		private readonly Expression[] exprs;
-		
-		public Expression[] Expressions{
-			get{return exprs;}
+		public IEnumerable<Expression> Expressions{
+			get{
+				for(var node = FirstChild; node != null; node = node.NextSibling)
+					yield return (Expression)node;
+			}
 		}
 		
-		public SequenceExpression(Expression[] expressions, TextLocation start, TextLocation end) : base(start, end)
+		public SequenceExpression(List<Expression> expressions, TextLocation start, TextLocation end) : base(start, end)
 		{
-			exprs = expressions;
+			foreach(var expr in expressions)
+				AddChild(expr);
 		}
 		
 		public override NodeType Type {
@@ -34,21 +37,10 @@ namespace BVE5Language.Ast
 			}
 		}
 		
-		public override string GetText()
-		{
-			var sb = new StringBuilder();
-			foreach(var expr in exprs){
-				sb.Append(expr.GetText());
-				sb.Append(",");
-			}
-			sb.Remove(sb.Length - 1, 1);		//remove the trailing comma
-			return sb.ToString();
-		}
-		
 		public override void AcceptWalker(AstWalker walker)
 		{
 			if(walker.Walk(this)){
-				foreach(var child in exprs)
+				foreach(var child in Expressions)
 					child.AcceptWalker(walker);
 			}
 			walker.PostWalk(this);
@@ -57,6 +49,17 @@ namespace BVE5Language.Ast
 		public override TResult AcceptWalker<TResult>(IAstWalker<TResult> walker)
 		{
 			return walker.Walk(this);
+		}
+		
+		public override string GetText()
+		{
+			var sb = new StringBuilder();
+			foreach(var expr in Expressions){
+				sb.Append(expr.GetText());
+				sb.Append(",");
+			}
+			sb.Remove(sb.Length - 1, 1);		//remove the trailing comma
+			return sb.ToString();
 		}
 	}
 }

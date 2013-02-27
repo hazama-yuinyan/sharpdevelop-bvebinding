@@ -16,15 +16,13 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class SectionStatement : Statement
 	{
-		private readonly Identifier ident;
-		
-		public Identifier Name{
-			get{return ident;}
+		public Identifier SectionName{
+			get{return (Identifier)FirstChild;}
 		}
 		
 		public SectionStatement(Identifier sectionName, TextLocation start, TextLocation end) : base(sectionName, start, end)
 		{
-			ident = sectionName;
+			AddChild(sectionName);
 		}
 		
 		public override NodeType Type {
@@ -40,6 +38,11 @@ namespace BVE5Language.Ast
 		public override TResult AcceptWalker<TResult>(IAstWalker<TResult> walker)
 		{
 			return walker.Walk(this);
+		}
+		
+		public override string GetText()
+		{
+			return "[Section: " + SectionName.GetText() + "]";
 		}
 	}
 }

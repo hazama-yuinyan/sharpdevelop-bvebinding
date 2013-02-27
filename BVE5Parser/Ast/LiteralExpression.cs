@@ -29,7 +29,7 @@ using ICSharpCode.NRefactory;
 namespace BVE5Language.Ast
 {
 	/// <summary>
-	/// Represents a literal like "10" or "10.5". It is also used to represent a file path literal.
+	/// Represents a literal like "10", "10.5" or a string literal "abc". It is also used to represent a file path literal.
 	/// </summary>
 	public class LiteralExpression : Expression
 	{

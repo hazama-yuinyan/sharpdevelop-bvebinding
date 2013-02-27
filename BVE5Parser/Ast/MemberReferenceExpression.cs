@@ -34,15 +34,12 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class MemberReferenceExpression : Expression
 	{
-		private readonly Expression lhs;
-		private readonly Identifier rhs;
-
 		public Expression Target{
-			get{return lhs;}
+			get{return (Expression)FirstChild;}
 		}
 
 		public Identifier Reference{
-			get{return rhs;}
+			get{return (Identifier)FirstChild.NextSibling;}
 		}
 
 		public override NodeType Type {
@@ -54,15 +51,15 @@ namespace BVE5Language.Ast
 		public MemberReferenceExpression(Expression target, Identifier reference, TextLocation startLoc, TextLocation endLoc)
 			: base(startLoc, endLoc)
 		{
-			lhs = target;
-			rhs = reference;
+			AddChild(target);
+			AddChild(reference);
 		}
 
 		public override void AcceptWalker(AstWalker walker)
 		{
 			if(walker.Walk(this)){
-				lhs.AcceptWalker(walker);
-				rhs.AcceptWalker(walker);
+				Target.AcceptWalker(walker);
+				Reference.AcceptWalker(walker);
 			}
 			walker.PostWalk(this);
 		}
@@ -74,7 +71,7 @@ namespace BVE5Language.Ast
 
 		public override string GetText()
 		{
-			return string.Format("{0}.{1}", lhs.GetText(), rhs.GetText());
+			return string.Format("{0}.{1}", Target.GetText(), Reference.GetText());
 		}
 	}
 }

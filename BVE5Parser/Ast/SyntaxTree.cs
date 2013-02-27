@@ -38,7 +38,6 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class SyntaxTree : AstNode
 	{
-		private Statement[] body;
 		private readonly string name;
 		List<Error> errors = new List<Error>();
 		
@@ -46,8 +45,11 @@ namespace BVE5Language.Ast
 			get { return errors; }
 		}
 
-		public Statement[] Body{
-			get{return body;}
+		public IEnumerable<Statement> Body{
+			get{
+				for(var node = FirstChild; node != null; node = node.NextSibling)
+					yield return (Statement)node;
+			}
 		}
 
 		public string Name{
@@ -60,17 +62,19 @@ namespace BVE5Language.Ast
 			}
 		}
 
-		public SyntaxTree(Statement[] bodyStmts, string treeName, TextLocation startLoc, TextLocation endLoc)
+		public SyntaxTree(List<Statement> body, string treeName, TextLocation startLoc, TextLocation endLoc)
 			: base(startLoc, endLoc)
 		{
-			body = bodyStmts;
+			foreach(var stmt in body)
+				AddChild(stmt);
+			
 			name = treeName;
 		}
 
 		public override void AcceptWalker(AstWalker walker)
 		{
 			if(walker.Walk(this)){
-				foreach(var stmt in body)
+				foreach(var stmt in Body)
 					stmt.AcceptWalker(walker);
 			}
 			walker.PostWalk(this);

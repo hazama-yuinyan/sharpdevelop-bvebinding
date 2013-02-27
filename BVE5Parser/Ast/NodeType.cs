@@ -5,6 +5,7 @@ namespace BVE5Language.Ast
 	public enum NodeType
 	{
 		None,
+		Expression,
 		Identifier,
 		Indexer,
 		Invocation,

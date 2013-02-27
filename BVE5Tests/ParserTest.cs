@@ -97,7 +97,7 @@ namespace BVE5Language.Ast
                         TypeDescriber.Create(NodeType.MemRef, new List<TypeDescriber>{
                             TypeDescriber.Create(NodeType.Indexer, new List<TypeDescriber>{
                                 TypeDescriber.Create(NodeType.Identifier, null),
-                                TypeDescriber.Create(NodeType.Identifier, null)
+                                TypeDescriber.Create(NodeType.Literal, null)
                             }),
                             TypeDescriber.Create(NodeType.Identifier, null)
                         }),
@@ -109,6 +109,46 @@ namespace BVE5Language.Ast
                 })
             };
             Helpers.TestStructualEqual(expected3.GetEnumerator(), stmt3);
+            
+            var tree = parser.Parse(@"Track[1].Position(0, 0, 100, 0);
+//This is a comment
+Track[2].Position(5.4, 0, 100, 0);",
+                                    "<string>");
+            var expected4 = new List<TypeDescriber>{
+            	TypeDescriber.Create(NodeType.Tree, new List<TypeDescriber>{
+            		TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+            	    	TypeDescriber.Create(NodeType.Invocation, new List<TypeDescriber>{
+            	        	TypeDescriber.Create(NodeType.MemRef, new List<TypeDescriber>{
+            	            	TypeDescriber.Create(NodeType.Indexer, new List<TypeDescriber>{
+            	                	TypeDescriber.Create(NodeType.Identifier, null),
+            	                    TypeDescriber.Create(NodeType.Literal, null)
+            	                }),
+            	                TypeDescriber.Create(NodeType.Identifier, null)
+            	            }),
+            	            TypeDescriber.Create(NodeType.Literal, null),
+            	            TypeDescriber.Create(NodeType.Literal, null),
+            	            TypeDescriber.Create(NodeType.Literal, null),
+            	            TypeDescriber.Create(NodeType.Literal, null)
+            	        })
+            	    }),
+            	    TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+            	    	TypeDescriber.Create(NodeType.Invocation, new List<TypeDescriber>{
+            	        	TypeDescriber.Create(NodeType.MemRef, new List<TypeDescriber>{
+            	            	TypeDescriber.Create(NodeType.Indexer, new List<TypeDescriber>{
+            	                	TypeDescriber.Create(NodeType.Identifier, null),
+            	                    TypeDescriber.Create(NodeType.Literal, null)
+            	                }),
+            	                TypeDescriber.Create(NodeType.Identifier, null)
+            	            }),
+            	            TypeDescriber.Create(NodeType.Literal, null),
+            	            TypeDescriber.Create(NodeType.Literal, null),
+            	            TypeDescriber.Create(NodeType.Literal, null),
+            	            TypeDescriber.Create(NodeType.Literal, null)
+            	        })
+            	    })
+            	})
+            };
+            Helpers.TestStructualEqual(expected4.GetEnumerator(), tree);
 		}
 	}
 	

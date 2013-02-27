@@ -46,7 +46,7 @@ namespace BVE5Language
 		
 		static BVE5ResourceManager()
 		{
-			//TODO: implement it
+			//TODO: read semantic information from xml files
 			/*using(var s = typeof(BVE5ResourceManager).Assembly.GetManifestResourceStream("BVE5ResourceManager.BVE5BuiltinNames.xml")){
 				using(var reader = new XmlTextReader(s)){
 					

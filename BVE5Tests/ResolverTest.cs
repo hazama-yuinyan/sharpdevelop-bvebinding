@@ -126,7 +126,7 @@ namespace BVE5Language
 			Assert.IsFalse(rr.IsError);
 		}
 		
-		// TODO: implement it
+		// TODO: test it
 		[TestCase]
 		public void ReferenceIndexer()
 		{

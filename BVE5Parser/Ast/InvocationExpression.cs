@@ -24,8 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 using System.Text;
-
 using ICSharpCode.NRefactory;
 
 namespace BVE5Language.Ast
@@ -35,15 +35,15 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class InvocationExpression : Expression
 	{
-		private readonly Expression target;
-		private readonly Expression[] args;
-
 		public Expression Target{
-			get{return target;}
+			get{return (Expression)FirstChild;}
 		}
 
-		public Expression[] Arguments{
-			get{return args;}
+		public IEnumerable<Expression> Arguments{
+			get{
+				for(var node = FirstChild.NextSibling; node != null; node = node.NextSibling)
+					yield return (Expression)node;
+			}
 		}
 
 		public override NodeType Type {
@@ -52,18 +52,19 @@ namespace BVE5Language.Ast
 			}
 		}
 
-		public InvocationExpression(Expression targetExpr, Expression[] arguments, TextLocation startLoc, TextLocation endLoc)
+		public InvocationExpression(Expression target, List<Expression> arguments, TextLocation startLoc, TextLocation endLoc)
 			: base(startLoc, endLoc)
 		{
-			target = targetExpr;
-			args = arguments;
+			AddChild(target);
+			foreach(var arg in arguments)
+				AddChild(arg);
 		}
 
 		public override void AcceptWalker(AstWalker walker)
 		{
 			if(walker.Walk(this)){
-				target.AcceptWalker(walker);
-				foreach(var arg in args)
+				Target.AcceptWalker(walker);
+				foreach(var arg in Arguments)
 					arg.AcceptWalker(walker);
 			}
 			walker.PostWalk(this);
@@ -76,8 +77,8 @@ namespace BVE5Language.Ast
 
 		public override string GetText()
 		{
-			var sb = new StringBuilder(target.GetText() + "(");
-			foreach(var arg in args)
+			var sb = new StringBuilder(Target.GetText() + "(");
+			foreach(var arg in Arguments)
 				sb.Append(arg.GetText());
 
 			sb.Append(")");

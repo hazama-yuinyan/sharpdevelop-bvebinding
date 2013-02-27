@@ -19,15 +19,19 @@ namespace BVE5Language.Ast
 	/// </remarks>
 	public class DefinitionExpression : Expression
 	{
-		private readonly Identifier lhs;
-		private readonly Expression rhs;
-		
 		public Identifier Lhs{
-			get{return lhs;}
+			get{
+				return (FirstChild.Type == NodeType.Identifier) ? (Identifier)FirstChild : null;
+			}
 		}
 		
 		public Expression Rhs{
-			get{return rhs;}
+			get{
+				if(FirstChild != null && FirstChild.NextSibling != null)
+					return (Expression)FirstChild.NextSibling;
+				else
+					return null;
+			}
 		}
 		
 		public override NodeType Type {
@@ -38,13 +42,8 @@ namespace BVE5Language.Ast
 		
 		public DefinitionExpression(Identifier left, Expression right, TextLocation start, TextLocation end) : base(start, end)
 		{
-			lhs = left;
-			rhs = right;
-		}
-		
-		public override string GetText()
-		{
-			return "<Definition: " + lhs.GetText() + " = " + rhs.GetText();
+			AddChild(left);
+			AddChild(right);
 		}
 		
 		public override TResult AcceptWalker<TResult>(IAstWalker<TResult> walker)
@@ -55,10 +54,15 @@ namespace BVE5Language.Ast
 		public override void AcceptWalker(AstWalker walker)
 		{
 			if(walker.Walk(this)){
-				lhs.AcceptWalker(walker);
-				rhs.AcceptWalker(walker);
+				Lhs.AcceptWalker(walker);
+				Rhs.AcceptWalker(walker);
 			}
 			walker.PostWalk(this);
+		}
+		
+		public override string GetText()
+		{
+			return "<Definition: " + Lhs.GetText() + " = " + Rhs.GetText();
 		}
 	}
 }

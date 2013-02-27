@@ -201,6 +201,8 @@ namespace BVE5Language.Parser
 					}while(ch != EOF && ch != '\n');
 					++line_num;
 					column_num = 1;
+					GetChar();
+					ch = PeekChar();
 				}else{
 					if(ch == '\n'){
 						++line_num;

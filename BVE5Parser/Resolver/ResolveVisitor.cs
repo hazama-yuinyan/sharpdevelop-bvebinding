@@ -264,7 +264,7 @@ namespace BVE5Language.Resolver
             ResolveResult target_rr = indexingExpr.Target.AcceptWalker(this);
             if(target_rr != null){
             	StoreCurrentState(indexingExpr);
-                var result = resolver.ResolveIndexer(target_rr, indexingExpr.Index.Name);
+            	var result = resolver.ResolveIndexer(target_rr, indexingExpr.Index.Value.ToString());
                 StoreResult(indexingExpr, result);
                 return result;
             }

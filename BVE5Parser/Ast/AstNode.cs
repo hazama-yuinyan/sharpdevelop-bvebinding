@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
 using ICSharpCode.NRefactory;
 
 namespace BVE5Language.Ast
@@ -162,7 +161,7 @@ namespace BVE5Language.Ast
 				last_child = child;
 			}
 		}
-
+		
         public void InsertChildBefore<T>(AstNode nextSibling, T child) where T : AstNode
         {
             if(nextSibling == null){
@@ -319,11 +318,9 @@ namespace BVE5Language.Ast
         /// </summary>
         public IEnumerable<AstNode> Ancestors
         {
-            get
-            {
-                for(AstNode cur = parent; cur != null; cur = cur.parent) {
+            get{
+                for(AstNode cur = parent; cur != null; cur = cur.parent)
                     yield return cur;
-                }
             }
         }
 
@@ -402,11 +399,6 @@ namespace BVE5Language.Ast
         	}
         }
         #endregion
-
-        public void ResetParent()
-        {
-            parent = null;
-        }
 
 		#region GetNodeAt
 		/// <summary>
@@ -493,23 +485,15 @@ namespace BVE5Language.Ast
 			return new Identifier(name, start, end);
 		}
 
-		internal static IndexerExpression MakeIndexExpr(Expression target, Identifier key, TextLocation start, TextLocation end)
+		internal static IndexerExpression MakeIndexExpr(Expression target, LiteralExpression key, TextLocation start, TextLocation end)
 		{
-			var res = new IndexerExpression(target, key, start, end);
-			res.AddChild(target);
-			res.AddChild(key);
-			return res;
+			return new IndexerExpression(target, key, start, end);
 		}
 
 		internal static InvocationExpression MakeInvoke(Expression invokeTarget, List<Expression> args, TextLocation start,
 		                                                TextLocation end)
 		{
-			var res = new InvocationExpression(invokeTarget, args.ToArray(), start, end);
-			res.AddChild(invokeTarget);
-			foreach(var arg in res.Arguments)
-				res.AddChild(arg);
-
-			return res;
+			return new InvocationExpression(invokeTarget, args, start, end);
 		}
 
 		internal static LiteralExpression MakeLiteral(object value, TextLocation start, TextLocation end)
@@ -519,50 +503,32 @@ namespace BVE5Language.Ast
 		
 		internal static DefinitionExpression MakeDefinition(Identifier lhs, Expression rhs, TextLocation start, TextLocation end)
 		{
-			var res = new DefinitionExpression(lhs, rhs, start, end);
-			res.AddChild(lhs);
-			res.AddChild(rhs);
-			return res;
+			return new DefinitionExpression(lhs, rhs, start, end);
 		}
 
 		internal static MemberReferenceExpression MakeMemRef(Expression target, Identifier reference, TextLocation start, TextLocation end)
 		{
-			var res = new MemberReferenceExpression(target, reference, start, end);
-			res.AddChild(target);
-			res.AddChild(reference);
-			return res;
+			return new MemberReferenceExpression(target, reference, start, end);
 		}
 		
 		internal static SectionStatement MakeSectionStatement(Identifier ident, TextLocation start, TextLocation end)
 		{
-			var res = new SectionStatement(ident, start, end);
-			res.AddChild(ident);
-			return res;
+			return new SectionStatement(ident, start, end);
 		}
 		
 		internal static SequenceExpression MakeSequence(List<Expression> exprs, TextLocation start, TextLocation end)
 		{
-			var res = new SequenceExpression(exprs.ToArray(), start, end);
-			foreach(var child in exprs)
-				res.AddChild(child);
-			
-			return res;
+			return new SequenceExpression(exprs, start, end);
 		}
 
 		internal static Statement MakeStatement(Expression expr, TextLocation start, TextLocation end)
 		{
-			var res = new Statement(expr, start, end);
-			res.AddChild(expr);
-			return res;
+			return new Statement(expr, start, end);
 		}
 
 		internal static SyntaxTree MakeSyntaxTree(List<Statement> body, string name, TextLocation start, TextLocation end)
 		{
-			var res = new SyntaxTree(body.ToArray(), name, start, end);
-			foreach(var stmt in res.Body)
-				res.AddChild(stmt);
-
-			return res;
+			return new SyntaxTree(body, name, start, end);
 		}
 
 		internal static TimeFormatLiteral MakeTimeFormat(int hour, int min, int sec, TextLocation start, TextLocation end)

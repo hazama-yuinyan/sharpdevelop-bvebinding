@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using BVE5Language.Ast;
 using ICSharpCode.NRefactory;
@@ -93,8 +94,8 @@ namespace BVE5Language.Parser
 		{
 			var tree = ParseImpl(src.Replace(Environment.NewLine, "\n"), "<string>", false);
             if(!returnAsSyntaxTree){
-                var res = tree.Body[0];
-                res.ResetParent();
+				var res = tree.Body.First();
+                res.Remove();
                 return res;
             }else{
                 return tree;
@@ -194,9 +195,10 @@ namespace BVE5Language.Parser
 			lexer.Advance();
 			SequenceExpression rhs = ParseSequence(lexer);
 			Expression expr = rhs;
-			if(rhs.Expressions.Length == 1){
-				rhs.Expressions[0].Remove();
-				expr = rhs.Expressions[0];
+			if(rhs.Expressions.Count() == 1){
+				var tmp = rhs.Expressions.First();
+				tmp.Remove();
+				expr = tmp;
 			}
 			return AstNode.MakeDefinition(lhs, expr, lhs.StartLocation, lexer.Current.StartLoc);
 		}

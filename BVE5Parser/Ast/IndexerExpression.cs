@@ -34,15 +34,12 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class IndexerExpression : Expression
 	{
-		private readonly Expression target;
-		private readonly Identifier index;
-
 		public Expression Target{
-			get{return target;}
+			get{return (Expression)FirstChild;}
 		}
 
-		public Identifier Index{
-			get{return index;}
+		public LiteralExpression Index{
+			get{return (LiteralExpression)FirstChild.NextSibling;}
 		}
 
 		public override NodeType Type {
@@ -51,18 +48,18 @@ namespace BVE5Language.Ast
 			}
 		}
 
-		public IndexerExpression(Expression targetExpr, Identifier indexKey, TextLocation startLoc, TextLocation endLoc)
+		public IndexerExpression(Expression target, LiteralExpression index, TextLocation startLoc, TextLocation endLoc)
 			: base(startLoc, endLoc)
 		{
-			target = targetExpr;
-			index = indexKey;
+			AddChild(target);
+			AddChild(index);
 		}
 
 		public override void AcceptWalker(AstWalker walker)
 		{
 			if(walker.Walk(this)){
-				target.AcceptWalker(walker);
-				index.AcceptWalker(walker);
+				Target.AcceptWalker(walker);
+				Index.AcceptWalker(walker);
 			}
 			walker.PostWalk(this);
 		}
@@ -74,7 +71,7 @@ namespace BVE5Language.Ast
 
 		public override string GetText()
 		{
-			return string.Format("{0}[{1}]", target.GetText(), index.GetText());
+			return string.Format("{0}[{1}]", Target.GetText(), Index.GetText());
 		}
 	}
 }

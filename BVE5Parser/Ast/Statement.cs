@@ -9,10 +9,8 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class Statement : AstNode
 	{
-		private readonly Expression expr;
-
 		public Expression Expr{
-			get{return expr;}
+			get{return (Expression)FirstChild;}
 		}
 
 		public override NodeType Type {
@@ -21,17 +19,17 @@ namespace BVE5Language.Ast
 			}
 		}
 
-		public Statement(Expression inputExpr, TextLocation startLoc, TextLocation endLoc)
+		public Statement(Expression expr, TextLocation startLoc, TextLocation endLoc)
 			: base(startLoc, endLoc)
 		{
-			expr = inputExpr;
+			AddChild(expr);
 		}
 
 		public override void AcceptWalker(AstWalker walker)
 		{
 			if(walker.Walk(this)){
-				if(expr != null)
-					expr.AcceptWalker(walker);
+				if(Expr != null)
+					Expr.AcceptWalker(walker);
 			}
 
 			walker.PostWalk(this);
@@ -44,7 +42,7 @@ namespace BVE5Language.Ast
 
 		public override string GetText()
 		{
-			return expr.GetText() + ";";
+			return Expr.GetText() + ";";
 		}
 	}
 }

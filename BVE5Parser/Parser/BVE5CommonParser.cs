@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using BVE5Language.Ast;
 using ICSharpCode.NRefactory;
 
@@ -92,8 +93,8 @@ namespace BVE5Language.Parser
 		{
 			var tree = ParseImpl(src.Replace(Environment.NewLine, "\n"), "<string>", false);
             if(!returnAsSyntaxTree){
-                var res = tree.Body[0];
-                res.ResetParent();
+				var res = tree.Body.First();
+                res.Remove();
                 return res;
             }else{
                 return tree;

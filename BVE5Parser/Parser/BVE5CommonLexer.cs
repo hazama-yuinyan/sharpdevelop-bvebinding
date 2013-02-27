@@ -160,9 +160,10 @@ namespace BVE5Language.Parser
 						GetChar();
 						ch = PeekChar();
 					}while(ch != EOF && ch != '\n');
-					GetChar();
 					++line_num;
 					column_num = 1;
+					GetChar();
+					ch = PeekChar();
 				}else{
 					if(ch == '\n')
 						break;
