@@ -38,31 +38,33 @@ namespace BVE5Language.Resolver
 	/// </remarks>
 	internal sealed class ResolveVisitor : IAstWalker<ResolveResult>
 	{
-		private static readonly ResolveResult RrrorResult = ErrorResolveResult.UnknownError;
+		static readonly ResolveResult RrrorResult = ErrorResolveResult.UnknownError;
 		
-		private BVE5Resolver resolver;
-		private readonly BVE5UnresolvedFile unresolved_file;
-		private readonly Dictionary<AstNode, ResolveResult> resolve_result_cache = new Dictionary<AstNode, ResolveResult>();
-		private readonly Dictionary<AstNode, BVE5Resolver> resolver_before_dict = new Dictionary<AstNode, BVE5Resolver>();
-		private readonly Dictionary<AstNode, BVE5Resolver> resolver_after_dict = new Dictionary<AstNode, BVE5Resolver>();
+		BVE5Resolver resolver;
+		readonly BVE5UnresolvedFile unresolved_file;
+		readonly string toplevel_type_name;
+		readonly Dictionary<AstNode, ResolveResult> resolve_result_cache = new Dictionary<AstNode, ResolveResult>();
+		readonly Dictionary<AstNode, BVE5Resolver> resolver_before_dict = new Dictionary<AstNode, BVE5Resolver>();
+		readonly Dictionary<AstNode, BVE5Resolver> resolver_after_dict = new Dictionary<AstNode, BVE5Resolver>();
 
         IResolveVisitorNavigator navigator;
 		bool resolver_enabled;
 		internal CancellationToken cancellation_token;
 
-        private static readonly IResolveVisitorNavigator SkipAllNavigator = new ConstantModeResolveVisitorNavigator(ResolveVisitorNavigationMode.Skip, null);
+        static readonly IResolveVisitorNavigator SkipAllNavigator = new ConstantModeResolveVisitorNavigator(ResolveVisitorNavigationMode.Skip, null);
 		
 		#region Constructor
 		/// <summary>
 		/// Creates a new ResolveVisitor instance.
 		/// </summary>
-		public ResolveVisitor(BVE5Resolver inputResolver, BVE5UnresolvedFile unresolvedFile)
+		public ResolveVisitor(BVE5Resolver inputResolver, BVE5UnresolvedFile unresolvedFile, string toplevelTypeName = null)
 		{
 			if(inputResolver == null)
 				throw new ArgumentNullException("inputResolver");
 
 			resolver = inputResolver;
 			unresolved_file = unresolvedFile;
+			toplevel_type_name = toplevelTypeName;
 			navigator = SkipAllNavigator;
 		}
 
@@ -98,7 +100,7 @@ namespace BVE5Language.Resolver
 		}
 		#endregion
 
-		private void StoreCurrentState(AstNode node)
+		void StoreCurrentState(AstNode node)
 		{
 			// It's possible that we re-visit an expression that we scanned over earlier,
 			// so we might have to overwrite an existing state.
@@ -106,7 +108,7 @@ namespace BVE5Language.Resolver
 			resolver_before_dict[node] = resolver;
 		}
 		
-		private void StoreResult(AstNode node, ResolveResult result)
+		void StoreResult(AstNode node, ResolveResult result)
 		{
 			Debug.Assert(result != null);
 			Log.WriteLine("Resolved '{0}' to {1}", node, result);
@@ -241,19 +243,31 @@ namespace BVE5Language.Resolver
 			BVE5Resolver stored_resolver;
 			while(!resolver_before_dict.TryGetValue(parent, out stored_resolver)){
 				parent = parent.Parent;
-				if(parent == null)
-					throw new InvalidOperationException("Could not find a resolver state for any parent of the specified node. Are you trying to resolve a node that is not a descendant of the BVE5AstResolver's root node?");
+				if(parent == null){
+					throw new InvalidOperationException("Could not find a resolver state for any parent of the specified node." +
+					                                    "Are you trying to resolve a node that is not a descendant of the BVE5AstResolver's root node?");
+				}
 			}
 			return stored_resolver;
 		}
 
-        private void ScanChildren(AstNode parent)
+        void ScanChildren(AstNode parent)
         {
             for(AstNode child = parent.FirstChild; child != null; child = child.NextSibling)
                 Scan(child);
         }
 
 		#region AstWalker members
+		public ResolveResult Walk(BinaryExpression binary)
+		{
+			return null; //TODO: implement it
+		}
+		
+		public ResolveResult Walk(UnaryExpression unary)
+		{
+			return null; //TODO: implement it
+		}
+		
 		public ResolveResult Walk(DefinitionExpression def)
 		{
 			return null; //TODO: implement it
@@ -301,7 +315,7 @@ namespace BVE5Language.Resolver
             }
 		}
         
-        private ResolveResult ResolveInvocationOnGivenTarget(ResolveResult target, InvocationExpression invocation)
+        ResolveResult ResolveInvocationOnGivenTarget(ResolveResult target, InvocationExpression invocation)
         {
         	ResolveResult[] args = GetArguments(invocation.Arguments);
         	return resolver.ResolveInvocation(target, args);
@@ -310,7 +324,7 @@ namespace BVE5Language.Resolver
         /// <summary>
 		/// Gets and resolves the arguments.
 		/// </summary>
-        private ResolveResult[] GetArguments(IEnumerable<Expression> argExpressions)
+        ResolveResult[] GetArguments(IEnumerable<Expression> argExpressions)
         {
             ResolveResult[] arguments = new ResolveResult[argExpressions.Count()];
             int i = 0;
@@ -347,7 +361,7 @@ namespace BVE5Language.Resolver
 			}
 		}
 		
-		private ResolveResult ResolveMemberReferenceOnGivenTarget(ResolveResult target, MemberReferenceExpression memRef)
+		ResolveResult ResolveMemberReferenceOnGivenTarget(ResolveResult target, MemberReferenceExpression memRef)
 		{
 			StoreCurrentState(memRef.Reference);
 			var result = resolver.ResolveMemberAccess(target, memRef.Reference.Name);
@@ -386,6 +400,9 @@ namespace BVE5Language.Resolver
 		{
             BVE5Resolver previous_resolver = resolver;
             try{
+            	if(unresolved_file != null){
+            		resolver = resolver.WithCurrentTypeDefinition(toplevel_type_name);
+            	}
                 ScanChildren(unit);
                 return VoidResult;
             }

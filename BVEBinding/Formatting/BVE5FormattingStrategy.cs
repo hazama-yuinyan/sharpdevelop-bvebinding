@@ -18,8 +18,8 @@ namespace BVEBinding.Formatting
 	/// </summary>
 	public class BVE5FormattingStrategy : DefaultFormattingStrategy
 	{
-		private bool immediately_after_newline = false;
-		private static Regex pos_stmt_searcher = new Regex(@"^\s*\d+", RegexOptions.Compiled);
+		bool immediately_after_newline = false;
+		static Regex pos_stmt_searcher = new Regex(@"^\s*\d+", RegexOptions.Compiled);
 		
 		#region DefaultFormattingStrategy members
 		public override void FormatLine(ITextEditor editor, char charTyped)
@@ -57,7 +57,7 @@ namespace BVEBinding.Formatting
 		}
 		#endregion
 		
-		private static void TryIndent(ITextEditor editor, int begin, int end)
+		static void TryIndent(ITextEditor editor, int begin, int end)
 		{
 			IDocument doc = editor.Document;
 			var tab = editor.Options.IndentationString;
@@ -76,7 +76,7 @@ namespace BVEBinding.Formatting
 			}
 		}
 		
-		private static bool IsInHeader(IDocument doc, int max)
+		static bool IsInHeader(IDocument doc, int max)
 		{
 			bool result = true;
 			for(int i = 1; i < max; ++i){

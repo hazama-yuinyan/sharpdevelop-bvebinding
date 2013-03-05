@@ -7,10 +7,9 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor;
-
 using BVEBinding.Formatting;
 
 namespace BVEBinding
@@ -20,8 +19,8 @@ namespace BVEBinding
 	/// </summary>
 	public class BVE5LanguageBinding : DefaultLanguageBinding
 	{
-		private IFormattingStrategy formatting_strategy = new BVE5FormattingStrategy();
-		private IBracketSearcher bracket_searcher = new BVE5BracketSearcher();
+		IFormattingStrategy formatting_strategy = new BVE5FormattingStrategy();
+		IBracketSearcher bracket_searcher = new BVE5BracketSearcher();
 		
 		public override IFormattingStrategy FormattingStrategy {
 			get {
@@ -39,6 +38,11 @@ namespace BVEBinding
 			get {
 				return bracket_searcher;
 			}
+		}
+		
+		public BVE5LanguageBinding()
+		{
+			ResourceService.RegisterStrings("BVEBinding.Resources.StringResources", GetType().Assembly);
 		}
 		
 		public override void Attach(ITextEditor editor)

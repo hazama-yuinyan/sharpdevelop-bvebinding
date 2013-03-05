@@ -10,11 +10,11 @@ namespace BVE5Language.Parser
 {
 	internal class BVE5RouteFileLexer
 	{
-		private readonly TextReader reader;
-		private Token token = null,		//current token
+		readonly TextReader reader;
+		Token token = null,		//current token
 			la = null;					//lookahead token
-		private int line_num = 1, column_num = 1;
-		private const char EOF = unchecked((char)-1);
+		int line_num = 1, column_num = 1;
+		const char EOF = unchecked((char)-1);
 
 		public Token Current{
 			get{return token;}
@@ -79,7 +79,7 @@ namespace BVE5Language.Parser
 			LookAheadToken();
 		}
 
-		private void LookAheadToken()
+		void LookAheadToken()
 		{
 			SkipWhitespace();
 			
@@ -97,6 +97,7 @@ namespace BVE5Language.Parser
 			case ':':
             case '[':
             case ']':
+			case '=':
 				GetChar();
 				la = new Token(line_num, column_num, ch.ToString(), TokenKind.SyntaxToken);
 				++column_num;
@@ -112,12 +113,12 @@ namespace BVE5Language.Parser
 				break;
 				
 			default:
-				la = GetId();
+				la = GetIdOrKeyword();
 				break;
 			}
 		}
 
-		private Token GetIdOrNumber()
+		Token GetIdOrNumber()
 		{
 			char ch = GetChar();
 			Debug.Assert(ch != EOF || ch != '-', "Attempted to parse an ID or number without hyphen.");
@@ -126,10 +127,10 @@ namespace BVE5Language.Parser
 			if(IsNumChar(ch))
 				return GetNumber(false);
 			else
-				return GetId();
+				return GetIdOrKeyword();
 		}
 
-		private Token GetNumber(bool isPositive)
+		Token GetNumber(bool isPositive)
 		{
 			char c = PeekChar();
 			Debug.Assert(c != EOF || !IsNumChar(c), "Really meant a number?");
@@ -162,12 +163,12 @@ namespace BVE5Language.Parser
 		//
 		// Must not call when the next char is EOF.
 		//
-		private Token GetId()
+		Token GetIdOrKeyword()
 		{
-			return GetId(GetChar());
+			return GetIdOrKeyword(GetChar());
 		}
 
-		private Token GetId(char first)
+		Token GetIdOrKeyword(char first)
 		{
 			Debug.Assert(first != EOF && !IsIdTerminator(first), "Really meant an id?");
 			var sb = new StringBuilder(first.ToString());
@@ -178,19 +179,20 @@ namespace BVE5Language.Parser
 				GetChar();
 				ch = PeekChar();
 			}
-			var tmp = new Token(line_num, column_num, sb.ToString(), TokenKind.Identifier);
+			var str = sb.ToString();
+			var tmp = new Token(line_num, column_num, str, (str == "let") ? TokenKind.KeywordToken : TokenKind.Identifier);
 			column_num += sb.Length;
 			return tmp;
 		}
 
-		private static readonly char[] IdTerminators = new[]{'(', ')', '[', ']', ';', ',', '.'};
+		static readonly char[] IdTerminators = new[]{'(', ')', '[', ']', ';', ',', '.'};
 
-		private static bool IsIdTerminator(char c)
+		static bool IsIdTerminator(char c)
 		{
 			return IdTerminators.Contains(c) || (c < (char)33);
 		}
 
-		private void SkipWhitespace()
+		void SkipWhitespace()
 		{
 			char ch = PeekChar();
 			while(char.IsWhiteSpace(ch) || ch == '/'){
@@ -216,17 +218,17 @@ namespace BVE5Language.Parser
 			}
 		}
 
-		private char GetChar()
+		char GetChar()
 		{
 			return unchecked((char)reader.Read());
 		}
 
-		private char PeekChar()
+		char PeekChar()
 		{
 			return unchecked((char)reader.Peek());
 		}
 
-		private static bool IsNumChar(char c)
+		static bool IsNumChar(char c)
 		{
 			return '0' <= c && c <= '9';
 		}

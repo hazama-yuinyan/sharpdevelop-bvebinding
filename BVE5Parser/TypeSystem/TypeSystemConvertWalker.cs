@@ -12,7 +12,7 @@ namespace BVE5Language.TypeSystem
 	/// </summary>
 	public class TypeSystemConvertWalker : DepthFirstAstWalker<IUnresolvedEntity>
 	{
-		private readonly BVE5UnresolvedFile unresolved_file;
+		readonly BVE5UnresolvedFile unresolved_file;
 		
 		/// <summary>
 		/// Creates a new TypeSystemConvertVisitor.

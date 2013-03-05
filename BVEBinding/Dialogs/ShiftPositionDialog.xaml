@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Window
 	x:Class="BVEBinding.Dialogs.ShiftPositionDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:core="http://icsharpcode.net/sharpdevelop/core" xmlns:widgets="http://icsharpcode.net/sharpdevelop/widgets"
 	Title="PositionShifter"
@@ -14,17 +14,15 @@
 			<RowDefinition
 				Height="Auto" />
 		</Grid.RowDefinitions>
-		<!--<widgets:UniformGridWithSpacing Columns="2" Rows="2" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-		</widgets:UniformGridWithSpacing>-->
 		<Label
-			Content="Amount of shift:"
 			Grid.Column="0"
 			Grid.Row="0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
 			Margin="8,8,0,0"
 			Width="105.5"
-			Height="28" />
+			Height="28"
+			Content="{core:Localize ShiftPositionsDialog.AmountOfShift}" />
 		<TextBox
 			Name="amount_of_shift"
 			Grid.Column="1"
@@ -35,7 +33,7 @@
 			Margin="51.586206896552,16,29.9999999999998,0"
 			Width="212.00000000000006"
 			Height="20"
-			ToolTip="Enter an integer indicating how much you want to shift the whole or the part of the route. A negative integer shifts backward, and a positive one does forward." />
+			ToolTip="{core:Localize ShiftPositionsDialog.TextboxTooltip}" />
 		<Button
 			Content="OK"
 			Click="OkButtonClick"

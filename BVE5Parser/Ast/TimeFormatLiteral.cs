@@ -34,7 +34,7 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class TimeFormatLiteral : Expression
 	{
-		private readonly int hour, minute, second;
+		readonly int hour, minute, second;
 
 		public int Hour{
 			get{return hour;}

@@ -16,7 +16,9 @@ namespace BVE5Language.Ast
 		TimeLiteral,
 		Definition,
 		SectionStmt,
-		Sequence
+		Sequence,
+		BinaryExpression,
+		UnaryExpression
 	}
 }
 

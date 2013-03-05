@@ -23,6 +23,11 @@ namespace BVE5Language.Ast
         }
 
         #region IAstWalker<T> members
+        public virtual T Walk(BinaryExpression binary)
+        {
+        	return WalkChildren(binary);
+        }
+        
         public virtual T Walk(DefinitionExpression def)
         {
         	return WalkChildren(def);
@@ -76,6 +81,11 @@ namespace BVE5Language.Ast
         public virtual T Walk(TimeFormatLiteral node)
         {
             return WalkChildren(node);
+        }
+        
+        public virtual T Walk(UnaryExpression unary)
+        {
+        	return WalkChildren(unary);
         }
         #endregion
     }

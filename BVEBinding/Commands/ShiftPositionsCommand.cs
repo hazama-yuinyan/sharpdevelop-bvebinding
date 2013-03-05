@@ -34,8 +34,9 @@ namespace BVEBinding.Commands
 				ShiftPositions(dialog.AmountOfShift);
 		}
 		
-		private void ShiftPositions(int amountShift)
+		void ShiftPositions(int amountShift)
 		{
+			//TODO: 数式入力による距離程シフトの対応・相対インデックスによる既存距離程の参照機能の追加
 			var provider = WorkbenchSingleton.Workbench.ActiveViewContent as ITextEditorProvider;
 			if(provider == null)
 				return;
@@ -52,9 +53,11 @@ namespace BVEBinding.Commands
 			using(provider.TextEditor.Document.OpenUndoGroup()){	//do the real work
 				var content_text = provider.TextEditor.Document.Text;
 				var tree = new BVE5RouteFileParser().Parse(content_text, provider.TextEditor.FileName, true);
-				foreach(var stmt in tree.FindNodes(n => begin_line <= n.StartLocation.Line && n.EndLocation.Line <= end_line &&
+				var pos_stmts = tree.FindNodes(n => begin_line <= n.StartLocation.Line && n.EndLocation.Line <= end_line &&
 				                                   n.Type == NodeType.Statement && ((Statement)n).Expr.Type == NodeType.Literal)
-				                                   .OfType<Statement>()){
+					.OfType<Statement>().ToArray();
+				
+				foreach(var stmt in pos_stmts){
 					var literal_expr = (LiteralExpression)stmt.Expr;
 					int original_value = (int)literal_expr.Value, modified_value = original_value + amountShift;
 					literal_expr.ReplaceWith(new LiteralExpression(modified_value, literal_expr.StartLocation,

@@ -30,9 +30,9 @@ namespace BVE5Language.TypeSystem
             new PrimitiveTypeReference(BVEPrimitiveTypeCode.EnumForwardDirection, "enum<ForwardDirection>");
         #endregion
 
-        private readonly BVEPrimitiveTypeCode type_code;
-        private readonly string name;
-        private readonly string @namespace;
+        readonly BVEPrimitiveTypeCode type_code;
+        readonly string name;
+        readonly string @namespace;
         
         #region Properties
         public string Name{

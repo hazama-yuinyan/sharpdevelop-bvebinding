@@ -10,7 +10,7 @@ namespace BVE5Language.Semantics
 {
     public class PositionStatementResolveResult : ResolveResult
     {
-        private readonly int position_value;
+        readonly int position_value;
 
         public PositionStatementResolveResult(int position, IType integerType) : base(integerType)
         {

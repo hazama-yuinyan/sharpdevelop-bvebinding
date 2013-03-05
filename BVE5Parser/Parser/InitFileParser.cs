@@ -22,10 +22,10 @@ namespace BVE5Language.Parser
 	/// </summary>
 	public class InitFileParser
 	{
-		private static object parse_lock = new object();
+		static object parse_lock = new object();
 		
-		private readonly string[] HeaderStringSplit;
-		private readonly string FileTypeName;
+		readonly string[] HeaderStringSplit;
+		readonly string FileTypeName;
 		
 		/// <summary>
 		/// Initializes a new instance of <see cref="BVE5Language.Parser.InitFileParser"/>.
@@ -104,7 +104,7 @@ namespace BVE5Language.Parser
 		#endregion
 		
 		#region Implementation details
-		private SyntaxTree ParseImpl(string src, string fileName, bool parseHeader)
+		SyntaxTree ParseImpl(string src, string fileName, bool parseHeader)
 		{
 			lock(parse_lock){
 				if(!src.EndsWith("\n"))
@@ -139,7 +139,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// section-statement | definition '\n'
-		private BVE5Language.Ast.Statement ParseStatement(InitFileLexer lexer)
+		BVE5Language.Ast.Statement ParseStatement(InitFileLexer lexer)
 		{
 			Token token = lexer.Current;
 			BVE5Language.Ast.Expression expr = null;
@@ -162,7 +162,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// '[' identifier ']' '\n'
-		private SectionStatement ParseSectionStatement(InitFileLexer lexer)
+		SectionStatement ParseSectionStatement(InitFileLexer lexer)
 		{
 			Token token = lexer.Current;
 			var start_loc = token.StartLoc;
@@ -185,7 +185,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// identifier '=' sequence
-		private DefinitionExpression ParseDefinition(InitFileLexer lexer)
+		DefinitionExpression ParseDefinition(InitFileLexer lexer)
 		{
 			Identifier lhs = ParseIdent(lexer);
 			Token token = lexer.Current;
@@ -204,7 +204,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// expr {',' expr}
-		private SequenceExpression ParseSequence(InitFileLexer lexer)
+		SequenceExpression ParseSequence(InitFileLexer lexer)
 		{
 			Token token = lexer.Current;
 			var start_loc = token.StartLoc;
@@ -241,7 +241,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// anyCharacterExcept-'='-']'-','
-		private Identifier ParseIdent(InitFileLexer lexer)
+		Identifier ParseIdent(InitFileLexer lexer)
 		{
 			Debug.Assert(lexer.Current.Kind == TokenKind.Identifier, "Really meant an identifier?");
 			Token token = lexer.Current;
@@ -250,7 +250,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// path-literal
-        private LiteralExpression ParsePathLiteral(InitFileLexer lexer)
+        LiteralExpression ParsePathLiteral(InitFileLexer lexer)
         {
             Token token = lexer.Current;
             var start_loc = token.StartLoc;
@@ -266,7 +266,7 @@ namespace BVE5Language.Parser
         }
         
         // '#' {number}{3,6}
-        private LiteralExpression ParseColorLiteral(InitFileLexer lexer)
+        LiteralExpression ParseColorLiteral(InitFileLexer lexer)
         {
         	Token token = lexer.Current;
         	Debug.Assert(token.Literal.StartsWith("#"), "Really meant a color literal?");
@@ -275,7 +275,7 @@ namespace BVE5Language.Parser
         }
 
 		// number
-		private LiteralExpression ParseLiteral(InitFileLexer lexer)
+		LiteralExpression ParseLiteral(InitFileLexer lexer)
 		{
 			Token token = lexer.Current;
 			Debug.Assert(token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral, "Really meant a literal?");

@@ -18,8 +18,8 @@ namespace BVE5Language.TypeSystem
 	/// </summary>
 	sealed class PrimitiveTypeCache
 	{
-		private readonly ICompilation compilation;
-		private readonly IType[] primitive_types = new IType[BVEBuiltins.PrimitiveTypeCodeCount];
+		readonly ICompilation compilation;
+		readonly IType[] primitive_types = new IType[BVEBuiltins.PrimitiveTypeCodeCount];
 		
 		public PrimitiveTypeCache(ICompilation compilation)
 		{
@@ -35,7 +35,7 @@ namespace BVE5Language.TypeSystem
 			return LazyInit.GetOrSet(ref primitive_types[(int)typeCode], SearchType(typeCode));
 		}
 		
-		private IType SearchType(BVEPrimitiveTypeCode typeCode)
+		IType SearchType(BVEPrimitiveTypeCode typeCode)
 		{
 			var type_ref = PrimitiveTypeReference.Get(typeCode);
 			if(type_ref == null)

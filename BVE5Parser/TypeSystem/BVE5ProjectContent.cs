@@ -10,12 +10,12 @@ namespace BVE5Language.TypeSystem
 {
     public class BVE5ProjectContent : IProjectContent
     {
-        private string assembly_name;
-        private string full_assembly_name;
-        private string project_file_name;
-        private string location;
-        private Dictionary<string, IUnresolvedFile> unresolved_files;
-        private List<IAssemblyReference> assembly_references;
+        string assembly_name;
+        string full_assembly_name;
+        string project_file_name;
+        string location;
+        Dictionary<string, IUnresolvedFile> unresolved_files;
+        List<IAssemblyReference> assembly_references;
 
         #region Constructors
         public BVE5ProjectContent()

@@ -14,13 +14,13 @@ namespace BVE5Language.TypeSystem
     /// </summary>
     public class BVE5Compilation : ICompilation
     {
-        private readonly ISolutionSnapshot solution_snapshot;
-        private readonly ITypeResolveContext context;
-        private readonly CacheManager cache_manager = new CacheManager();
-        private readonly IAssembly main_assembly;
-        private readonly IList<IAssembly> assemblies;
-        private readonly IList<IAssembly> referenced_assemblies;
-        private readonly PrimitiveTypeCache type_cache;
+        readonly ISolutionSnapshot solution_snapshot;
+        readonly ITypeResolveContext context;
+        readonly CacheManager cache_manager = new CacheManager();
+        readonly IAssembly main_assembly;
+        readonly IList<IAssembly> assemblies;
+        readonly IList<IAssembly> referenced_assemblies;
+        readonly PrimitiveTypeCache type_cache;
 
         #region ICompilation members
         public IList<IAssembly> Assemblies

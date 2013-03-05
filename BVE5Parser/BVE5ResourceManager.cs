@@ -9,9 +9,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.IO;
+using System.Reflection;
 using System.Xml;
-
 using Newtonsoft.Json;
 
 namespace BVE5Language
@@ -21,8 +22,8 @@ namespace BVE5Language
 	/// </summary>
 	public static class BVE5ResourceManager
 	{
-		private static readonly string[] TypeNames;
-		private static readonly Dictionary<string, string[]> MethodNames;
+		static readonly string[] TypeNames;
+		static readonly Dictionary<string, string[]> MethodNames;
 		
 		class BuiltinsDefinition
 		{
@@ -30,19 +31,43 @@ namespace BVE5Language
 			public Dictionary<string, string[]> Methods{get; set;}
 		}
 		
-		public static T DeserializeObject<T>(XmlTextReader reader) where T : class
+		/*public static T DeserializeObject<T>(XmlTextReader reader) where T : class
 		{
-			/*var target_type = typeof(T);
+			var target_type = typeof(T);
+			string cur_target_prop_name = "";
 			while(reader.Read()){
-				reader.LocalName
-			}*/
+				switch(reader.LocalName){
+				case "key":
+					cur_target_prop_name = reader.ReadString();
+					break;
+					
+				case "array":
+					var child_reader = reader.ReadSubtree();
+					child_reader.Read();
+					var child_type = target_type.GetProperty(cur_target_prop_name, BindingFlags.Public).PropertyType;
+					if(!child_type.IsArray)
+						throw new Exception(string.Format("The property type of {0} isn't an array type!"), cur_target_prop_name);
+					
+					typeof(BVE5ResourceManager).GetMethod("DeserializeObject").MakeGenericMethod(child_type).Invoke(this, child_reader);
+					break;
+					
+				case "dict":
+					break;
+					
+				case "string":
+					break;
+					
+				default:
+					throw new Exception("A plist cannot have that type of data: " + reader.LocalName);
+				}
+			}
 			return (T)null;
 		}
 		
-		private static object ReadObject(XmlTextReader reader)
+		static object ReadObject(XmlTextReader reader)
 		{
 			return null;
-		}
+		}*/
 		
 		static BVE5ResourceManager()
 		{
@@ -52,7 +77,8 @@ namespace BVE5Language
 					
 				}
 			}*/
-			var builtin_names = JsonConvert.DeserializeObject<BuiltinsDefinition>(File.ReadAllText("../../../resources/BVE5BuiltinNames.json"));
+			var resource_path = Path.Combine(Path.GetDirectoryName(typeof(BVE5ResourceManager).Assembly.Location), @"resources\BVE5BuiltinNames.json");
+			var builtin_names = JsonConvert.DeserializeObject<BuiltinsDefinition>(File.ReadAllText(resource_path));
 			TypeNames = builtin_names.TypeNames;
 			MethodNames = builtin_names.Methods;
 		}

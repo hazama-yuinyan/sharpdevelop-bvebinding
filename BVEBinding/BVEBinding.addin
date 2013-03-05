@@ -9,18 +9,12 @@
 	
 	<Runtime>
 		<Import assembly=":ICSharpCode.SharpDevelop"/>
-		<Import assembly = "BVEBinding.dll"/>
+		<Import assembly="BVEBinding.dll"/>
 	</Runtime>
-	
-	<!-- Extend the SharpDevelop AddIn-Tree like this:
-	<Path name = ...>
-		<.../>
-	</Path>
-	-->
 	
 	<Path name="/SharpDevelop/ViewContent/AvalonEdit/SyntaxModes">
 		<SyntaxMode id="BVE5.SyntaxMode"
-		            extensions=".txt"
+		            extensions=".txt;.bvert"
 		            name="BVE5"
 		            resource="BVEBinding.Resources.BVE5.xshd"/>
 	</Path>
@@ -33,16 +27,23 @@
 		<LanguageBinding
 			id="BVE5"
 			class="BVEBinding.BVE5LanguageBinding"
-			extensions=".txt"/>
+			extensions=".txt;.bvert"/>
+	</Path>
+	
+	<Path name="/AddIns/DefaultTextEditor/CodeCompletion">
+		<CodeCompletionBinding id="BVE5Route" extensions=".txt;.bvert" class="BVEBinding.Completion.BVE5CodeCompletionBinding" />
 	</Path>
 
 	<Path name="/SharpDevelop/Workbench/MainMenu">
-		<Condition name="ActiveContentExtension" activeextension=".txt">
+		<Condition name="TextContent" textcontent="BVE5">
 			<MenuItem id="BVE5Route" label="BVE5" type="Menu">
 				<Condition name = "WindowActive" activewindow="ICSharpCode.SharpDevelop.Editor.ITextEditorProvider" action="Disable">
 					<MenuItem id="ShiftPositions"
-							  label="ShiftPositions"
+							  label="${res:BVE5Menu.ShiftPositionsEntry}"
 							  class="BVEBinding.Commands.ShiftPositionsCommand"/>
+					<MenuItem id="CalculateCant"
+							  label="${res:BVE5Menu.CalculateCantEntry}"
+							  class="BVEBinding.Commands.CalculateCantCommand"/>
 				</Condition>
 			</MenuItem>
 		</Condition>

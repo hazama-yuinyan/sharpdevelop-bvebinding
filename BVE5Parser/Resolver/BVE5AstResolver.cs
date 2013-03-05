@@ -20,10 +20,10 @@ namespace BVE5Language.Resolver
 	/// <remarks>This class is thread-safe.</remarks>
 	public class BVE5AstResolver
 	{
-		private readonly BVE5Resolver initial_resolver_state;
-		private readonly AstNode root_node;
-		private readonly BVE5UnresolvedFile unresolved_file;
-		private readonly ResolveVisitor resolve_visitor;
+		readonly BVE5Resolver initial_resolver_state;
+		readonly AstNode root_node;
+		readonly BVE5UnresolvedFile unresolved_file;
+		readonly ResolveVisitor resolve_visitor;
 		bool resolver_initialized;
 		
 		/// <summary>

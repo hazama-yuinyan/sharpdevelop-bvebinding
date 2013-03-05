@@ -13,9 +13,9 @@ namespace BVE5Language.TypeSystem
     /// </summary>
     public class BVE5Assembly : IAssembly
     {
-        private readonly ICompilation compilation;
-        private readonly ITypeResolveContext context;
-        private readonly BVE5ProjectContent project_content;
+        readonly ICompilation compilation;
+        readonly ITypeResolveContext context;
+        readonly BVE5ProjectContent project_content;
 
         internal BVE5Assembly(ICompilation compilation, BVE5ProjectContent projectContent)
         {
@@ -42,7 +42,7 @@ namespace BVE5Language.TypeSystem
 
         Dictionary<TopLevelTypeName, ITypeDefinition> type_dict;
 
-        private Dictionary<TopLevelTypeName, ITypeDefinition> GetTypes()
+        Dictionary<TopLevelTypeName, ITypeDefinition> GetTypes()
         {
             var dict = LazyInit.VolatileRead(ref this.type_dict);
             if(dict != null){
@@ -91,7 +91,7 @@ namespace BVE5Language.TypeSystem
         }
 
         public IEnumerable<ITypeDefinition> TopLevelTypeDefinitions{
-            get { throw new NotImplementedException(); }
+            get { return type_dict.Values; }
         }
 
         public IUnresolvedAssembly UnresolvedAssembly{

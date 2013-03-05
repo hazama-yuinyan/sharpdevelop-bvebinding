@@ -21,10 +21,10 @@ namespace BVE5Language.Parser
 	/// </summary>
 	public class BVE5CommonParser
 	{
-		private static object parse_lock = new object();
+		static object parse_lock = new object();
 		
-		private readonly string header_str;
-		private readonly string file_kind_name;
+		readonly string header_str;
+		readonly string file_kind_name;
 		
 		/// <summary>
 		/// Initializes a new instance of <see cref="BVE5Language.Parser.CommonParser"/>.
@@ -103,7 +103,7 @@ namespace BVE5Language.Parser
 		#endregion
 		
 		#region Implementation details
-		private SyntaxTree ParseImpl(string src, string fileName, bool parseHeader)
+		SyntaxTree ParseImpl(string src, string fileName, bool parseHeader)
 		{
 			lock(parse_lock){
 				if(!src.EndsWith("\n"))
@@ -133,7 +133,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// sequence '\n'
-		private Statement ParseStatement(BVE5CommonLexer lexer)
+		Statement ParseStatement(BVE5CommonLexer lexer)
 		{
 			var seq = ParseSequence(lexer);
 			Token token = lexer.Current;
@@ -145,7 +145,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// argument {',' argument}
-		private SequenceExpression ParseSequence(BVE5CommonLexer lexer)
+		SequenceExpression ParseSequence(BVE5CommonLexer lexer)
 		{
 			Token token = lexer.Current;
 			var start_loc = token.StartLoc;
@@ -166,7 +166,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// literal
-		private Expression ParseArgument(BVE5CommonLexer lexer)
+		Expression ParseArgument(BVE5CommonLexer lexer)
 		{
 			Token token = lexer.Current;
 			switch(token.Kind){
@@ -187,7 +187,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// any-string(including file path)
-		private LiteralExpression ParseString(BVE5CommonLexer lexer)
+		LiteralExpression ParseString(BVE5CommonLexer lexer)
 		{
 			Token token = lexer.Current;
 			Debug.Assert(token.Kind == TokenKind.StringLiteral, "Really meant a string?");
@@ -196,7 +196,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// number
-		private LiteralExpression ParseLiteral(BVE5CommonLexer lexer)
+		LiteralExpression ParseLiteral(BVE5CommonLexer lexer)
 		{
 			Token token = lexer.Current;
 			Debug.Assert(token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral, "Really meant a literal?");
@@ -208,7 +208,7 @@ namespace BVE5Language.Parser
 		}
 
 		// number ':' number ':' number
-		private TimeFormatLiteral ParseTimeLiteral(BVE5CommonLexer lexer)
+		TimeFormatLiteral ParseTimeLiteral(BVE5CommonLexer lexer)
 		{
 			Token token = lexer.Current;
 			Debug.Assert(token.Kind == TokenKind.IntegerLiteral, "Really meant a time literal?");

@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
@@ -33,39 +34,69 @@ namespace BVE5Language.TypeSystem
 {
 	public class BVE5UnresolvedFile : IUnresolvedFile
 	{
-		private readonly string file_name;
-		private List<Error> errors;
+		readonly string file_name;
+		readonly IUnresolvedTypeDefinition file_scope_type_def;
+		List<Error> errors;
 
 		public BVE5UnresolvedFile(string fileName)
 		{
 			file_name = fileName;
 		}
 
-		public BVE5UnresolvedFile(string fileName, List<Error> errorList)
+		public BVE5UnresolvedFile(string fileName, IUnresolvedTypeDefinition unresolvedTypeDef, List<Error> errorList)
 		{
 			file_name = fileName;
+			file_scope_type_def = unresolvedTypeDef;
 			errors = errorList;
 		}
 
 		#region IUnresolvedFile implementation
 		public IUnresolvedTypeDefinition GetTopLevelTypeDefinition(TextLocation location)
 		{
-			throw new NotImplementedException ();
+			return file_scope_type_def;
 		}
 
 		public IUnresolvedTypeDefinition GetInnermostTypeDefinition(TextLocation location)
 		{
-			throw new NotImplementedException ();
+			return file_scope_type_def;
 		}
 
 		public IUnresolvedMember GetMember(TextLocation location)
 		{
-			throw new NotImplementedException ();
+			IUnresolvedTypeDefinition type = GetInnermostTypeDefinition(location);
+			if(type == null)
+				return null;
+			
+			return FindEntity(type.Members, location);
+		}
+		
+		static T FindEntity<T>(IList<T> list, TextLocation location) where T : class, IUnresolvedEntity
+		{
+			// This could be improved using a binary search
+			foreach(T entity in list){
+				if(entity.Region.IsInside(location.Line, location.Column))
+					return entity;
+			}
+			return null;
 		}
 
 		public ITypeResolveContext GetTypeResolveContext(ICompilation compilation, TextLocation loc)
 		{
-			throw new NotImplementedException ();
+			ITypeResolveContext ctx = new SimpleTypeResolveContext(compilation.MainAssembly);
+			var cur_def = GetInnermostTypeDefinition(loc);
+			if(cur_def != null){
+				var resolved_def = cur_def.Resolve(ctx).GetDefinition();
+				if(resolved_def == null)
+					return ctx;
+				
+				ctx = ctx.WithCurrentTypeDefinition(resolved_def);
+				
+				var cur_member = resolved_def.Members.FirstOrDefault(m => m.Region.FileName == FileName && m.Region.Begin <= loc && loc < m.BodyRegion.End);
+				if(cur_member != null)
+					ctx = ctx.WithCurrentMember(cur_member);
+			}
+			
+			return ctx;
 		}
 
 		public string FileName {
@@ -78,7 +109,7 @@ namespace BVE5Language.TypeSystem
 
 		public IList<IUnresolvedTypeDefinition> TopLevelTypeDefinitions {
 			get {
-				throw new NotImplementedException("Never implemented!");
+				return new List<IUnresolvedTypeDefinition>{file_scope_type_def};
 			}
 		}
 

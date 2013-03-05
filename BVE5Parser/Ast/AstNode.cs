@@ -37,7 +37,7 @@ namespace BVE5Language.Ast
 	public abstract class AstNode
 	{
 		protected readonly TextLocation start_loc, end_loc;
-		private AstNode parent, prev_sibling, next_sibling, first_child, last_child;
+		AstNode parent, prev_sibling, next_sibling, first_child, last_child;
 
 		#region Properties
 		public TextLocation StartLocation{
@@ -534,6 +534,16 @@ namespace BVE5Language.Ast
 		internal static TimeFormatLiteral MakeTimeFormat(int hour, int min, int sec, TextLocation start, TextLocation end)
 		{
 			return new TimeFormatLiteral(hour, min, sec, start, end);
+		}
+		
+		internal static BinaryExpression MakeBinary(Expression lhs, Expression rhs, Operator ope, TextLocation start, TextLocation end)
+		{
+			return new BinaryExpression(lhs, rhs, ope, start, end);
+		}
+		
+		internal static UnaryExpression MakeUnary(Expression operand, Operator ope, TextLocation start, TextLocation end)
+		{
+			return new UnaryExpression(operand, ope, start, end);
 		}
 		#endregion
 	}

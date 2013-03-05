@@ -218,7 +218,7 @@ namespace BVE5Language.Parser
 		#endregion
 
 		#region Implemetation details
-		private SyntaxTree ParseImpl(string src, string fileName, bool parseHeader)
+		SyntaxTree ParseImpl(string src, string fileName, bool parseHeader)
 		{
 			lock(parse_lock){
 				using(var reader = new StringReader(src)){
@@ -249,15 +249,18 @@ namespace BVE5Language.Parser
 			}
 		}
 
-		// [\d]+ ';' | ident ['[' ident ']'] '.' ident '(' [args] ')' ';'
-		private BVE5Language.Ast.Statement ParseStatement(BVE5RouteFileLexer lexer)
+		// definition ';' | [\d]+ ';' | ident ['[' ident ']'] '.' ident '(' [args] ')' ';'
+		BVE5Language.Ast.Statement ParseStatement(BVE5RouteFileLexer lexer)
 		{
 			Token token = lexer.Current;
 			BVE5Language.Ast.Expression expr = null;
 
-			if(token.Kind == TokenKind.IntegerLiteral){
+			switch(token.Kind){
+			case TokenKind.IntegerLiteral:
 				expr = ParseLiteral(lexer);
-			}else if(token.Kind == TokenKind.Identifier){
+				break;
+				
+			case TokenKind.Identifier:
 				BVE5Language.Ast.Expression res = ParseIdent(lexer);
 				if(lexer.Current.Literal == "[")
 					res = ParseIndexExpr(lexer, res);
@@ -268,9 +271,15 @@ namespace BVE5Language.Parser
 
 				res = ParseMemberRef(lexer, res);
 				expr = ParseInvokeExpr(lexer, res);
-			}else{
+				break;
+				
+			case TokenKind.KeywordToken:
+				expr = ParseDefinition(lexer);
+				break;
+				
+			default:
 				throw new BVE5ParserException(token.Line, token.Column,
-					                          "A statement must start with an integer literal or an identifier.");
+					                          "A statement must start with a keyword, an integer literal or an identifier.");
 			}
 
 			token = lexer.Current;
@@ -281,9 +290,30 @@ namespace BVE5Language.Parser
 
 			return AstNode.MakeStatement(expr, expr.StartLocation, token.EndLoc);   //token should be pointing to a semicolon token
 		}
+		
+		// "let" ident '=' expr
+		DefinitionExpression ParseDefinition(BVE5RouteFileLexer lexer)
+		{
+			Token token = lexer.Current;
+			var start_loc = token.StartLoc;
+			Debug.Assert(token.Kind == TokenKind.KeywordToken, "Really meant a definition?");
+			if(token.Literal != "let")
+				throw new BVE5ParserException(token.Line, token.Column, "Unknown keyword " + token.Literal);
+			
+			lexer.Advance();
+			var lhs = ParseIdent(lexer);
+			token = lexer.Current;
+			if(token.Literal != "=")
+				throw new BVE5ParserException(token.Line, token.Column, "Expected '=' but got " + token.Literal);
+			
+			lexer.Advance();
+			var rhs = ParseRValueExpression(lexer);
+			token = lexer.Current;
+			return AstNode.MakeDefinition(lhs, rhs, start_loc, token.StartLoc);
+		}
 
 		// any-character-except-(-)-.-;-[-]
-		private Identifier ParseIdent(BVE5RouteFileLexer lexer)
+		Identifier ParseIdent(BVE5RouteFileLexer lexer)
 		{
 			Token token = lexer.Current;
 			Debug.Assert(token.Kind == TokenKind.Identifier, "Really meant an identifier?");
@@ -292,7 +322,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// ident '[' ident ']'
-		private IndexerExpression ParseIndexExpr(BVE5RouteFileLexer lexer, BVE5Language.Ast.Expression target)
+		IndexerExpression ParseIndexExpr(BVE5RouteFileLexer lexer, BVE5Language.Ast.Expression target)
 		{
 			Debug.Assert(lexer.Current.Literal == "[", "Really meant an index reference?");
 			lexer.Advance();
@@ -312,7 +342,7 @@ namespace BVE5Language.Parser
 		}
 
 		// ident '.' ident
-		private MemberReferenceExpression ParseMemberRef(BVE5RouteFileLexer lexer, BVE5Language.Ast.Expression parent)
+		MemberReferenceExpression ParseMemberRef(BVE5RouteFileLexer lexer, BVE5Language.Ast.Expression parent)
 		{
 			Debug.Assert(lexer.Current.Literal == ".", "Really meant a member reference?");
 			lexer.Advance();
@@ -325,7 +355,7 @@ namespace BVE5Language.Parser
 		}
 
 		// expr '(' [arguments] ')'
-		private InvocationExpression ParseInvokeExpr(BVE5RouteFileLexer lexer, BVE5Language.Ast.Expression callTarget)
+		InvocationExpression ParseInvokeExpr(BVE5RouteFileLexer lexer, BVE5Language.Ast.Expression callTarget)
 		{
 			Debug.Assert(lexer.Current.Literal == "(", "Really meant an invoke expression?");
 			lexer.Advance();
@@ -333,7 +363,7 @@ namespace BVE5Language.Parser
 			var args = new List<BVE5Language.Ast.Expression>();
 
 			while(token.Kind != TokenKind.EOF && token.Literal != ")"){
-                args.Add(ParseArgument(lexer));
+                args.Add(ParseRValueExpression(lexer));
 
 				token = lexer.Current;
 				if(token.Literal == ","){
@@ -349,7 +379,7 @@ namespace BVE5Language.Parser
 			return AstNode.MakeInvoke(callTarget, args, callTarget.StartLocation, token.EndLoc);    //token should be pointing to a closing parenthesis token
 		}
 
-        private BVE5Language.Ast.Expression ParseArgument(BVE5RouteFileLexer lexer)
+        BVE5Language.Ast.Expression ParseRValueExpression(BVE5RouteFileLexer lexer)
         {
             Token token = lexer.Current;
             switch(token.Kind){
@@ -369,12 +399,12 @@ namespace BVE5Language.Parser
             
             default:
                 throw new BVE5ParserException(token.Line, token.Column,
-                                              "An argument must be an identifier, a file path, a literal or a time format literal!");
+                                              "A right-hand-side expression must be an identifier, a file path, a literal or a time format literal!");
             }
         }
 
         // path-literal
-        private LiteralExpression ParsePathLiteral(BVE5RouteFileLexer lexer)
+        LiteralExpression ParsePathLiteral(BVE5RouteFileLexer lexer)
         {
             Token token = lexer.Current;
             var start_loc = token.StartLoc;
@@ -390,7 +420,7 @@ namespace BVE5Language.Parser
         }
 
 		// number | any-string
-		private LiteralExpression ParseLiteral(BVE5RouteFileLexer lexer)
+		LiteralExpression ParseLiteral(BVE5RouteFileLexer lexer)
 		{
 			Token token = lexer.Current;
 			Debug.Assert(token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral ||
@@ -406,7 +436,7 @@ namespace BVE5Language.Parser
 		}
 
 		// number ':' number ':' number
-		private TimeFormatLiteral ParseTimeLiteral(BVE5RouteFileLexer lexer)
+		TimeFormatLiteral ParseTimeLiteral(BVE5RouteFileLexer lexer)
 		{
 			Token token = lexer.Current;
 			Debug.Assert(token.Kind == TokenKind.IntegerLiteral, "Really meant a time literal?");

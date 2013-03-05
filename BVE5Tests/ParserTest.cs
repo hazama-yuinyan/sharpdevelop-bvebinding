@@ -11,8 +11,8 @@ namespace BVE5Language.Ast
 {
 	class TypeDescriber
 	{
-		private readonly NodeType expected_type;
-		private readonly List<TypeDescriber> children;
+		readonly NodeType expected_type;
+		readonly List<TypeDescriber> children;
 		
 		public NodeType ExpectedType{
 			get{return expected_type;}
@@ -125,10 +125,10 @@ Track[2].Position(5.4, 0, 100, 0);",
             	                }),
             	                TypeDescriber.Create(NodeType.Identifier, null)
             	            }),
-            	            TypeDescriber.Create(NodeType.Literal, null),
-            	            TypeDescriber.Create(NodeType.Literal, null),
-            	            TypeDescriber.Create(NodeType.Literal, null),
-            	            TypeDescriber.Create(NodeType.Literal, null)
+            	            TypeDescriber.Create(NodeType.Literal, null),	//0
+            	            TypeDescriber.Create(NodeType.Literal, null),	//0
+            	            TypeDescriber.Create(NodeType.Literal, null),	//100
+            	            TypeDescriber.Create(NodeType.Literal, null)	//0
             	        })
             	    }),
             	    TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
@@ -140,15 +140,42 @@ Track[2].Position(5.4, 0, 100, 0);",
             	                }),
             	                TypeDescriber.Create(NodeType.Identifier, null)
             	            }),
-            	            TypeDescriber.Create(NodeType.Literal, null),
-            	            TypeDescriber.Create(NodeType.Literal, null),
-            	            TypeDescriber.Create(NodeType.Literal, null),
-            	            TypeDescriber.Create(NodeType.Literal, null)
+            	            TypeDescriber.Create(NodeType.Literal, null),	//5.4
+            	            TypeDescriber.Create(NodeType.Literal, null),	//0
+            	            TypeDescriber.Create(NodeType.Literal, null),	//100
+            	            TypeDescriber.Create(NodeType.Literal, null)	//0
             	        })
             	    })
             	})
             };
             Helpers.TestStructualEqual(expected4.GetEnumerator(), tree);
+		}
+		
+		[TestCase]
+		public void Additions()
+		{
+			var parser = new BVE5RouteFileParser();
+			var stmt = parser.ParseOneStatement("let a = 1;");
+			var expected1 = new List<TypeDescriber>{
+				TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+					TypeDescriber.Create(NodeType.Definition, new List<TypeDescriber>{
+				    	TypeDescriber.Create(NodeType.Identifier, null),
+				        TypeDescriber.Create(NodeType.Literal, null)
+				    })
+				})
+			};
+			Helpers.TestStructualEqual(expected1.GetEnumerator(), stmt);
+			
+			var stmt2 = parser.ParseOneStatement("let ‰½‚© = 1;");
+			var expected2 = new List<TypeDescriber>{
+				TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+					TypeDescriber.Create(NodeType.Definition, new List<TypeDescriber>{
+				    	TypeDescriber.Create(NodeType.Identifier, null),
+				        TypeDescriber.Create(NodeType.Literal, null)
+				    })
+				})
+			};
+			Helpers.TestStructualEqual(expected2.GetEnumerator(), stmt2);
 		}
 	}
 	

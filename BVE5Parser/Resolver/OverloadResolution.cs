@@ -58,8 +58,8 @@ namespace BVE5Language.Resolver
 			}
 		}
 		
-		private readonly ICompilation compilation;
-		private readonly ResolveResult[] arguments;
+		readonly ICompilation compilation;
+		readonly ResolveResult[] arguments;
 		List<Candidate> candidates = new List<Candidate>();
 		Candidate best_candidate;
 		Candidate best_candidate_ambiguous_with;
@@ -230,7 +230,7 @@ namespace BVE5Language.Resolver
 			return (errors & ~errorsThatDoNotMatterForApplicability) == OverloadResolutionErrors.None;
 		}
 
-        private static bool CanConvertToEnum(ResolveResult rr, IType type)
+        static bool CanConvertToEnum(ResolveResult rr, IType type)
         {
             Debug.Assert(rr.IsCompileTimeConstant);
             if(type.Kind == TypeKind.Enum)
@@ -239,7 +239,7 @@ namespace BVE5Language.Resolver
                 return false;
         }
 
-        private static bool MatchType(ResolveResult resolveResult, IType paramType)
+        static bool MatchType(ResolveResult resolveResult, IType paramType)
         {
             if(resolveResult.IsCompileTimeConstant)
                 return CanConvertToEnum(resolveResult, paramType);

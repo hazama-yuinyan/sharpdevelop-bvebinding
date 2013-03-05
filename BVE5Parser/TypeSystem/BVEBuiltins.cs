@@ -36,10 +36,10 @@ namespace BVE5Language.TypeSystem
     {
         internal const int PrimitiveTypeCodeCount = (int)BVEPrimitiveTypeCode.EnumForwardDirection + 1;
         
-        private static IUnresolvedAssembly builtin_assembly = null;
+        static IUnresolvedAssembly builtin_assembly = null;
         
         #region Initialization
-        private static IUnresolvedTypeDefinition[] GetPrimitiveTypeDefs()
+        static IUnresolvedTypeDefinition[] GetPrimitiveTypeDefs()
         {
         	var types = new DefaultUnresolvedTypeDefinition[]{
         		new DefaultUnresolvedTypeDefinition("global", "void"),
@@ -76,7 +76,7 @@ namespace BVE5Language.TypeSystem
         	return types;
         }
         
-        private static IUnresolvedMember MakeEnumField(IUnresolvedTypeDefinition type, string name, object value)
+        static IUnresolvedMember MakeEnumField(IUnresolvedTypeDefinition type, string name, object value)
         {
         	var field = new DefaultUnresolvedField(type, name);
         	field.Accessibility = Accessibility.Public;
@@ -87,7 +87,7 @@ namespace BVE5Language.TypeSystem
         	return field;
         }
         
-        private static IConstantValue CreateSimpleConstantValue(ITypeReference type, object value)
+        static IConstantValue CreateSimpleConstantValue(ITypeReference type, object value)
         {
         	return new SimpleConstantValue(type, value);
         }
@@ -103,7 +103,8 @@ namespace BVE5Language.TypeSystem
                 foreach(var primitive_type in GetPrimitiveTypeDefs())
                 	builtin_asm.AddTypeDefinition(primitive_type);
                 
-                var semantic_info = JsonConvert.DeserializeObject<SemanticInfo>(File.ReadAllText("../../../resources/BVE5SemanticInfos.json"));
+                var resource_path = Path.Combine(Path.GetDirectoryName(typeof(BVE5ResourceManager).Assembly.Location), @"resources\BVE5SemanticInfos.json");
+                var semantic_info = JsonConvert.DeserializeObject<SemanticInfo>(File.ReadAllText(resource_path));
                 foreach(var type_name in semantic_info.SemanticInfos.Keys){
                     var cur_type_def = new DefaultUnresolvedTypeDefinition("global", type_name);
                     InitTypeDefinition(semantic_info.SemanticInfos[type_name], cur_type_def);
@@ -116,7 +117,7 @@ namespace BVE5Language.TypeSystem
             return builtin_assembly;
         }
 
-        private static void InitTypeDefinition(Dictionary<string, MemberAnnotation[]> typeSemanticInfo, DefaultUnresolvedTypeDefinition typeDef)
+        static void InitTypeDefinition(Dictionary<string, MemberAnnotation[]> typeSemanticInfo, DefaultUnresolvedTypeDefinition typeDef)
         {
             foreach(var method_name in typeSemanticInfo.Keys){
                 var method_info = typeSemanticInfo[method_name];
@@ -138,7 +139,7 @@ namespace BVE5Language.TypeSystem
             }
         }
 
-        private static IUnresolvedParameter TransformParameterInfo(ArgumentAnnotation argAnnotation)
+        static IUnresolvedParameter TransformParameterInfo(ArgumentAnnotation argAnnotation)
         {
             var name = argAnnotation.Name;
             bool has_variable_params = false;

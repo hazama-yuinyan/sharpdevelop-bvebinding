@@ -22,43 +22,90 @@ namespace BVE5Language.Resolver
 	/// </remarks>
 	public class BVE5Resolver
 	{
-		private static readonly ResolveResult ErrorResult = ErrorResolveResult.UnknownError;
-		private readonly BVE5Compilation compilation;
+		static readonly ResolveResult ErrorResult = ErrorResolveResult.UnknownError;
+		readonly BVE5Compilation compilation;
+		readonly SimpleTypeResolveContext context;
 		
 		public BVE5Compilation Compilation{
 			get{return compilation;}
 		}
 
 		public ITypeResolveContext CurrentTypeResolveContext{
-			get{return compilation.TypeResolveContext;}
+			get{return context;}
 		}
 		
-		#region Constructor
+		#region Constructors
 		public BVE5Resolver(BVE5Compilation compilation)
 		{
 			if(compilation == null)
 				throw new ArgumentNullException("compilation");
 			
 			this.compilation = compilation;
+			this.context = new SimpleTypeResolveContext(compilation.MainAssembly);
+		}
+		
+		public BVE5Resolver(SimpleTypeResolveContext context)
+		{
+			if(context == null)
+				throw new ArgumentNullException("context");
+			
+			this.compilation = (BVE5Compilation)context.Compilation;
+			this.context = context;
+			if(context.CurrentTypeDefinition != null)
+				user_defined_name_lookup_cache = new Dictionary<string, ResolveResult>();
+		}
+		
+		public BVE5Resolver(BVE5Compilation compilation, SimpleTypeResolveContext context, Dictionary<string, ResolveResult> nameLookupCache)
+		{
+			this.compilation = compilation;
+			this.context = context;
+			user_defined_name_lookup_cache = nameLookupCache;
 		}
 		#endregion
-
-        private IType GetBuitlinTypeDefinition(string typeName)
-        {
-        	var type_name = new TopLevelTypeName("global", typeName);
+		
+		#region Per-CurrentTypeDefinition cache
+		readonly Dictionary<string, ResolveResult> user_defined_name_lookup_cache;
+		
+		public ITypeDefinition CurrentTypeDefinition{
+			get{return context.CurrentTypeDefinition;}
+		}
+		
+		public BVE5Resolver WithCurrentTypeDefinition(string newTypeDefName)
+		{
+			if(context.CurrentTypeDefinition.Name == newTypeDefName)
+				return this;
+			
+			var type_def = GetBuiltinTypeDefinition(newTypeDefName);
+			Dictionary<string, ResolveResult> new_name_lookup_cache = (type_def != null) ? new Dictionary<string, ResolveResult>() : null;
+			return new BVE5Resolver(compilation, (SimpleTypeResolveContext)context.WithCurrentTypeDefinition(type_def), new_name_lookup_cache);
+		}
+		#endregion
+		
+		ITypeDefinition GetBuiltinTypeDefinition(string typeName)
+		{
+			var type_name = new TopLevelTypeName("global", typeName);
         	foreach(var asm in compilation.Assemblies){
         		var type_def = asm.GetTypeDefinition(type_name);
         		if(type_def != null)
         			return type_def;
         	}
         	
-        	return SpecialType.UnknownType;
+        	return null;
+		}
+
+        IType GetBuitlinType(string typeName)
+        {
+        	var type = GetBuiltinTypeDefinition(typeName);
+        	if(type != null)
+        		return type;
+        	else
+        		return SpecialType.UnknownType;
         }
 
         public ResolveResult LookupMethodName(TypeResolveResult typeResolveResult, string typeName, string name)
         {
             if(!BVE5ResourceManager.BuiltinTypeHasMethod(typeName, name))
-            	return new UnknownMemberResolveResult(GetBuitlinTypeDefinition(typeName), name, EmptyList<IType>.Instance);
+            	return new UnknownMemberResolveResult(GetBuitlinType(typeName), name, EmptyList<IType>.Instance);
 
             var type_def = typeResolveResult.Type as ITypeDefinition;
             if(type_def == null)
@@ -110,7 +157,7 @@ namespace BVE5Language.Resolver
                 return ErrorResult;
         }
 
-        private List<IParameter> CreateParameters(ResolveResult[] args)
+        List<IParameter> CreateParameters(ResolveResult[] args)
         {
             var result = new List<IParameter>();
             string arg_name;
@@ -121,7 +168,7 @@ namespace BVE5Language.Resolver
             return result;
         }
 
-        private static string GuessParameterName(ResolveResult rr)
+        static string GuessParameterName(ResolveResult rr)
         {
             MemberResolveResult mrr = rr as MemberResolveResult;
             if(mrr != null)
@@ -137,7 +184,7 @@ namespace BVE5Language.Resolver
                 return "parameter";
         }
 
-        private static string MakeParameterName(string variableName)
+        static string MakeParameterName(string variableName)
         {
             if(string.IsNullOrEmpty(variableName))
                 return "parameter";

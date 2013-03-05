@@ -1,23 +1,23 @@
 ﻿/*
  * Created by SharpDevelop.
  * User: HAZAMA
- * Date: 2013/02/21
- * Time: 15:57
+ * Date: 2013/03/02
+ * Time: 14:28
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.IO;
 using System.Text;
+using BVE5Language.Ast;
 
-namespace BVE5Language.Parser
+namespace BVE5Language.Parser.Extension
 {
 	/// <summary>
-	/// Description of InitFileLexer.
+	/// The lexer for MathExpressionParser.
 	/// </summary>
-	internal class InitFileLexer
+	/*internal class MathExpressionLexer
 	{
 		readonly TextReader reader;
 		Token token = null,		//current token
@@ -34,7 +34,7 @@ namespace BVE5Language.Parser
 		}
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BVE5Language.Parser.InitFileLexer"/> class.
+		/// Initializes a new instance of the <see cref="BVE5Language.Parser.Extension.MathExpressionLexer"/> class.
 		/// </summary>
 		/// <remarks>
 		/// It assumes that the source string doesn't contain any \r.
@@ -43,7 +43,7 @@ namespace BVE5Language.Parser
 		/// <param name='srcReader'>
 		/// Source reader.
 		/// </param>
-		public InitFileLexer(TextReader srcReader)
+		public MathExpressionLexer(TextReader srcReader)
 		{
 			if(srcReader == null)
 				throw new ArgumentNullException("srcReader");
@@ -88,47 +88,49 @@ namespace BVE5Language.Parser
 				la = null;
 				break;
 				
-			case '[':
-			case ']':
+			case '(':
+			case ')':
 			case '=':
-			case ',':
+			case '+':
+			case '-':
+			case '*':
+			case '/':
+			case '$':
+			case '{':
+			case '}':
 				GetChar();
 				la = new Token(line_num, column_num, ch.ToString(), TokenKind.SyntaxToken);
 				++column_num;
 				break;
 				
-			case '\n':
-				GetChar();
-				la = Token.GetEOLToken(line_num, column_num);
-				++line_num;
-				column_num = 1;
-				break;
-				
 			case '-':
 				GetChar();
-				la = GetIdOrNumber(true);
+				la = GetNumber(true);
+				break;
+				
+			case '0': case '1': case '2': case '3': case '4':
+			case '5': case '6': case '7': case '8': case '9':
+				la = GetNumber(false);
 				break;
 				
 			default:
-				la = GetIdOrNumber(false);
-				break;
+				throw new BVE5ParserException("Unknown token");
+				//la = GetId();
+				//break;
 			}
 		}
 		
-		Token GetIdOrNumber(bool canBeNegativeNumber)
+		Token GetNumber(bool isNegativeNumber)
 		{
 			char ch = PeekChar();
-			Debug.Assert(ch != EOF && !IsIdTerminator(ch), "Really meant an string or number?");
-			bool found_non_digit = false, found_dot = false;
-			var sb = new StringBuilder(canBeNegativeNumber ? "-" : "");
-			while(ch != EOF && (!IsIdTerminator(ch))){
-				if(!found_non_digit && ch != '.' && !char.IsDigit(ch))
-					found_non_digit = true;
-				
+			Debug.Assert(ch != EOF && char.IsDigit(ch), "Really meant a number?");
+			var sb = new StringBuilder(isNegativeNumber ? "-" : "");
+			bool found_dot = false;
+			while(ch != EOF && char.IsDigit(ch) || ch == '.'){
 				if(ch == '.'){
 					if(found_dot)
 						throw new BVE5ParserException(line_num, column_num, "A number literal can't have multiple dots in it!");
-
+					
 					found_dot = true;
 				}
 				sb.Append(ch);
@@ -136,41 +138,43 @@ namespace BVE5Language.Parser
 				ch = PeekChar();
 			}
 			
-			var tmp = found_non_digit ? new Token(line_num, column_num, sb.ToString(), TokenKind.Identifier) :
-				new Token(line_num, column_num, sb.ToString(), found_dot ? TokenKind.FloatLiteral : TokenKind.IntegerLiteral);
+			var res = AstNode.MakeLiteral(Convert.ToDouble(sb.ToString()), line_num, column_num);
+			column_num += sb.Length;
+			return res;
+		}
+		
+		Token GetId()
+		{
+			char ch = PeekChar();
+			Debug.Assert(ch != EOF && !IsIdTerminator(ch), "Really meant an string or number?");
+			var sb = new StringBuilder();
+			while(ch != EOF && (!IsIdTerminator(ch))){
+				sb.Append(ch);
+				GetChar();
+				ch = PeekChar();
+			}
+			
+			var tmp = new Token(line_num, column_num, sb.ToString(), TokenKind.Identifier);
 			column_num += sb.Length;
 			return tmp;
 		}
 		
-		static readonly char[] IdTerminator = new[]{'=', ']', ','};
-
 		static bool IsIdTerminator(char c)
 		{
-			return IdTerminator.Contains(c) || c < (char)33;
+			return c == '}' || c < (char)33;
 		}
 		
 		void SkipWhitespace()
 		{
 			char ch = PeekChar();
-			while(char.IsWhiteSpace(ch) || ch == ';'){
-				if(ch == ';'){
-					do{
-						GetChar();
-						ch = PeekChar();
-					}while(ch != EOF && ch != '\n');
-					++line_num;
-					column_num = 1;
-					GetChar();
-					ch = PeekChar();
-				}else{
-					if(ch == '\n')
-						break;
-					else
-						++column_num;
-					
-					GetChar();
-					ch = PeekChar();
-				}
+			while(char.IsWhiteSpace(ch)){
+				if(ch == '\n')
+					break;
+				else
+					++column_num;
+				
+				GetChar();
+				ch = PeekChar();
 			}
 		}
 		
@@ -183,5 +187,5 @@ namespace BVE5Language.Parser
 		{
 			return unchecked((char)reader.Peek());
 		}
-	}
+	}*/
 }

@@ -19,11 +19,11 @@ namespace BVE5Language.Parser
 	/// </summary>
 	internal class BVE5CommonLexer
 	{
-		private readonly TextReader reader;
-		private Token token = null,		//current token
+		readonly TextReader reader;
+		Token token = null,		//current token
 			la = null;					//lookahead token
-		private int line_num = 1, column_num = 1;
-		private const char EOF = unchecked((char)-1);
+		int line_num = 1, column_num = 1;
+		const char EOF = unchecked((char)-1);
 
 		public Token Current{
 			get{return token;}
@@ -82,7 +82,7 @@ namespace BVE5Language.Parser
 			LookAheadToken();
 		}
 
-		private void LookAheadToken()
+		void LookAheadToken()
 		{
 			SkipWhitespace();
 			
@@ -117,7 +117,7 @@ namespace BVE5Language.Parser
 			}
 		}
 		
-		private Token GetStringOrNumber(bool canBeNegativeNumber)
+		Token GetStringOrNumber(bool canBeNegativeNumber)
 		{
 			char ch = PeekChar();
 			Debug.Assert(ch != EOF && !IsStringTerminator(ch), "Really meant an string or number?");
@@ -144,14 +144,14 @@ namespace BVE5Language.Parser
 			return tmp;
 		}
 		
-		private static readonly char[] string_terminators = new[]{',', ':'};
+		static readonly char[] string_terminators = new[]{',', ':'};
 
-		private static bool IsStringTerminator(char c)
+		static bool IsStringTerminator(char c)
 		{
 			return string_terminators.Contains(c) || c < (char)20;
 		}
 		
-		private void SkipWhitespace()
+		void SkipWhitespace()
 		{
 			char ch = PeekChar();
 			while(char.IsWhiteSpace(ch) || ch == '#'){
@@ -176,12 +176,12 @@ namespace BVE5Language.Parser
 			}
 		}
 		
-		private char GetChar()
+		char GetChar()
 		{
 			return unchecked((char)reader.Read());
 		}
 
-		private char PeekChar()
+		char PeekChar()
 		{
 			return unchecked((char)reader.Peek());
 		}

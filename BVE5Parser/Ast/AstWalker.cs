@@ -34,6 +34,9 @@ namespace BVE5Language.Ast
 	{
 		//protected virtual bool Walk(AstNode node){return true;}
 		
+		public virtual bool Walk(BinaryExpression binary){return true;}
+		public virtual void PostWalk(BinaryExpression binary){}
+		
 		public virtual bool Walk(DefinitionExpression def){return true;}
 		public virtual void PostWalk(DefinitionExpression def){}
 
@@ -69,10 +72,14 @@ namespace BVE5Language.Ast
 
 		public virtual bool Walk(TimeFormatLiteral timeLiteral){return true;}
 		public virtual void PostWalk(TimeFormatLiteral timeLiteral){}
+		
+		public virtual bool Walk(UnaryExpression unary){return true;}
+		public virtual void PostWalk(UnaryExpression unary){}
 	}
 
 	public interface IAstWalker<TResult>
 	{
+		TResult Walk(BinaryExpression binary);
 		TResult Walk(DefinitionExpression def);
 		TResult Walk(Identifier node);
 		TResult Walk(IndexerExpression node);
@@ -84,6 +91,7 @@ namespace BVE5Language.Ast
 		TResult Walk(Statement node);
 		TResult Walk(SyntaxTree node);
 		TResult Walk(TimeFormatLiteral node);
+		TResult Walk(UnaryExpression unary);
 	}
 }
 

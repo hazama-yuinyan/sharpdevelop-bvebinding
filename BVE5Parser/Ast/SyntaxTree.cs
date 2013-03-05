@@ -38,7 +38,7 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class SyntaxTree : AstNode
 	{
-		private readonly string name;
+		readonly string name;
 		List<Error> errors = new List<Error>();
 		
 		public List<Error> Errors {

@@ -33,7 +33,7 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class LiteralExpression : Expression
 	{
-		private readonly object value;
+		readonly object value;
 
 		public object Value{
 			get{return value;}

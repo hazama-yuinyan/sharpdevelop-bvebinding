@@ -52,6 +52,7 @@
     </Reference>
     <Reference Include="ICSharpCode.Core.Presentation">
       <HintPath>..\..\SharpDevelop\bin\ICSharpCode.Core.Presentation.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ICSharpCode.NRefactory">
       <HintPath>..\BVE5Parser\bin\Debug\ICSharpCode.NRefactory.dll</HintPath>
@@ -87,6 +88,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\StringResources.ja.resx" />
+    <EmbeddedResource Include="Resources\StringResources.resx" />
     <None Include="AddInWritingHelp.txt" />
     <None Include="BVEBinding.addin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -99,9 +102,16 @@
   <ItemGroup>
     <Compile Include="BVE5BracketSearcher.cs" />
     <Compile Include="BVE5LanguageBinding.cs" />
-    <None Include="Completion\BVE5CompletionBinding.cs" />
-    <Compile Include="Commands\ShiftPositions.cs" />
+    <Compile Include="Commands\CalculateCantCommand.cs" />
+    <Compile Include="Commands\CantCalculator.cs" />
+    <Compile Include="Completion\BVE5CompletionBinding.cs" />
+    <Compile Include="Commands\ShiftPositionsCommand.cs" />
+    <Compile Include="Completion\CompletionDataHelper.cs" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
+    <Compile Include="Dialogs\CalculateCantDialog.xaml.cs">
+      <DependentUpon>CalculateCantDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Dialogs\ShiftPositionDialog.xaml.cs">
       <DependentUpon>ShiftPositionDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -124,6 +134,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Dialogs\CalculateCantDialog.xaml" />
     <Page Include="Dialogs\ShiftPositionDialog.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

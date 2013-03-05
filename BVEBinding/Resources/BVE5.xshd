@@ -1,12 +1,12 @@
-﻿<SyntaxDefinition name="BVE5" extensions=".txt" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+﻿<SyntaxDefinition name="BVE5" extensions=".txt;.bvert" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
 
 	<Color name="PositionStatement" foreground="DarkBlue" exampleText="1000;" />
 	<Color name="LineComment" foreground="Green" exampleText="// comment" />
 	<Color name="String" foreground="Blue" exampleText='name = "Joe"' />
-	<Color name="Char" foreground="Magenta" exampleText="char linefeed = '\n'" />
 	<Color name="Punctuation" exampleText="a(b.c);" />
 	<Color name="MethodCall" fontWeight="bold" foreground="MidnightBlue" exampleText="method(" />
 	<Color name="BuiltInTypes" fontWeight="bold" foreground="Blue" exampleText="Track." />
+	<Color name="Keyword" foreground="Blue" exampleText="let " />
 
 	<Property name="LineComment" value="//"/>
 
@@ -42,6 +42,10 @@
 			<Word>Train</Word>
 			<Word>Section</Word>
 			<Word>Legacy</Word>
+		</Keywords>
+		
+		<Keywords color="Keyword">
+			<Word>let</Word>
 		</Keywords>
 		
 		<Rule color="MethodCall">\b[\d\w_]+(?=(\s*\())</Rule>

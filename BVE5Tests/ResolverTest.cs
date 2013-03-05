@@ -29,8 +29,8 @@ namespace BVE5Language
 	[TestFixture]
 	public class ResolverTest
 	{
-		private ICompilation compilation;
-		private IProjectContent project;
+		ICompilation compilation;
+		IProjectContent project;
 		
 		[SetUp]
 		public void Setup()
@@ -39,7 +39,7 @@ namespace BVE5Language
 			compilation = project.CreateCompilation();
 		}
 		
-		private IEnumerable<TextLocation> FindDollarSigns(string code)
+		IEnumerable<TextLocation> FindDollarSigns(string code)
 		{
 			int line = 1, col = 1;
 			foreach(char c in code){
@@ -54,7 +54,7 @@ namespace BVE5Language
 			}
 		}
 		
-		private Tuple<BVE5AstResolver, AstNode> PrepareResolver(string code)
+		Tuple<BVE5AstResolver, AstNode> PrepareResolver(string code)
 		{
 			var tree = new BVE5RouteFileParser().Parse(code.Replace("$", ""), "<string>");
 			var dollars = FindDollarSigns(code).ToArray();
@@ -70,7 +70,7 @@ namespace BVE5Language
 			return Tuple.Create(resolver, tree.FindNode((node) => node.StartLocation == dollars[0] && node.EndLocation == dollars[1]));
 		}
 		
-		private ResolveResult Resolve(string code)
+		ResolveResult Resolve(string code)
 		{
 			var prep = PrepareResolver(code);
 			Debug.WriteLine(new string('=', 70));
@@ -82,7 +82,7 @@ namespace BVE5Language
 			return rr;
 		}
 		
-		private T Resolve<T>(string code) where T : ResolveResult
+		T Resolve<T>(string code) where T : ResolveResult
 		{
 			ResolveResult rr = Resolve(code);
 			Assert.IsNotNull(rr);

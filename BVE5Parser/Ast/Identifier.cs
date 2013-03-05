@@ -34,7 +34,7 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class Identifier : Expression
 	{
-		private readonly string name;
+		readonly string name;
 
 		public string Name{
 			get{return name;}

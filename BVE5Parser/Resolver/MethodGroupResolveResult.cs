@@ -16,9 +16,9 @@ namespace BVE5Language.Resolver
 	/// </summary>
 	public class MethodGroupResolveResult : ResolveResult
 	{
-		private readonly IList<IMethod> method_lists;
-		private readonly ResolveResult target_result;
-		private readonly string method_name;
+		readonly IList<IMethod> method_lists;
+		readonly ResolveResult target_result;
+		readonly string method_name;
 		
 		public MethodGroupResolveResult(ResolveResult targetResult, string methodName, IList<IMethod> methods)
             : base(SpecialType.UnknownType)
