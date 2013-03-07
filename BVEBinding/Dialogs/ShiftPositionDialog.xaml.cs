@@ -15,9 +15,9 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using BVEBinding.Commands;
+using BVE5Binding.Commands;
 
-namespace BVEBinding.Dialogs
+namespace BVE5Binding.Dialogs
 {
 	/// <summary>
 	/// Interaction logic for ShiftPositionDialog.xaml

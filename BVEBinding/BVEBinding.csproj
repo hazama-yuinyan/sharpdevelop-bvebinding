@@ -5,8 +5,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
-    <RootNamespace>BVEBinding</RootNamespace>
-    <AssemblyName>BVEBinding</AssemblyName>
+    <RootNamespace>BVE5Binding</RootNamespace>
+    <AssemblyName>BVE5Binding</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <NoWin32Manifest>False</NoWin32Manifest>
     <SignAssembly>False</SignAssembly>
@@ -17,6 +17,8 @@
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <WarningLevel>4</WarningLevel>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <RunCodeAnalysis>False</RunCodeAnalysis>
+    <SourceAnalysisOverrideSettingsFile>C:\Users\Ryouta\AppData\Roaming\ICSharpCode/SharpDevelop4\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,40 +35,44 @@
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
     <StartAction>Program</StartAction>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
     <StartProgram>..\..\SharpDevelop\bin\SharpDevelop.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\SharpDevelop\AddIns\BackendBindings\BVE5Binding\</OutputPath>
     <DebugSymbols>False</DebugSymbols>
     <DebugType>None</DebugType>
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
+    <StartAction>Program</StartAction>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+    <StartProgram>..\..\SharpDevelop\bin\SharpDevelop.exe</StartProgram>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.Core">
-      <HintPath>..\..\SharpDevelop\bin\ICSharpCode.Core.dll</HintPath>
+      <HintPath>..\Refs\ICSharpCode.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ICSharpCode.Core.Presentation">
-      <HintPath>..\..\SharpDevelop\bin\ICSharpCode.Core.Presentation.dll</HintPath>
+      <HintPath>..\Refs\ICSharpCode.Core.Presentation.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ICSharpCode.NRefactory">
-      <HintPath>..\BVE5Parser\bin\Debug\ICSharpCode.NRefactory.dll</HintPath>
+      <HintPath>..\Refs\ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpDevelop">
-      <HintPath>..\..\SharpDevelop\bin\ICSharpCode.SharpDevelop.dll</HintPath>
+      <HintPath>..\Refs\ICSharpCode.SharpDevelop.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpDevelop.Dom">
-      <HintPath>..\..\SharpDevelop\bin\ICSharpCode.SharpDevelop.Dom.dll</HintPath>
+      <HintPath>..\Refs\ICSharpCode.SharpDevelop.Dom.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpDevelop.Widgets">
-      <HintPath>..\..\SharpDevelop\bin\ICSharpCode.SharpDevelop.Widgets.dll</HintPath>
+      <HintPath>..\Refs\ICSharpCode.SharpDevelop.Widgets.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -74,24 +80,16 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\StringResources.ja.resx" />
     <EmbeddedResource Include="Resources\StringResources.resx" />
     <None Include="AddInWritingHelp.txt" />
-    <None Include="BVEBinding.addin">
+    <None Include="BVE5Binding.addin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="license.txt" />

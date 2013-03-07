@@ -10,7 +10,7 @@ using System;
 using System.Text.RegularExpressions;
 using ICSharpCode.SharpDevelop.Editor;
 
-namespace BVEBinding.Formatting
+namespace BVE5Binding.Formatting
 {
 	/// <summary>
 	/// This class handles the auto and smart indenting in the textbuffer while

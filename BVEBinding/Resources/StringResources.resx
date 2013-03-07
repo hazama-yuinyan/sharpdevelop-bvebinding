@@ -182,4 +182,7 @@ IsAllowed: {2}(Gauge: {3}mm)</value>
   <data name="CommonCommandStrings.Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="BVE5Binding.BVE5Files" xml:space="preserve">
+    <value>BVE5 Files</value>
+  </data>
 </root>

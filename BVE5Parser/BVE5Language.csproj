@@ -51,21 +51,13 @@
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.NRefactory, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ICSharpCode.NRefactory.5.3.0\lib\Net40\ICSharpCode.NRefactory.dll</HintPath>
+    <Reference Include="ICSharpCode.NRefactory">
+      <HintPath>..\Refs\ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.CSharp">
-      <HintPath>..\packages\Mono.CSharp.4.0\Lib\net40\Mono.CSharp.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Refs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\bin\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Linq.Expressions" />
     <Reference Include="System.Xml" />
@@ -97,6 +89,7 @@
     <Compile Include="Parser\InitFileParser.cs" />
     <Compile Include="Parser\MathExpressionLexer.cs" />
     <Compile Include="Parser\MathExpressionParser.cs" />
+    <Compile Include="Parser\report.cs" />
     <Compile Include="Resolver\BVE5AstResolver.cs" />
     <Compile Include="BVE5ParserException.cs" />
     <Compile Include="Resolver\BVE5Resolver.cs" />
@@ -138,7 +131,7 @@
     <Folder Include="Resources" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\BVE5BuiltinNames.xml" />
+    <None Include="Resources\BVE5BuiltinNames.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\BVE5Documentation.xml" />

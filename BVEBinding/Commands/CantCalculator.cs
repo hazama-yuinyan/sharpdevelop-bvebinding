@@ -10,7 +10,7 @@ using System;
 using System.Text;
 using ICSharpCode.Core;
 
-namespace BVEBinding.Commands
+namespace BVE5Binding.Commands
 {
 	/// <summary>
 	/// Description of CantCalculator.

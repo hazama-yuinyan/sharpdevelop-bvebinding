@@ -14,11 +14,11 @@ using ICSharpCode.SharpDevelop;
 using BVE5Language.Ast;
 using BVE5Language.Parser;
 using BVE5Language.Resolver;
-using BVEBinding.Dialogs;
+using BVE5Binding.Dialogs;
 using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Gui;
 
-namespace BVEBinding.Commands
+namespace BVE5Binding.Commands
 {
 	/// <summary>
 	/// This class is responsible for shifting positions in all or parts of the position statements.
@@ -49,6 +49,7 @@ namespace BVEBinding.Commands
 				begin_line = doc.GetLineForOffset(provider.TextEditor.SelectionStart).LineNumber;
 				end_line = doc.GetLineForOffset(provider.TextEditor.SelectionStart + provider.TextEditor.SelectionLength).LineNumber;
 			}
+			LoggingService.Debug(string.Format("Shifting positions started; begin: {0}, end: {1}", begin_line, end_line));
 			
 			using(provider.TextEditor.Document.OpenUndoGroup()){	//do the real work
 				var content_text = provider.TextEditor.Document.Text;

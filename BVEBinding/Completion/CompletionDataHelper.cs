@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using ICSharpCode.SharpDevelop.Editor.CodeCompletion;
 
-namespace BVEBinding.Completion
+namespace BVE5Binding.Completion
 {
 	/// <summary>
 	/// Description of CompletionDataHelper.

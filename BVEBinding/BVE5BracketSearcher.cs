@@ -10,28 +10,28 @@ using System;
 
 using ICSharpCode.SharpDevelop.Editor;
 
-namespace BVEBinding
+namespace BVE5Binding
 {
 	/// <summary>
 	/// Searches matching brackets for BVE5.
 	/// </summary>
 	public class BVE5BracketSearcher : IBracketSearcher
 	{
-		const string openingBrackets = "([";
-		const string closingBrackets = ")]";
+		const string OpeningBrackets = "([";
+		const string ClosingBrackets = ")]";
 		
 		public BracketSearchResult SearchBracket(IDocument document, int offset)
 		{
 			if(offset > 0){
 				char c = document.GetCharAt(offset - 1);
-				int index = openingBrackets.IndexOf(c);
+				int index = OpeningBrackets.IndexOf(c);
 				int other_offset = -1;
 				if(index > -1)
-					other_offset = SearchBracketForward(document, offset, openingBrackets[index], closingBrackets[index]);
+					other_offset = SearchBracketForward(document, offset, OpeningBrackets[index], ClosingBrackets[index]);
 				
-				index = closingBrackets.IndexOf(c);
+				index = ClosingBrackets.IndexOf(c);
 				if(index > -1)
-					other_offset = SearchBracketBackward(document, offset - 2, openingBrackets[index], closingBrackets[index]);
+					other_offset = SearchBracketBackward(document, offset - 2, OpeningBrackets[index], ClosingBrackets[index]);
 				
 				if(other_offset > -1)
 					return new BracketSearchResult(Math.Min(offset - 1, other_offset), 1,

@@ -15,12 +15,12 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using BVEBinding.Commands;
+using BVE5Binding.Commands;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Gui;
 
-namespace BVEBinding.Dialogs
+namespace BVE5Binding.Dialogs
 {
 	/// <summary>
 	/// Interaction logic for CalculateCantDialog.xaml

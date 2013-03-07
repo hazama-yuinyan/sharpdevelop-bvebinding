@@ -15,7 +15,7 @@ using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Editor.CodeCompletion;
 using ICSharpCode.NRefactory.Completion;
 
-namespace BVEBinding.Completion
+namespace BVE5Binding.Completion
 {
 	/// <summary>
 	/// Code Completion binding for BVE5 files.

@@ -34,7 +34,6 @@ using BVE5Language.Ast;
 
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
-using Mono.CSharp;
 
 
 /**
@@ -111,11 +110,11 @@ namespace BVE5Language.Parser
 				this.file_name = fileName;
 			}
 			
-			public override void Print(AbstractMessage msg)
+			public override void Print(AbstractMessage msg, bool showFullPath = false)
 			{
-				base.Print(msg);
+				base.Print(msg, showFullPath);
 				var newError = new Error(msg.IsWarning ? ErrorType.Warning : ErrorType.Error, msg.Text,
-                                         new DomRegion(file_name, msg.Location.Row, msg.Location.Column));
+                                         new DomRegion(file_name, msg.Location.Line, msg.Location.Column));
 				Errors.Add(newError);
 			}
 		}

@@ -7,10 +7,10 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using BVEBinding.Dialogs;
+using BVE5Binding.Dialogs;
 using ICSharpCode.Core;
 
-namespace BVEBinding.Commands
+namespace BVE5Binding.Commands
 {
 	/// <summary>
 	/// Calculates the amount of cant in terms of physics.

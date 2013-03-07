@@ -10,9 +10,9 @@ using System;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor;
-using BVEBinding.Formatting;
+using BVE5Binding.Formatting;
 
-namespace BVEBinding
+namespace BVE5Binding
 {
 	/// <summary>
 	/// Description of BVE5LanguageBinding.
@@ -30,6 +30,7 @@ namespace BVEBinding
 		
 		public override ICSharpCode.SharpDevelop.Dom.LanguageProperties Properties {
 			get {
+				LoggingService.Info("Language properties requested");
 				throw new NotImplementedException();
 			}
 		}
@@ -42,7 +43,7 @@ namespace BVEBinding
 		
 		public BVE5LanguageBinding()
 		{
-			ResourceService.RegisterStrings("BVEBinding.Resources.StringResources", GetType().Assembly);
+			ResourceService.RegisterStrings("BVE5Binding.Resources.StringResources", GetType().Assembly);
 		}
 		
 		public override void Attach(ITextEditor editor)
