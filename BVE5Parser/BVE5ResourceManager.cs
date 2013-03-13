@@ -12,11 +12,60 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml;
+using BVE5Language.TypeSystem;
 using Newtonsoft.Json;
 
 namespace BVE5Language
 {
+	class BuiltinsDefinition
+	{
+		public string[] TypeNames{get; set;}
+		public Dictionary<string, string[]> Methods{get; set;}
+	}
+		
+	public class CommonFileCommandInfo
+	{
+		public ArgumentAnnotation[] Args{get; set;}
+		public string Doc{get; set;}
+	}
+		
+	public class InitFileArgumentAnnotation
+	{
+		public string Name{get; set;}
+		public string ParamType{get; set;}
+		public string Doc{get; set;}
+	}
+		
+	public class InitFileMemberAnnotation
+	{
+		public InitFileArgumentAnnotation[] Keys { get; set; }
+       	public string Doc { get; set; }
+	}
+		
+	public class InitFileSemanticInfo
+    {
+      	public Dictionary<string, InitFileMemberAnnotation> SemanticInfos { get; set; }
+    }
+		
+	public class ArgumentAnnotation
+	{
+	    public string Name{get; set;}
+	    public string ParamType{get; set;}
+	}
+	
+	public class MemberAnnotation
+	{
+		public ArgumentAnnotation[] Args { get; set; }
+	    public string Doc { get; set; }
+	}
+	
+	class SemanticInfo
+	{
+		public Dictionary<string, Dictionary<string, MemberAnnotation[]>> SemanticInfos { get; set; }
+	}
+	    
 	/// <summary>
 	/// Description of BVE5ResourceManager.
 	/// </summary>
@@ -24,63 +73,41 @@ namespace BVE5Language
 	{
 		static readonly string[] TypeNames;
 		static readonly Dictionary<string, string[]> MethodNames;
-		
-		class BuiltinsDefinition
-		{
-			public string[] TypeNames{get; set;}
-			public Dictionary<string, string[]> Methods{get; set;}
-		}
-		
-		/*public static T DeserializeObject<T>(XmlTextReader reader) where T : class
-		{
-			var target_type = typeof(T);
-			string cur_target_prop_name = "";
-			while(reader.Read()){
-				switch(reader.LocalName){
-				case "key":
-					cur_target_prop_name = reader.ReadString();
-					break;
-					
-				case "array":
-					var child_reader = reader.ReadSubtree();
-					child_reader.Read();
-					var child_type = target_type.GetProperty(cur_target_prop_name, BindingFlags.Public).PropertyType;
-					if(!child_type.IsArray)
-						throw new Exception(string.Format("The property type of {0} isn't an array type!"), cur_target_prop_name);
-					
-					typeof(BVE5ResourceManager).GetMethod("DeserializeObject").MakeGenericMethod(child_type).Invoke(this, child_reader);
-					break;
-					
-				case "dict":
-					break;
-					
-				case "string":
-					break;
-					
-				default:
-					throw new Exception("A plist cannot have that type of data: " + reader.LocalName);
-				}
-			}
-			return (T)null;
-		}
-		
-		static object ReadObject(XmlTextReader reader)
-		{
-			return null;
-		}*/
+		public static readonly Dictionary<string, Dictionary<string, MemberAnnotation[]>> RouteFileSemanticInfos;
+		public static readonly Dictionary<string, CommonFileCommandInfo> CommonFileSemanticInfos;
+		public static readonly Dictionary<string, InitFileSemanticInfo> InitFileSemanticInfos;
+		static readonly Dictionary<string, string> Documentations;
+		static readonly Regex variable_name_searcher = new Regex(@"\$(.+)", RegexOptions.Compiled);
 		
 		static BVE5ResourceManager()
 		{
-			//TODO: read semantic information from xml files
-			/*using(var s = typeof(BVE5ResourceManager).Assembly.GetManifestResourceStream("BVE5ResourceManager.BVE5BuiltinNames.xml")){
-				using(var reader = new XmlTextReader(s)){
-					
-				}
-			}*/
-			var resource_path = Path.Combine(Path.GetDirectoryName(typeof(BVE5ResourceManager).Assembly.Location), @"resources\BVE5BuiltinNames.json");
-			var builtin_names = JsonConvert.DeserializeObject<BuiltinsDefinition>(File.ReadAllText(resource_path));
+			var builtin_names = JsonConvert.DeserializeObject<BuiltinsDefinition>(GetResourceString("BVE5LanguageResources.BuiltinNames.json"));
 			TypeNames = builtin_names.TypeNames;
 			MethodNames = builtin_names.Methods;
+			
+			CommonFileSemanticInfos = new Dictionary<string, CommonFileCommandInfo>{
+				{"SignalAspectsList", JsonConvert.DeserializeObject<CommonFileCommandInfo>(GetResourceString("BVE5LanguageResources.SignalAspectsListSemanticInfos.json"))},
+				{"SoundList", JsonConvert.DeserializeObject<CommonFileCommandInfo>(GetResourceString("BVE5LanguageResources.SoundListSemanticInfos.json"))},
+				{"StationList", JsonConvert.DeserializeObject<CommonFileCommandInfo>(GetResourceString("BVE5LanguageResources.StationListSemanticInfos.json"))},
+				{"StructureList", JsonConvert.DeserializeObject<CommonFileCommandInfo>(GetResourceString("BVE5LanguageResources.StructureListSemanticInfos.json"))}
+			};
+			
+			InitFileSemanticInfos = new Dictionary<string, InitFileSemanticInfo>{
+				{"TrainFile", JsonConvert.DeserializeObject<InitFileSemanticInfo>(GetResourceString("BVE5LanguageResources.TrainFileSemanticInfos.json"))},
+				{"VehicleParametersFile", JsonConvert.DeserializeObject<InitFileSemanticInfo>(GetResourceString("BVE5LanguageResources.VehicleParametersFileSemanticInfos.json"))},
+				{"InstrumentPanelFile", JsonConvert.DeserializeObject<InitFileSemanticInfo>(GetResourceString("BVE5LanguageResources.InstrumentPanelFileSemanticInfos.json"))},
+				{"VehicleSoundFile", JsonConvert.DeserializeObject<InitFileSemanticInfo>(GetResourceString("BVE5LanguageResources.VehicleSoundFileSemanticInfos.json"))}
+			};
+			
+			Documentations = JsonConvert.DeserializeObject<Dictionary<string, string>>(GetResourceString("BVE5LanguageResources.Documentation.json"));
+			
+			RouteFileSemanticInfos = JsonConvert.DeserializeObject<SemanticInfo>(GetResourceString("BVE5LanguageResources.SemanticInfos.json")).SemanticInfos;
+		}
+		
+		internal static string GetResourceString(string resourceName)
+		{
+			var resource_stream = typeof(BVE5ResourceManager).Assembly.GetManifestResourceStream(resourceName);
+			return new StreamReader(resource_stream).ReadToEnd();
 		}
 		
 		/// <summary>
@@ -109,6 +136,21 @@ namespace BVE5Language
         public static string[] GetAllTypeNames()
         {
         	return TypeNames;
+        }
+        
+        public static MemberAnnotation[] GetRouteFileMemberAnnotation(string typeName, string methodName)
+        {
+        	var type_semantic_info = RouteFileSemanticInfos[typeName];
+        	return type_semantic_info[methodName];
+        }
+        
+        public static string GetDocumentationString(string docName)
+        {
+        	var match = variable_name_searcher.Match(docName);
+        	if(!match.Success)
+        		throw new InvalidOperationException("Unknown type of input! Variables must begin with a '$'!");
+        	
+        	return Documentations[match.Groups[1].Value];
         }
 	}
 }

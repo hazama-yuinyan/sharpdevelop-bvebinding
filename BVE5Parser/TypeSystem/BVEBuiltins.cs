@@ -11,23 +11,6 @@ using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace BVE5Language.TypeSystem
 {
-    class ArgumentAnnotation
-    {
-        public string Name{get; set;}
-        public string ParamType{get; set;}
-    }
-
-    class MemberAnnotation
-    {
-        public ArgumentAnnotation[] Args { get; set; }
-        public string Doc { get; set; }
-    }
-
-    class SemanticInfo
-    {
-        public Dictionary<string, Dictionary<string, MemberAnnotation[]>> SemanticInfos { get; set; }
-    }
-
     /// <summary>
     /// Contains the unresolved assembly instance for BVE5's primitive and builtin types.
     /// </summary>
@@ -103,11 +86,10 @@ namespace BVE5Language.TypeSystem
                 foreach(var primitive_type in GetPrimitiveTypeDefs())
                 	builtin_asm.AddTypeDefinition(primitive_type);
                 
-                var resource_path = Path.Combine(Path.GetDirectoryName(typeof(BVE5ResourceManager).Assembly.Location), @"resources\BVE5SemanticInfos.json");
-                var semantic_info = JsonConvert.DeserializeObject<SemanticInfo>(File.ReadAllText(resource_path));
-                foreach(var type_name in semantic_info.SemanticInfos.Keys){
+                var semantic_info = BVE5ResourceManager.RouteFileSemanticInfos;
+                foreach(var type_name in semantic_info.Keys){
                     var cur_type_def = new DefaultUnresolvedTypeDefinition("global", type_name);
-                    InitTypeDefinition(semantic_info.SemanticInfos[type_name], cur_type_def);
+                    InitTypeDefinition(semantic_info[type_name], cur_type_def);
                     builtin_asm.AddTypeDefinition(cur_type_def);
                 }
 

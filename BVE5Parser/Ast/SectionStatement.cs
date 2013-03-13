@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: Ryouta
+ * User: HAZAMA
  * Date: 2013/02/26
  * Time: 1:59
  * 
@@ -12,7 +12,7 @@ using ICSharpCode.NRefactory;
 namespace BVE5Language.Ast
 {
 	/// <summary>
-	/// Description of SectionStatement.
+	/// Represents a section statement in init files like "[section]".
 	/// </summary>
 	public class SectionStatement : Statement
 	{

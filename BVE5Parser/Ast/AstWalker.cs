@@ -51,6 +51,9 @@ namespace BVE5Language.Ast
 
 		public virtual bool Walk(InvocationExpression invocation){return true;}
 		public virtual void PostWalk(InvocationExpression invocation){}
+		
+		public virtual bool Walk(LetStatement letStmt){return true;}
+		public virtual void PostWalk(LetStatement letStmt){}
 
 		public virtual bool Walk(LiteralExpression literal){return true;}
 		public virtual void PostWalk(LiteralExpression literal){}
@@ -84,6 +87,7 @@ namespace BVE5Language.Ast
 		TResult Walk(Identifier node);
 		TResult Walk(IndexerExpression node);
 		TResult Walk(InvocationExpression node);
+		TResult Walk(LetStatement letStmt);
 		TResult Walk(LiteralExpression node);
 		TResult Walk(MemberReferenceExpression node);
 		TResult Walk(SectionStatement secStmt);

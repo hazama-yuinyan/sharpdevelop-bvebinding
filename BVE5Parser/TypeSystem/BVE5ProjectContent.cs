@@ -55,13 +55,13 @@ namespace BVE5Language.TypeSystem
 
         /// <summary>
         /// Adds the specified files to the project content.
-        /// If a file with the same name already exists, updated the existing file.
+        /// If a file with the same name already exists, update the existing file.
         /// </summary>
         public IProjectContent AddOrUpdateFiles(params IUnresolvedFile[] newFiles)
         {
             var cloned = Clone();
             foreach(var file in newFiles)
-                unresolved_files[file.FileName] = file;
+                cloned.unresolved_files[file.FileName] = file;
 
             return cloned;
         }

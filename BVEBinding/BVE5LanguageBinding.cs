@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using BVE5Language.TypeSystem;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor;
@@ -15,10 +16,12 @@ using BVE5Binding.Formatting;
 namespace BVE5Binding
 {
 	/// <summary>
-	/// Description of BVE5LanguageBinding.
+	/// Language binding for BVE5 files.
 	/// </summary>
 	public class BVE5LanguageBinding : DefaultLanguageBinding
 	{
+		static BVE5ProjectContent project;
+		static BVE5Compilation compilation;
 		IFormattingStrategy formatting_strategy = new BVE5FormattingStrategy();
 		IBracketSearcher bracket_searcher = new BVE5BracketSearcher();
 		
@@ -39,6 +42,26 @@ namespace BVE5Binding
 			get {
 				return bracket_searcher;
 			}
+		}
+		
+		/// <summary>
+		/// Gets the unique BVE5ProjectContent instance per a program execution.
+		/// </summary>
+		static internal BVE5ProjectContent ProjectContent{
+			get{return project;}
+		}
+		
+		/// <summary>
+		/// Gets the unique BVE5Compilation instance per a program execution.
+		/// </summary>
+		static internal BVE5Compilation Compilation{
+			get{return compilation;}
+		}
+		
+		static BVE5LanguageBinding()
+		{
+			project = new BVE5ProjectContent().AddAssemblyReferences(BVEBuiltins.GetBuiltinAssembly()) as BVE5ProjectContent;
+			compilation = project.CreateCompilation() as BVE5Compilation;
 		}
 		
 		public BVE5LanguageBinding()

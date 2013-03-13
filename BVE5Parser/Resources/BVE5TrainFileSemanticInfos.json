@@ -1,0 +1,22 @@
+{
+	"SemanticInfos" : {
+		"Structure" : {
+			"Keys" : [
+				{"Name" : "Key", "ParamType" : "name", "Doc" : "$Doc501"},
+				{"Name" : "Distance", "ParamType" : "float", "Doc" : "$Doc502"},
+				{"Name" : "Span", "ParamType" : "float", "Doc" : "$Doc503"},
+				{"Name" : "Z", "ParamType" : "float", "Doc" : "$Doc504"}
+			],
+			"Doc" : "$Doc500"
+		},
+		"Sound3d" : {
+			"Keys" : [
+				{"Name" : "Key", "ParamType" : "name", "Doc" : "$Doc506"},
+				{"Name" : "Distance1", "ParamType" : "float", "Doc" : "$Doc507"},
+				{"Name" : "Distance2", "ParamType" : "float", "Doc" : "$Doc508"},
+				{"Name" : "Function", "ParamType" : "string", "Doc" : "$Doc509"}
+			],
+			"Doc" : "$Doc505"
+		}
+	}
+}

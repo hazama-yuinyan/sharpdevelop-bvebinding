@@ -47,6 +47,11 @@ namespace BVE5Language.Ast
         {
             return WalkChildren(node);
         }
+        
+        public virtual T Walk(LetStatement letStmt)
+        {
+        	return WalkChildren(letStmt);
+        }
 
         public virtual T Walk(LiteralExpression node)
         {

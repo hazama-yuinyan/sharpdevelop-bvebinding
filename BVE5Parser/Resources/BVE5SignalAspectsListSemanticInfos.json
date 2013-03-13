@@ -1,0 +1,7 @@
+{
+	"Args" : [
+		{"Name" : "aspectsKey", "ParamType" : "name"},
+		{"Name" : "structureKey...", "ParamType" : "FilePath"}
+	],
+	"Doc" : "$Doc300"
+}

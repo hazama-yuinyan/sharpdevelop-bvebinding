@@ -148,11 +148,11 @@
 		"Station" : {
 			"indexer" : [{
 				"Args" : [{"Name" : "stationKey", "ParamType" : "name"}],
-				"Doc" : "$Doc20"
+				"Doc" : ""
 			}],
 			"Load" : [{
 				"Args" : [{"Name" : "filePath", "ParamType" : "name"}],
-				"Doc" : "$Doc21"
+				"Doc" : "$Doc20"
 			}],
 			"Put" : [{
 				"Args" : [
@@ -160,7 +160,7 @@
 					{"Name" : "margin1", "ParamType" : "int"},
 					{"Name" : "margin2", "ParamType" : "int"}
 				],
-				"Doc" : "$Doc22"
+				"Doc" : "$Doc21"
 			}]
 		},
 		"Signal" : {
@@ -170,7 +170,7 @@
 			}],
 			"Load" : [{
 				"Args" : [{"Name" : "filePath", "ParamType" : "name"}],
-				"Doc" : "$Doc23"
+				"Doc" : "$Doc22"
 			}],
 			"Put" : [{
 				"Args" : [
@@ -179,7 +179,7 @@
 					{"Name" : "x", "ParamType" : "int"},
 					{"Name" : "y", "ParamType" : "int"}
 				],
-				"Doc" : "$Doc24"
+				"Doc" : "$Doc23"
 			},{
 				"Args" : [
 					{"Name" : "section", "ParamType" : "int"},
@@ -193,7 +193,11 @@
 					{"Name" : "tilt", "ParamType" : "enum<Tilt>"},
 					{"Name" : "span", "ParamType" : "int"}
 				],
-				"Doc" : "$Doc25"
+				"Doc" : "$Doc24"
+			}],
+			"SpeedLimit" : [{
+				"Args" : [{"Name" : "v...", "ParamType" : "int"}],
+				"Doc" : "$Doc26"
 			}]
 		},
 		"Beacon" : {
@@ -203,12 +207,12 @@
 					{"Name" : "section", "ParamType" : "int"},
 					{"Name" : "sendingData", "ParamType" : "int"}
 				],
-				"Doc" : "$Doc26"
+				"Doc" : "$Doc25"
 			}]
 		},
-		"Signal" : {
-			"SpeedLimit" : [{
-				"Args" : [{"Name" : "v...", "ParamType" : "int"}],
+		"Section" : {
+			"BeginNew" : [{
+				"Args" : [{"Name" : "signal...", "ParamType" : "int"}],
 				"Doc" : "$Doc27"
 			}]
 		},
@@ -287,8 +291,7 @@
 			"Change" : [{
 				"Args" : [{"Name" : "a", "ParamType" : "float"}],
 				"Doc" : "$Doc37"
-			}],
-			"Change" : [{
+			},{
 				"Args" : [
 					{"Name" : "a", "ParamType" : "float"},
 					{"Name" : "b", "ParamType" : "float"},

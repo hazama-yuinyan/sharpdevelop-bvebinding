@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using BVE5Language.Ast;
 using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace BVE5Language.Parser
 {
@@ -26,6 +27,46 @@ namespace BVE5Language.Parser
 		
 		readonly string[] HeaderStringSplit;
 		readonly string FileTypeName;
+		
+		ErrorReportPrinter error_report_printer = new ErrorReportPrinter(null);
+
+		public bool HasErrors {
+			get {
+				return error_report_printer.ErrorsCount > 0;
+			}
+		}
+		
+		public bool HasWarnings {
+			get {
+				return error_report_printer.WarningsCount > 0;
+			}
+		}
+		
+		public IEnumerable<Error> Errors {
+			get {
+				return error_report_printer.Errors.Where(e => e.ErrorType == ErrorType.Error);
+			}
+		}
+		
+		public IEnumerable<Error> Warnings {
+			get {
+				return error_report_printer.Errors.Where(e => e.ErrorType == ErrorType.Warning);
+			}
+		}
+		
+		public IEnumerable<Error> ErrorsAndWarnings {
+			get { return error_report_printer.Errors; }
+		}
+		
+		void AddWarning(ErrorCode warningCode, int line, int column, string message, List<string> extraInfos = null)
+		{
+			error_report_printer.Print(new WarningMessage((int)warningCode, new TextLocation(line, column), message, extraInfos));
+		}
+		
+		void AddError(ErrorCode errorCode, int line, int column, string message, List<string> extraInfos = null)
+		{
+			error_report_printer.Print(new ErrorMessage((int)errorCode, new TextLocation(line, column), message, extraInfos));
+		}
 		
 		/// <summary>
 		/// Initializes a new instance of <see cref="BVE5Language.Parser.InitFileParser"/>.
@@ -88,7 +129,7 @@ namespace BVE5Language.Parser
 		/// Source string.
 		/// </param>
         /// <param name="returnAsSyntaxTree">
-        /// Flag determining whether the method should return the result as SyntaxTree instance or not.
+        /// Flag determining whether the method should return the result as a SyntaxTree or not.
         /// </param>
 		public AstNode ParseOneStatement(string src, bool returnAsSyntaxTree = false)
 		{
@@ -149,13 +190,13 @@ namespace BVE5Language.Parser
 			}else if(token.Literal == "["){
 				return ParseSectionStatement(lexer);
 			}else{
-				throw new BVE5ParserException(token.Line, token.Column,
-					                          "A statement must start with an identifier or the sign '['.");
+				AddError(ErrorCode.SyntaxError, token.Line, token.Column,
+					     "A statement must start with an identifier or the sign '['.");
 			}
 			
 			token = lexer.Current;
 			if(token.Kind != TokenKind.EOL)
-				throw new BVE5ParserException(token.Line, token.Column, "Expected EOL but got " + token.Literal + ".");
+				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected EOL but got " + token.Literal + ".");
 			
 			lexer.Advance();
 			return AstNode.MakeStatement(expr, expr.StartLocation, lexer.Current.StartLoc);
@@ -172,12 +213,12 @@ namespace BVE5Language.Parser
 			Identifier ident = ParseIdent(lexer);
 			token = lexer.Current;
 			if(token.Literal != "]")
-				throw new BVE5ParserException(token.Line, token.Column, "Expected ']' but got " + token.Literal + ".");
+				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected ']' but got " + token.Literal + ".");
 			
 			lexer.Advance();
 			token = lexer.Current;
 			if(token.Kind != TokenKind.EOL)
-				throw new BVE5ParserException(token.Line, token.Column, "Expected EOL but got " + token.Literal + ".");
+				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected EOL but got " + token.Literal + ".");
 			
 			lexer.Advance();
 			token = lexer.Current;
@@ -190,7 +231,7 @@ namespace BVE5Language.Parser
 			Identifier lhs = ParseIdent(lexer);
 			Token token = lexer.Current;
 			if(token.Literal != "=")
-				throw new BVE5ParserException(token.Line, token.Column, "Expected '=' but got " + token.Literal + ".");
+				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected '=' but got " + token.Literal + ".");
 			
 			lexer.Advance();
 			SequenceExpression rhs = ParseSequence(lexer);
@@ -226,7 +267,8 @@ namespace BVE5Language.Parser
 					break;
 					
 				default:
-					throw new BVE5ParserException("Line {0}: Invalid definition!", token.Line);
+					AddError(ErrorCode.Other, token.Line, 1, string.Format("Line {0}: Invalid definition!", token.Line));
+					break;
 				}
 				
 				exprs.Add(expr);

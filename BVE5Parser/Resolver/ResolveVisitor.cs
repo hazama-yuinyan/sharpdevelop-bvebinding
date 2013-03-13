@@ -369,13 +369,13 @@ namespace BVE5Language.Resolver
 			return result;
 		}
 		#endregion
-
-		public ResolveResult Walk(SectionStatement secStmt)
+		
+		public ResolveResult Walk(LetStatement letStmt)
 		{
 			return null; //TODO: implement it
 		}
-		
-		public ResolveResult Walk(SequenceExpression sequence)
+
+		public ResolveResult Walk(SectionStatement secStmt)
 		{
 			return null; //TODO: implement it
 		}
@@ -424,6 +424,11 @@ namespace BVE5Language.Resolver
         {
         	return null;
         }
+        
+        public ResolveResult Walk(SequenceExpression sequence)
+		{
+			return null;
+		}
         #endregion
         #endregion
     }

@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: Ryouta
+ * User: HAZAMA
  * Date: 2013/03/03
  * Time: 18:54
  * 
@@ -25,6 +25,11 @@ namespace BVE5Binding.Completion
 			
 			list.SortItems();
 			return list;
+		}
+		
+		internal static string ConvertDocumentation(string docString)
+		{
+			return docString;
 		}
 	}
 }

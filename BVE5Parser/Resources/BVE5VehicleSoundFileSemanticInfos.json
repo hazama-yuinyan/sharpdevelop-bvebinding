@@ -1,0 +1,120 @@
+{
+	"SemanticInfos" : {
+		"Run" : {
+			"Keys" : [],
+			"Doc" : "$Doc800"
+		},
+		"Flange" : {
+			"Keys" : [],
+			"Doc" : "$Doc801"
+		},
+		"Motor" : {
+			"Keys" : [],
+			"Doc" : "$Doc802"
+		},
+		"Joint" : {
+			"Keys" : [],
+			"Doc" : "$Doc803"
+		},
+		"Brake" : {
+			"Keys" : [
+				{"Name" : "BcReleaseHigh", "ParamType" : "FilePath", "Doc" : "$Doc805"},
+				{"Name" : "BcRelease", "ParamType" : "FilePath", "Doc" : "$Doc806"},
+				{"Name" : "BcReleaseFull", "ParamType" : "FilePath", "Doc" : "$Doc807"},
+				{"Name" : "Emergency", "ParamType" : "FilePath", "Doc" : "$Doc808"}
+			],
+			"Doc" : "$Doc804"
+		},
+		"Compressor" : {
+			"Keys" : [
+				{"Name" : "Attack", "ParamType" : "FilePath", "Doc" : "$Doc810"},
+				{"Name" : "Loop", "ParamType" : "FilePath", "Doc" : "$Doc811"},
+				{"Name" : "Release", "ParamType" : "FilePath", "Doc" : "$Doc812"}
+			],
+			"Doc" : "$Doc809"
+		},
+		"AirSpring" : {
+			"Keys" : [
+				{"Name" : "LeftRelease", "ParamType" : "FilePath", "Doc" : "$Doc814"},
+				{"Name" : "RightRelease", "ParamType" : "FilePath", "Doc" : "$Doc815"},
+				{"Name" : "LeftApply", "ParamType" : "FilePath", "Doc" : "$Doc816"},
+				{"Name" : "RightApply", "ParamType" : "FilePath", "Doc" : "$Doc817"}
+			],
+			"Doc" : "$Doc813"
+		},
+		"Breaker" : {
+			"Keys" : [
+				{"Name" : "On", "ParamType" : "FilePath", "Doc" : "$Doc819"},
+				{"Name" : "Off", "ParamType" : "FilePath", "Doc" : "$Doc820"}
+			],
+			"Doc" : "$Doc818"
+		},
+		"Horn" : {
+			"Keys" : [
+				{"Name" : "Primary", "ParamType" : "FilePath", "Doc" : "$Doc822"},
+				{"Name" : "PrimaryRelease", "ParamType" : "FilePath", "Doc" : "$Doc823"},
+				{"Name" : "Secondary", "ParamType" : "FilePath", "Doc" : "$Doc824"},
+				{"Name" : "SecondaryRelease", "ParamType" : "FilePath", "Doc" : "$Doc825"}
+			],
+			"Doc" : "$Doc821"
+		},
+		"Door" : {
+			"Keys" : [
+				{"Name" : "OpenLeft", "ParamType" : "FilePath", "Doc" : "$Doc827"},
+				{"Name" : "OpenRight", "ParamType" : "FilePath", "Doc" : "$Doc828"},
+				{"Name" : "CloseLeft", "ParamType" : "FilePath", "Doc" : "$Doc829"},
+				{"Name" : "CloseRight", "ParamType" : "FilePath", "Doc" : "$Doc830"}
+			],
+			"Doc" : "$Doc826"
+		},
+		"Ats" : {
+			"Keys" : [],
+			"Doc" : "$Doc831"
+		},
+		"Buzzer" : {
+			"Keys" : [
+				{"Name" : "Correct", "ParamType" : "FilePath", "Doc" : "$Doc833"}
+			],
+			"Doc" : "$Doc832"
+		},
+		"Pilot Lamp" : {
+			"Keys" : [
+				{"Name" : "On", "ParamType" : "FilePath", "Doc" : "$Doc835"},
+				{"Name" : "Off", "ParamType" : "FilePath", "Doc" : "$Doc836"}
+			],
+			"Doc" : "$Doc834"
+		},
+		"Brake Handle" : {
+			"Keys" : [
+				{"Name" : "Apply", "ParamType" : "FilePath", "Doc" : "$Doc838"},
+				{"Name" : "Release", "ParamType" : "FilePath", "Doc" : "$Doc839"},
+				{"Name" : "Min", "ParamType" : "FilePath", "Doc" : "$Doc840"},
+				{"Name" : "Max", "ParamType" : "FilePath", "Doc" : "$Doc841"}
+			],
+			"Doc" : "$Doc837"
+		},
+		"Master Controller" : {
+			"Keys" : [
+				{"Name" : "Up", "ParamType" : "FilePath", "Doc" : "$Doc843"},
+				{"Name" : "Down", "ParamType" : "FilePath", "Doc" : "$Doc844"},
+				{"Name" : "Max", "ParamType" : "FilePath", "Doc" : "$Doc845"},
+				{"Name" : "Min", "ParamType" : "FilePath", "Doc" : "$Doc846"}
+			],
+			"Doc" : "$Doc842"
+		},
+		"Reverser" : {
+			"Keys" : [
+				{"Name" : "On", "ParamType" : "FilePath", "Doc" : "$Doc848"},
+				{"Name" : "Off", "ParamType" : "FilePath", "Doc" : "$Doc849"}
+			],
+			"Doc" : "$Doc847"
+		},
+		"Others" : {
+			"Keys" : [
+				{"Name" : "Noise", "ParamType" : "FilePath", "Doc" : "$Doc851"},
+				{"Name" : "Shoe", "ParamType" : "FilePath", "Doc" : "$Doc852"}
+			],
+			"Doc" : "$Doc850"
+		}
+	}
+}

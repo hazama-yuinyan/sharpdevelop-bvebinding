@@ -102,9 +102,17 @@
     <Compile Include="BVE5LanguageBinding.cs" />
     <Compile Include="Commands\CalculateCantCommand.cs" />
     <Compile Include="Commands\CantCalculator.cs" />
+    <Compile Include="Completion\BVE5CommonFileCompleter.cs" />
+    <Compile Include="Completion\BVE5CommonFileInsightWindowHandler.cs" />
     <Compile Include="Completion\BVE5CompletionBinding.cs" />
     <Compile Include="Commands\ShiftPositionsCommand.cs" />
+    <Compile Include="Completion\BVE5FileKind.cs" />
+    <Compile Include="Completion\BVE5InitFileCompleter.cs" />
+    <Compile Include="Completion\BVE5RouteFileInsightWindowHandler.cs" />
+    <Compile Include="Completion\BVE5RouteFileCompleter.cs" />
+    <Compile Include="Completion\CommandInsightItem.cs" />
     <Compile Include="Completion\CompletionDataHelper.cs" />
+    <Compile Include="Completion\ICodeCompleter.cs" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="Dialogs\CalculateCantDialog.xaml.cs">
       <DependentUpon>CalculateCantDialog.xaml</DependentUpon>
@@ -115,6 +123,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Formatting\BVE5FormattingStrategy.cs" />
+    <Compile Include="ParserFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Formatting" />

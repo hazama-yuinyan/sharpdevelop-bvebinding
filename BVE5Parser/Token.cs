@@ -4,7 +4,7 @@ using ICSharpCode.NRefactory;
 
 namespace BVE5Language.Parser
 {
-	internal enum TokenKind
+	public enum TokenKind
 	{
 		/// <summary>
 		/// Represents a syntax token(like ',', ';', '(' etc.)
@@ -50,7 +50,7 @@ namespace BVE5Language.Parser
 		EOF
 	}
 	
-	internal class Token
+	public class Token
 	{
 		TokenKind kind;
 		readonly int line, column;			//the line and column number where the token appears

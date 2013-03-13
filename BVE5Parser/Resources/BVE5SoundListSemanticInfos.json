@@ -1,0 +1,8 @@
+{
+	"Args" : [
+		{"Name" : "soundKey", "ParamType" : "name"},
+		{"Name" : "soundFilePath", "ParamType" : "FilePath"},
+		{"Name" : "bufferCount", "ParamType" : "int"}
+	],
+	"Doc" : "$Doc400"
+}

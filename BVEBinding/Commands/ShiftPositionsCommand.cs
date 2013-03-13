@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: Ryouta
+ * User: HAZAMA
  * Date: 2013/02/22
  * Time: 1:17
  * 
@@ -36,7 +36,7 @@ namespace BVE5Binding.Commands
 		
 		void ShiftPositions(int amountShift)
 		{
-			//TODO: 数式入力による距離程シフトの対応・相対インデックスによる既存距離程の参照機能の追加
+			//TODO: (保留)数式入力による距離程シフトの対応・相対インデックスによる既存距離程の参照機能の追加
 			var provider = WorkbenchSingleton.Workbench.ActiveViewContent as ITextEditorProvider;
 			if(provider == null)
 				return;

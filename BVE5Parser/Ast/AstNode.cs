@@ -124,7 +124,7 @@ namespace BVE5Language.Ast
 		/// </returns>
 		public abstract string GetText();
 
-		#region CommonAstNode methods
+		#region Common AstNode methods
         /// <summary>
         /// Determines whether the specified location is inside this node.
         /// </summary>
@@ -325,7 +325,7 @@ namespace BVE5Language.Ast
         }
 
         /// <summary>
-        /// Traverses child node that match the predicate.
+        /// Traverses child nodes that match the predicate.
         /// </summary>
         /// <param name="pred">A delegate that determines which nodes must be traversed and which must not.
         /// If it is null, this method will traverses all the children including this one.</param>
@@ -524,6 +524,11 @@ namespace BVE5Language.Ast
 		internal static Statement MakeStatement(Expression expr, TextLocation start, TextLocation end)
 		{
 			return new Statement(expr, start, end);
+		}
+		
+		internal static LetStatement MakeLetStatement(Expression expr, TextLocation start, TextLocation end)
+		{
+			return new LetStatement(expr, start, end);
 		}
 
 		internal static SyntaxTree MakeSyntaxTree(List<Statement> body, string name, TextLocation start, TextLocation end)

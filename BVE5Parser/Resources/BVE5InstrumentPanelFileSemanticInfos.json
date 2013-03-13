@@ -1,0 +1,77 @@
+{
+	"SemanticInfos" : {
+		"This" : {
+			"Keys" : [
+				{"Name" : "Resolution", "ParamType" : "float", "Doc" : "$Doc701"},
+				{"Name" : "Left", "ParamType" : "int", "Doc" : "$Doc702"},
+				{"Name" : "Top", "ParamType" : "int", "Doc" : "$Doc703"},
+				{"Name" : "Right", "ParamType" : "int", "Doc" : "$Doc704"},
+				{"Name" : "Bottom", "ParamType" : "int", "Doc" : "$Doc705"},
+				{"Name" : "DaytimeImage", "ParamType" : "FilePath", "Doc" : "$Doc706"},
+				{"Name" : "NighttimeImage", "ParamType" : "FilePath", "Doc" : "$Doc707"},
+				{"Name" : "TransparentColor", "ParamType" : "ColorString", "Doc" : "$Doc708"},
+				{"Name" : "Center", "ParamType" : "Coordinates", "Doc" : "$Doc709"},
+				{"Name" : "Origin", "ParamType" : "Coordinates", "Doc" : "$Doc710"}
+			],
+			"Doc" : "$Doc700"
+		},
+		"PilotLamp" : {
+			"Keys" : [
+				{"Name" : "Subject", "ParamType" : "name", "Doc" : "$Doc712"},
+				{"Name" : "Location", "ParamType" : "Coordinates", "Doc" : "$Doc713"},
+				{"Name" : "DaytimeImage", "ParamType" : "FilePath", "Doc" : "$Doc706"},
+				{"Name" : "NighttimeImage", "ParamType" : "FilePath", "Doc" : "$Doc707"},
+				{"Name" : "TransparentColor", "ParamType" : "ColorString", "Doc" : "$Doc708"},
+				{"Name" : "Layer", "ParamType" : "enum<LayerIndex>", "Doc" : "$Doc714"}
+			],
+			"Doc" : "$Doc711"
+		},
+		"Needle" : {
+			"Keys" : [
+				{"Name" : "Subject", "ParamType" : "name", "Doc" : "$Doc712"},
+				{"Name" : "Location", "ParamType" : "Coordinates", "Doc" : "$Doc716"},
+				{"Name" : "DaytimeImage", "ParamType" : "FilePath", "Doc" : "$Doc706"},
+				{"Name" : "NighttimeImage", "ParamType" : "FilePath", "Doc" : "$Doc707"},
+				{"Name" : "Color", "ParamType" : "ColorString", "Doc" : "$Doc717"},
+				{"Name" : "TransparentColor", "ParamType" : "ColorString", "Doc" : "$Doc708"},
+				{"Name" : "Origin", "ParamType" : "Coordinates", "Doc" : "$Doc718"},
+				{"Name" : "Layer", "ParamType" : "enum<LayerIndex>", "Doc" : "$Doc714"},
+				{"Name" : "Radius", "ParamType" : "float", "Doc" : "$Doc719"},
+				{"Name" : "InitialAngle", "ParamType" : "float", "Doc" : "$Doc720"},
+				{"Name" : "LastAngle", "ParamType" : "float", "Doc" : "$Doc721"},
+				{"Name" : "Minimum", "ParamType" : "float", "Doc" : "$Doc722"},
+				{"Name" : "Maximum", "ParamType" : "float", "Doc" : "$Doc723"},
+				{"Name" : "NaturalFreq", "ParamType" : "float", "Doc" : "$Doc724"},
+				{"Name" : "DampingRatio", "ParamType" : "float", "Doc" : "$Doc725"}
+			],
+			"Doc" : "$Doc715"
+		},
+		"DigitalGauge" : {
+			"Keys" : [
+				{"Name" : "Subject", "ParamType" : "name", "Doc" : "$Doc712"},
+				{"Name" : "Location", "ParamType" : "Coordinates", "Doc" : "$Doc716"},
+				{"Name" : "Color", "ParamType" : "ColorString", "Doc" : "$Doc727"},
+				{"Name" : "Layer", "ParamType" : "enum<LayerIndex>", "Doc" : "$Doc714"},
+				{"Name" : "Radius", "ParamType" : "float", "Doc" : "$Doc728"},
+				{"Name" : "InitialAngle", "ParamType" : "float", "Doc" : "$Doc729"},
+				{"Name" : "LastAngle", "ParamType" : "float", "Doc" : "$Doc730"},
+				{"Name" : "Minimum", "ParamType" : "float", "Doc" : "$Doc721"},
+				{"Name" : "Maximum", "ParamType" : "float", "Doc" : "$Doc722"},
+				{"Name" : "Step", "ParamType" : "float", "Doc" : "$Doc731"}
+			],
+			"Doc" : "$Doc726"
+		},
+		"DigitalNumber" : {
+			"Keys" : [
+				{"Name" : "Subject", "ParamType" : "name", "Doc" : "$Doc712"},
+				{"Name" : "Location", "ParamType" : "Coordinates", "Doc" : "$Doc733"},
+				{"Name" : "DaytimeImage", "ParamType" : "FilePath", "Doc" : "$Doc706"},
+				{"Name" : "NighttimeImage", "ParamType" : "FilePath", "Doc" : "$Doc707"},
+				{"Name" : "TransparentColor", "ParamType" : "ColorString", "Doc" : "$Doc708"},
+				{"Name" : "Layer", "ParamType" : "enum<LayerIndex>", "Doc" : "$Doc714"},
+				{"Name" : "Interval", "ParamType" : "int", "Doc" : "$Doc734"}
+			],
+			"Doc" : "$Doc732"
+		}
+	}
+}

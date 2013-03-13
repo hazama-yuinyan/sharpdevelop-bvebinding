@@ -31,7 +31,7 @@ using ICSharpCode.NRefactory;
 namespace BVE5Language.Ast
 {
 	/// <summary>
-	/// Represents an invoke expression.
+	/// Represents a command invoke expression.
 	/// </summary>
 	public class InvocationExpression : Expression
 	{

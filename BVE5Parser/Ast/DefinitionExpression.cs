@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: Ryouta
+ * User: HAZAMA
  * Date: 02/22/2013
  * Time: 16:22
  * 
@@ -12,7 +12,7 @@ using ICSharpCode.NRefactory;
 namespace BVE5Language.Ast
 {
 	/// <summary>
-	/// Represents a definition such as "name = 1". Used in ini files.
+	/// Represents a definition such as "name = 1". Used in ini files and route files.
 	/// </summary>
 	/// <remarks>
 	/// In programming languages, the equal sign usually denotes assignment, but in BVE5 it instead denotes definition or equality as in a mathematical expression.

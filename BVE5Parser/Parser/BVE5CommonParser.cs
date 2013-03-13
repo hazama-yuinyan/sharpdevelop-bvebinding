@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using BVE5Language.Ast;
 using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace BVE5Language.Parser
 {
@@ -25,6 +26,46 @@ namespace BVE5Language.Parser
 		
 		readonly string header_str;
 		readonly string file_kind_name;
+		
+		ErrorReportPrinter error_report_printer = new ErrorReportPrinter(null);
+
+		public bool HasErrors {
+			get {
+				return error_report_printer.ErrorsCount > 0;
+			}
+		}
+		
+		public bool HasWarnings {
+			get {
+				return error_report_printer.WarningsCount > 0;
+			}
+		}
+		
+		public IEnumerable<Error> Errors {
+			get {
+				return error_report_printer.Errors.Where(e => e.ErrorType == ErrorType.Error);
+			}
+		}
+		
+		public IEnumerable<Error> Warnings {
+			get {
+				return error_report_printer.Errors.Where(e => e.ErrorType == ErrorType.Warning);
+			}
+		}
+		
+		public IEnumerable<Error> ErrorsAndWarnings {
+			get { return error_report_printer.Errors; }
+		}
+		
+		void AddWarning(ErrorCode warningCode, int line, int column, string message, List<string> extraInfos = null)
+		{
+			error_report_printer.Print(new WarningMessage((int)warningCode, new TextLocation(line, column), message, extraInfos));
+		}
+		
+		void AddError(ErrorCode errorCode, int line, int column, string message, List<string> extraInfos = null)
+		{
+			error_report_printer.Print(new ErrorMessage((int)errorCode, new TextLocation(line, column), message, extraInfos));
+		}
 		
 		/// <summary>
 		/// Initializes a new instance of <see cref="BVE5Language.Parser.CommonParser"/>.
@@ -87,7 +128,7 @@ namespace BVE5Language.Parser
 		/// Source string.
 		/// </param>
         /// <param name="returnAsSyntaxTree">
-        /// Flag determining whether the method should return the result as SyntaxTree instance or not.
+        /// Flag determining whether the method should return the result as a SyntaxTree or not.
         /// </param>
 		public AstNode ParseOneStatement(string src, bool returnAsSyntaxTree = false)
 		{
@@ -115,7 +156,7 @@ namespace BVE5Language.Parser
 						int cur_line = lexer.CurrentLine;
 						var token = lexer.Current;
 						if(token.Literal != header_str)
-							throw new BVE5ParserException(1, 1, "Invalid " + file_kind_name + " file!");
+							AddError(ErrorCode.InvalidFileHeader, 1, 1, "Invalid " + file_kind_name + " file!");
 					}
 					
 					lexer.Advance();
@@ -135,17 +176,17 @@ namespace BVE5Language.Parser
 		// sequence '\n'
 		Statement ParseStatement(BVE5CommonLexer lexer)
 		{
-			var seq = ParseSequence(lexer);
+			var seq = ParseCommandInvoke(lexer);
 			Token token = lexer.Current;
 			if(token.Kind != TokenKind.EOL)
-				throw new BVE5ParserException(token.Line, token.Column, "Expected EOL but got " + token.Literal + ".");
+				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected EOL but got " + token.Literal + ".");
 			
 			lexer.Advance();
 			return AstNode.MakeStatement(seq, seq.StartLocation, token.EndLoc);
 		}
 		
 		// argument {',' argument}
-		SequenceExpression ParseSequence(BVE5CommonLexer lexer)
+		InvocationExpression ParseCommandInvoke(BVE5CommonLexer lexer)
 		{
 			Token token = lexer.Current;
 			var start_loc = token.StartLoc;
@@ -162,7 +203,7 @@ namespace BVE5Language.Parser
 			}
 			
 			token = lexer.Current;
-			return AstNode.MakeSequence(children, start_loc, token.StartLoc);
+			return AstNode.MakeInvoke(AstNode.MakeIdent(file_kind_name, start_loc, start_loc), children, start_loc, token.StartLoc);
 		}
 		
 		// literal
@@ -182,7 +223,8 @@ namespace BVE5Language.Parser
                 	return ParseLiteral(lexer);
 				
 			default:
-				throw new BVE5ParserException(token.Line, token.Column, "An argument must be a string, a literal or a time format literal!");
+				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "An argument must be a string, a literal or a time format literal!");
+				return null;
 			}
 		}
 		
@@ -217,7 +259,7 @@ namespace BVE5Language.Parser
 
 			for(int i = 0; i < 3; ++i){
 				if(token.Kind == TokenKind.EOF)
-					throw new BVE5ParserException(token.Line, token.Column, "Unexpected EOF!");
+					AddError(ErrorCode.UnexpectedEOF, token.Line, token.Column, "Unexpected EOF!");
 
 				nums[i] = Convert.ToInt32(token.Literal);
 
@@ -226,9 +268,9 @@ namespace BVE5Language.Parser
 				
 				token = lexer.Current;
 				if(token.Kind == TokenKind.EOF)
-					throw new BVE5ParserException(token.Line, token.Column, "Unexpected EOF!");
+					AddError(ErrorCode.UnexpectedEOF, token.Line, token.Column, "Unexpected EOF!");
 				else if(token.Literal != ":")
-					throw new BVE5ParserException(token.Line, token.Column, "Expected ':' but got " + token.Literal);
+					AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected ':' but got " + token.Literal);
 
 				lexer.Advance();
 				token = lexer.Current;

@@ -134,8 +134,13 @@ namespace BVE5Language.Resolver
                 throw new ArgumentNullException("targetResult");
 
             var type_rr = targetResult as TypeResolveResult;
-            if(type_rr != null)	//TODO: implement it
-                return null;
+            if(type_rr != null){
+            	var fields = type_rr.Type.GetFields(field => field.Name == indexName).ToList();
+            	if(fields.Count > 1)
+            		return new ErrorResolveResult(type_rr.Type, "Multiple fields found!", new TextLocation());
+            	
+            	return new MemberResolveResult(targetResult, fields[0], fields[0].ReturnType, fields[0].IsConst, fields[0].ConstantValue);
+            }
 
             return new ErrorResolveResult(targetResult.Type);
         }

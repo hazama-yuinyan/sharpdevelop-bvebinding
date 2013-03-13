@@ -1,0 +1,18 @@
+{
+	"Args" : [
+		{"Name" : "stationKey", "ParamType" : "name"},
+		{"Name" : "stationName", "ParamType" : "name"},
+		{"Name" : "arrivalTime", "ParamType" : "TimeFormat"},
+		{"Name" : "depertureTime", "ParamType" : "TimeFormat"},
+		{"Name" : "stoppageTime", "ParamType" : "int"},
+		{"Name" : "defaultTime", "ParamType" : "TimeFormat"},
+		{"Name" : "signalFlag", "ParamType" : "int"},
+		{"Name" : "alightingTime", "ParamType" : "int"},
+		{"Name" : "passengers", "ParamType" : "float"},
+		{"Name" : "arrivalSoundKey", "ParamType" : "name"},
+		{"Name" : "depertureSoundKey", "ParamType" : "name"},
+		{"Name" : "doorReopen", "ParamType" : "float"},
+		{"Name" : "stuckInDoor", "ParamType" : "int"}
+	],
+	"Doc" : "$Doc200"
+}

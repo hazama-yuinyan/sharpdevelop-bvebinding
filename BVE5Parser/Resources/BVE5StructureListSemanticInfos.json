@@ -1,0 +1,7 @@
+{
+	"Args" : [
+		{"Name" : "structureKey", "ParamType" : "name"},
+		{"Name" : "structureFilePath", "ParamType" : "FilePath"}
+	],
+	"Doc" : "$Doc100"
+}

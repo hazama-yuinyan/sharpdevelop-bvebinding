@@ -1,0 +1,174 @@
+{
+	"SemanticInfos" : {
+		"Global" : {
+			"Keys" : [
+				{"Name" : "FirstCar", "ParamType" : "string", "Doc" : "$Doc601"},
+				{"Name" : "LoadCompensating", "ParamType" : "bool", "Doc" : "$Doc602"}
+			],
+			"Doc" : "$Doc600"
+		},
+		"Cab" : {
+			"Keys" : [
+				{"Name" : "BrakeNotchCount", "ParamType" : "int", "Doc" : "$Doc604"},
+				{"Name" : "PowerNotchCount", "ParamType" : "int", "Doc" : "$Doc605"},
+				{"Name" : "HoldingSpeedNotchCount", "ParamType" : "int", "Doc" : "$Doc606"},
+				{"Name" : "HoldingSpeedBrake", "ParamType" : "bool", "Doc" : "$Doc607"},
+				{"Name" : "AtsCancelNotch", "ParamType" : "int", "Doc" : "$Doc608"},
+				{"Name" : "MotorBrakeNotch", "ParamType" : "int", "Doc" : "$Doc609"},
+				{"Name" : "ReverserText", "ParamType" : "string", "Doc" : "$Doc610"},
+				{"Name" : "BrakeText", "ParamType" : "string", "Doc" : "$Doc611"},
+				{"Name" : "PowerText", "ParamType" : "string", "Doc" : "$Doc612"},
+				{"Name" : "HoldingSpeedText", "ParamType" : "string", "Doc" : "$Doc613"}
+			],
+			"Doc" : "$Doc603"
+		},
+		"OneLeverCab" : {
+			"Keys" : [
+				{"Name" : "BrakeNotchCount", "ParamType" : "int", "Doc" : "$Doc604"},
+				{"Name" : "PowerNotchCount", "ParamType" : "int", "Doc" : "$Doc605"},
+				{"Name" : "HoldingSpeedNotchCount", "ParamType" : "int", "Doc" : "$Doc606"},
+				{"Name" : "HoldingSpeedBrake", "ParamType" : "bool", "Doc" : "$Doc607"},
+				{"Name" : "AtsCancelNotch", "ParamType" : "int", "Doc" : "$Doc608"},
+				{"Name" : "MotorBrakeNotch", "ParamType" : "int", "Doc" : "$Doc609"},
+				{"Name" : "ReverserText", "ParamType" : "string", "Doc" : "$Doc610"},
+				{"Name" : "BrakeText", "ParamType" : "string", "Doc" : "$Doc611"},
+				{"Name" : "PowerText", "ParamType" : "string", "Doc" : "$Doc612"},
+				{"Name" : "HoldingSpeedText", "ParamType" : "string", "Doc" : "$Doc613"}
+			],
+			"Doc" : "$Doc614"
+		},
+		"Compressor" : {
+			"Keys" : [
+				{"Name" : "LowerPressure", "ParamType" : "int", "Doc" : "$Doc616"},
+				{"Name" : "UpperPressure", "ParamType" : "int", "Doc" : "$Doc617"},
+				{"Name" : "CompressionSpeed", "ParamType" : "int", "Doc" : "$Doc618"}
+			],
+			"Doc" : "$Doc615"
+		},
+		"Bc" : {
+			"Keys" : [
+				{"Name" : "ApplySpeed", "ParamType" : "int", "Doc" : "$Doc620"},
+				{"Name" : "ReleaseSpeed", "ParamType" : "int", "Doc" : "$Doc621"},
+				{"Name" : "VolumeRatio", "ParamType" : "int", "Doc" : "$Doc622"},
+				{"Name" : "ApplyStart", "ParamType" : "int", "Doc" : "$Doc623"},
+				{"Name" : "ApplyStop", "ParamType" : "int", "Doc" : "$Doc624"},
+				{"Name" : "ReleaseStart", "ParamType" : "int", "Doc" : "$Doc625"},
+				{"Name" : "ReleaseStop", "ParamType" : "int", "Doc" : "$Doc626"},
+				{"Name" : "PistonArea", "ParamType" : "float", "Doc" : "$Doc627"}
+			],
+			"Doc" : "$Doc619"
+		},
+		"BcServo" : {
+			"Keys" : [
+				{"Name" : "ApplySpeed", "ParamType" : "int", "Doc" : "$Doc620"},
+				{"Name" : "ReleaseSpeed", "ParamType" : "int", "Doc" : "$Doc621"},
+				{"Name" : "VolumeRatio", "ParamType" : "int", "Doc" : "$Doc622"},
+				{"Name" : "ApplyStart", "ParamType" : "int", "Doc" : "$Doc623"},
+				{"Name" : "ApplyStop", "ParamType" : "int", "Doc" : "$Doc624"},
+				{"Name" : "ReleaseStart", "ParamType" : "int", "Doc" : "$Doc625"},
+				{"Name" : "ReleaseStop", "ParamType" : "int", "Doc" : "$Doc626"},
+				{"Name" : "PistonArea", "ParamType" : "float", "Doc" : "$Doc627"}
+			],
+			"Doc" : "$Doc628"
+		},
+		"Bp" : {
+			"Keys" : [
+				{"Name" : "ApplySpeed", "ParamType" : "int", "Doc" : "$Doc630"},
+				{"Name" : "ReleaseSpeed", "ParamType" : "int", "Doc" : "$Doc631"},
+				{"Name" : "VolumeRatio", "ParamType" : "int", "Doc" : "$Doc632"},
+				{"Name" : "RapidReleaseSpeed", "ParamType" : "int", "Doc" : "$Doc633"}
+			],
+			"Doc" : "$Doc629"
+		},
+		"Sap" : {
+			"Keys" : [
+				{"Name" : "ApplySpeed", "ParamType" : "int", "Doc" : "$Doc620"},
+				{"Name" : "ReleaseSpeed", "ParamType" : "int", "Doc" : "$Doc621"},
+				{"Name" : "VolumeRatio", "ParamType" : "int", "Doc" : "$Doc635"}
+			],
+			"Doc" : "$Doc634"
+		},
+		"ConstantSpeedControl" : {
+			"Keys" : [
+				{"Name" : "Power", "ParamType" : "enum<ConstantSpeedControl>", "Doc" : "$Doc637"},
+				{"Name" : "Neutral", "ParamType" : "enum<ConstantSpeedControl>", "Doc" : "$Doc638"},
+				{"Name" : "Brake", "ParamType" : "enum<ConstantSpeedControl>", "Doc" : "$Doc639"}
+			],
+			"Doc" : "$Doc636"
+		},
+		"LockoutValve" : {
+			"Keys" : [
+				{"Name" : "MaximumPressure", "ParamType" : "int", "Doc" : "$Doc641"},
+				{"Name" : "RegenerationLimit", "ParamType" : "int", "Doc" : "$Doc644"}
+			],
+			"Doc" : "$Doc640"
+		},
+		"AirSupplement" : {
+			"Keys" : [
+				{"Name" : "MaximumPressure", "ParamType" : "int", "Doc" : "$Doc641"},
+				{"Name" : "MotorcarRate", "ParamType" : "float", "Doc" : "$Doc642"},
+				{"Name" : "InitialPressure", "ParamType" : "int", "Doc" : "$Doc643"},
+				{"Name" : "RegenerationLimit", "ParamType" : "int", "Doc" : "$Doc644"}
+			],
+			"Doc" : "$Doc645"
+		},
+		"Smee" : {
+			"Keys" : [
+				{"Name" : "MaximumPressure", "ParamType" : "int", "Doc" : "$Doc647"},
+				{"Name" : "PressureRates", "ParamType" : "string", "Doc" : "$Doc648"},
+				{"Name" : "SapBcRatio", "ParamType" : "float", "Doc" : "$Doc649"},
+				{"Name" : "SapBcOffset", "ParamType" : "int", "Doc" : "$Doc650"},
+				{"Name" : "BpInitialPressure", "ParamType" : "int", "Doc" : "$Doc651"},
+				{"Name" : "LeverDelay", "ParamType" : "float", "Doc" : "$Doc652"}
+			],
+			"Doc" : "$Doc646"
+		},
+		"Ecb" : {
+			"Keys" : [
+				{"Name" : "MaximumPressure", "ParamType" : "int", "Doc" : "$Doc647"},
+				{"Name" : "PressureRates", "ParamType" : "string", "Doc" : "$Doc648"},
+				{"Name" : "SapBcRatio", "ParamType" : "float", "Doc" : "$Doc649"},
+				{"Name" : "SapBcOffset", "ParamType" : "int", "Doc" : "$Doc650"},
+				{"Name" : "BpInitialPressure", "ParamType" : "int", "Doc" : "$Doc651"},
+				{"Name" : "LeverDelay", "ParamType" : "float", "Doc" : "$Doc652"}
+			],
+			"Doc" : "$Doc653"
+		},
+		"MainCircuit" : {
+			"Keys" : [
+				{"Name" : "RegenerationLimit", "ParamType" : "int", "Doc" : "$Doc655"},
+				{"Name" : "LeverDelay", "ParamType" : "float", "Doc" : "$Doc656"},
+				{"Name" : "BrakePriority", "ParamType" : "bool", "Doc" : "$Doc657"}
+			],
+			"Doc" : "$Doc654"
+		},
+		"Dynamics" : {
+			"Keys" : [
+				{"Name" : "MotorcarWeight", "ParamType" : "int", "Doc" : "$Doc659"},
+				{"Name" : "TrailerWeight", "ParamType" : "int", "Doc" : "$Doc660"},
+				{"Name" : "MotorcarCount", "ParamType" : "int", "Doc" : "$Doc661"},
+				{"Name" : "TrailerCount", "ParamType" : "int", "Doc" : "$Doc662"},
+				{"Name" : "MotorcarInertialFactor", "ParamType" : "float", "Doc" : "$Doc663"},
+				{"Name" : "TrailerInertialFactor", "ParamType" : "float", "Doc" : "$Doc664"},
+				{"Name" : "CarLength", "ParamType" : "float", "Doc" : "$Doc665"},
+				{"Name" : "RunningResistanceFactor", "ParamType" : "string", "Doc" : "$Doc666"},
+				{"Name" : "CurveResistanceFactor", "ParamType" : "float", "Doc" : "$Doc667"}
+			],
+			"Doc" : "$Doc658"
+		},
+		"Door" : {
+			"Keys" : [
+				{"Name" : "CloseTime", "ParamType" : "int", "Doc" : "$Doc669"}
+			],
+			"Doc" : "$Doc668"
+		},
+		"ViewPoint" : {
+			"Keys" : [
+				{"Name" : "X", "ParamType" : "float", "Doc" : "$Doc671"},
+				{"Name" : "Y", "ParamType" : "float", "Doc" : "$Doc672"},
+				{"Name" : "Z", "ParamType" : "float", "Doc" : "$Doc673"}
+			],
+			"Doc" : "$Doc670"
+		}
+	}
+}

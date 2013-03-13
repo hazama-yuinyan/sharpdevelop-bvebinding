@@ -17,7 +17,7 @@ namespace BVE5Language.Parser
 	/// <summary>
 	/// Description of BVE5CommonLexer.
 	/// </summary>
-	internal class BVE5CommonLexer
+	public class BVE5CommonLexer : ILexer
 	{
 		readonly TextReader reader;
 		Token token = null,		//current token
@@ -25,6 +25,7 @@ namespace BVE5Language.Parser
 		int line_num = 1, column_num = 1;
 		const char EOF = unchecked((char)-1);
 
+		/// <inheritdoc/>
 		public Token Current{
 			get{return token;}
 		}
@@ -33,6 +34,7 @@ namespace BVE5Language.Parser
 			get{return la;}
 		}
 
+		/// <inheritdoc/>
 		public int CurrentLine{
 			get{return token.Line;}
 		}
@@ -56,28 +58,29 @@ namespace BVE5Language.Parser
 			LookAheadToken();
 		}
 		
-		/// <summary>
-		/// Checks whether the lexer hits the EOF.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c>, if EOF was encountered, <c>false</c> otherwise.
-		/// </returns>
+		/// <inheritdoc/>
+		public void SetInitialLocation(int line, int column)
+		{
+			if(token != null)
+				throw new InvalidOperationException("SetInitialLocation should not be called after Advance is called");
+			
+			line_num = line;
+			column_num = column;
+			la = new Token(line, column, la.Literal, la.Kind);
+		}
+		
+		/// <inheritdoc/>
 		public bool HitEOF()
 		{
 			return token == Token.EOF;
 		}
 
-		/// <summary>
-		/// Tells the lexer to read the next token and to store it on the internal buffer.
-		/// </summary>
+		/// <inheritdoc/>
 		public void Advance()
 		{
-			if(la != null){
-				token = la;
-			}else{
-				token = Token.EOF;
+			token = la;
+			if(la == Token.EOF)
 				return;
-			}
 
 			LookAheadToken();
 		}
@@ -89,7 +92,7 @@ namespace BVE5Language.Parser
 			char ch = PeekChar();
 			switch(ch){
 			case EOF:
-				la = null;
+				la = Token.EOF;
 				break;
 				
 			case ',':

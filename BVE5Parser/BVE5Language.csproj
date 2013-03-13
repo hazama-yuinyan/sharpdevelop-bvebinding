@@ -68,6 +68,7 @@
     <Compile Include="Ast\BinaryExpression.cs" />
     <Compile Include="Ast\DefinitionExpression.cs" />
     <Compile Include="Ast\DepthFirstAstWalker.cs" />
+    <Compile Include="Ast\LetStatement.cs" />
     <Compile Include="Ast\SectionStatement.cs" />
     <Compile Include="Ast\SequenceExpression.cs" />
     <Compile Include="Ast\SyntaxTree.cs" />
@@ -85,6 +86,8 @@
     <Compile Include="Parser\BVE5CommonParser.cs" />
     <Compile Include="Parser\BVE5RouteFileLexer.cs" />
     <Compile Include="Parser\BVE5RouteFileParser.cs" />
+    <Compile Include="Parser\ErrorCode.cs" />
+    <Compile Include="Parser\ILexer.cs" />
     <Compile Include="Parser\InitFileLexer.cs" />
     <Compile Include="Parser\InitFileParser.cs" />
     <Compile Include="Parser\MathExpressionLexer.cs" />
@@ -131,10 +134,42 @@
     <Folder Include="Resources" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BVE5BuiltinNames.xml" />
+    <EmbeddedResource Include="Resources\BVE5BuiltinNames.json">
+      <LogicalName>BVE5LanguageResources.BuiltinNames.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BVE5SignalAspectsListSemanticInfos.json">
+      <LogicalName>BVE5LanguageResources.SignalAspectsListSemanticInfos.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BVE5SoundListSemanticInfos.json">
+      <LogicalName>BVE5LanguageResources.SoundListSemanticInfos.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BVE5StationListSemanticInfos.json">
+      <LogicalName>BVE5LanguageResources.StationListSemanticInfos.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BVE5StructureListSemanticInfos.json">
+      <LogicalName>BVE5LanguageResources.StructureListSemanticInfos.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BVE5TrainFileSemanticInfos.json">
+      <LogicalName>BVE5LanguageResources.TrainFileSemanticInfos.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BVE5VehicleParametersFileSemanticInfos.json">
+      <LogicalName>BVE5LanguageResources.VehicleParametersFileSemanticInfos.json</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BVE5Documentation.xml" />
-    <None Include="Resources\BVE5SematicInfos.xml" />
+    <EmbeddedResource Include="Resources\BVE5Documentation.json">
+      <LogicalName>BVE5LanguageResources.Documentation.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BVE5SemanticInfos.json">
+      <LogicalName>BVE5LanguageResources.SemanticInfos.json</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\BVE5InstrumentPanelFileSemanticInfos.json">
+      <LogicalName>BVE5LanguageResources.InstrumentPanelFileSemanticInfos.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\BVE5VehicleSoundFileSemanticInfos.json">
+      <LogicalName>BVE5LanguageResources.VehicleSoundFileSemanticInfos.json</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: Ryouta
+ * User: HAZAMA
  * Date: 2013/03/07
  * Time: 13:30
  * 
@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace BVE5Language.Parser
 {
@@ -29,7 +30,7 @@ namespace BVE5Language.Parser
 
 			this.location = loc;
 			this.message = msg;
-			if(extraInfo.Count != 0)
+			if(extraInfo != null && extraInfo.Count != 0)
 				this.extra_info = extraInfo.ToArray();
 		}
 
@@ -78,8 +79,8 @@ namespace BVE5Language.Parser
 
 	sealed class WarningMessage : AbstractMessage
 	{
-		public WarningMessage(int code, TextLocation loc, string message, List<string> extra_info)
-			: base(code, loc, message, extra_info)
+		public WarningMessage(int code, TextLocation loc, string message, List<string> extraInfo)
+			: base(code, loc, message, extraInfo)
 		{
 		}
 
@@ -101,8 +102,8 @@ namespace BVE5Language.Parser
 		{
 		}
 
-		public ErrorMessage(AbstractMessage aMsg)
-			: base (aMsg)
+		public ErrorMessage(AbstractMessage otherMsg)
+			: base (otherMsg)
 		{
 		}
 
@@ -180,6 +181,25 @@ namespace BVE5Language.Parser
 		{
 			// HACK: Temporary hack for broken repl flow
 			ErrorsCount = WarningsCount = 0;
+		}
+	}
+	
+	public class ErrorReportPrinter : ReportPrinter
+	{
+		readonly string file_name;
+		public readonly List<Error> Errors = new List<Error>();
+			
+		public ErrorReportPrinter(string fileName)
+		{
+			this.file_name = fileName;
+		}
+			
+		public override void Print(AbstractMessage msg, bool showFullPath = false)
+		{
+			base.Print(msg, showFullPath);
+			var new_error = new Error(msg.IsWarning ? ErrorType.Warning : ErrorType.Error, msg.Text,
+                                     new DomRegion(file_name, msg.Location.Line, msg.Location.Column));
+			Errors.Add(new_error);
 		}
 	}
 }
