@@ -59,57 +59,38 @@ namespace BVE5Binding.Completion
 				return;
 			}
 			
-			var first_line = provider.TextEditor.Document.GetLine(1);
-			switch(first_line.Text.Trim()){
-			case "BveTs Map 1.00":
+			var first_line_text = provider.TextEditor.Document.GetLine(1).Text.Trim().ToLowerInvariant();
+			if(first_line_text.StartsWith("bvets map")){
 				completer = new BVE5RouteFileCompleter();
 				insightHandler = new BVE5RouteFileInsightWindowHandler((BVE5RouteFileCompleter)completer);
-				break;
-				
-			case "BveTs Structure List 1.00":
+			}else if(first_line_text.StartsWith("bvets structure list")){
 				completer = new BVE5CommonFileCompleter(BVE5FileKind.StructureList);
 				insightHandler = new BVE5CommonFileInsightWindowHandler(BVE5FileKind.StructureList, (BVE5CommonFileCompleter)completer);
-				break;
-				
-			case "BveTs Station List 1.01":
+			}else if(first_line_text.StartsWith("bvets station list")){
 				completer = new BVE5CommonFileCompleter(BVE5FileKind.StationList);
 				insightHandler = new BVE5CommonFileInsightWindowHandler(BVE5FileKind.StationList, (BVE5CommonFileCompleter)completer);
-				break;
-				
-			case "BveTs Signal Aspects List 1.00":
+			}else if(first_line_text.StartsWith("bvets signal aspects list")){
 				completer = new BVE5CommonFileCompleter(BVE5FileKind.SignalAspectsList);
 				insightHandler = new BVE5CommonFileInsightWindowHandler(BVE5FileKind.SignalAspectsList, (BVE5CommonFileCompleter)completer);
-				break;
-				
-			case "BveTs Sound List 1.00":
+			}else if(first_line_text.StartsWith("bvets sound list")){
 				completer = new BVE5CommonFileCompleter(BVE5FileKind.SoundList);
 				insightHandler = new BVE5CommonFileInsightWindowHandler(BVE5FileKind.SoundList, (BVE5CommonFileCompleter)completer);
-				break;
-				
-			case "BveTs Train 0.01":
+			}else if(first_line_text.StartsWith("bvets train")){
 				completer = new BVE5InitFileCompleter(BVE5FileKind.TrainFile);
 				insightHandler = null;//new BVE5RouteFileInsightWindowHandler(BVE5FileKind.Train);
-				break;
-				
-			case "BveTs Vehicle Parameters 1.01":
+			}else if(first_line_text.StartsWith("bvets vehicle parameters")){
 				completer = new BVE5InitFileCompleter(BVE5FileKind.VehicleParametersFile);
 				insightHandler = null;//new BVE5RouteFileInsightWindowHandler(BVE5FileKind.VehicleParameters);
-				break;
-				
-			case "Version 1.0":
+			}else if(first_line_text.StartsWith("version")){
 				completer = new BVE5InitFileCompleter(BVE5FileKind.InstrumentPanelFile);
 				insightHandler = null;//new BVE5RouteFileInsightWindowHandler(BVE5FileKind.InstrumentPanel);
-				break;
-				
-			case "Bvets Vehicle Sound 2.00":
+			}else if(first_line_text.StartsWith("bvets vehicle sound")){
 				completer = new BVE5InitFileCompleter(BVE5FileKind.VehicleSoundFile);
 				insightHandler = null;//new BVE5RouteFileInsightWindowHandler(BVE5FileKind.VehicleSound);
-				break;
-				
-			default:
+			}else{
+				LoggingService.Info("Could not find any valid bve headers");
 				completer = null;
 				insightHandler = null;
-				break;
 			}
 		}
 	}

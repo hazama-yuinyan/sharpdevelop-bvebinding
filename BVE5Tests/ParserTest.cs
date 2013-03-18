@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-
 using NUnit.Framework;
-
 using BVE5Language.Ast;
 using BVE5Language.Parser;
 
@@ -54,9 +53,9 @@ namespace BVE5Language.Ast
                 TestStructualEqual(expected.Current.Children.GetEnumerator(), sibling.FirstChild);
                 bool expected_has_next = expected.MoveNext();
                 if(sibling.NextSibling != null && !expected_has_next)
-                    Assert.Fail("Unexpected node found!");
+                	Assert.Fail("Unexpected node found; " + sibling.NextSibling.GetText());
                 else if(sibling.NextSibling == null && expected_has_next)
-                    Assert.Fail("Expected the current node to have a sibling node, but it doesn't.");
+                	Assert.Fail("Expected the current node to have a sibling node, but it doesn't; " + sibling.GetText());
             }
         }
 	}
@@ -109,8 +108,13 @@ namespace BVE5Language.Ast
                 })
             };
             Helpers.TestStructualEqual(expected3.GetEnumerator(), stmt3);
-            
-            var tree = parser.Parse(@"Track[1].Position(0, 0, 100, 0);
+		}
+		
+		[TestCase]
+		public void Statements()
+		{
+			var parser = new BVE5RouteFileParser();
+			var tree = parser.Parse(@"Track[1].Position(0, 0, 100, 0);
 //This is a comment
 Track[2].Position(5.4, 0, 100, 0);",
                                     "<string>");
@@ -152,6 +156,44 @@ Track[2].Position(5.4, 0, 100, 0);",
 		}
 		
 		[TestCase]
+		public void Invalid()
+		{
+			var parser = new BVE5RouteFileParser();
+			var stmt = parser.ParseOneStatement("Track[.Position");
+			var expected1 = new List<TypeDescriber>{
+				TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+					TypeDescriber.Create(NodeType.MemRef, new List<TypeDescriber>{
+				    	TypeDescriber.Create(NodeType.Indexer, new List<TypeDescriber>{
+				        	TypeDescriber.Create(NodeType.Identifier, null)
+				        }),
+				        TypeDescriber.Create(NodeType.Identifier, null)
+				    })
+				})
+			};
+			Helpers.TestStructualEqual(expected1.GetEnumerator(), stmt);
+			Assert.IsTrue(parser.HasErrors && parser.Errors.Count() == 3);
+			
+			var parser2 = new BVE5RouteFileParser();
+			var stmt2 = parser2.ParseOneStatement("Track[0].Position(100");
+			var expected2 = new List<TypeDescriber>{
+				TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
+					TypeDescriber.Create(NodeType.Invocation, new List<TypeDescriber>{
+				    	TypeDescriber.Create(NodeType.MemRef, new List<TypeDescriber>{
+				        	TypeDescriber.Create(NodeType.Indexer, new List<TypeDescriber>{
+				            	TypeDescriber.Create(NodeType.Identifier, null),
+				                TypeDescriber.Create(NodeType.Literal, null)
+				            }),
+				            TypeDescriber.Create(NodeType.Identifier, null)
+				        }),
+				        TypeDescriber.Create(NodeType.Literal, null)
+				    })
+				})
+			};
+			Helpers.TestStructualEqual(expected2.GetEnumerator(), stmt2);
+			Assert.IsTrue(parser2.HasErrors && parser2.Errors.Count() == 2);
+		}
+		
+		[TestCase]
 		public void Additions()
 		{
 			var parser = new BVE5RouteFileParser();
@@ -185,11 +227,12 @@ Track[2].Position(5.4, 0, 100, 0);",
 		[TestCase]
 		public void CommonParser()
 		{
-			var parser = new BVE5CommonParser("BveTs Station List 1.01", "Station list");
+			var parser = new BVE5CommonParser("BveTs Station List", "Station list");
 			var stmt = parser.ParseOneStatement("staA, A, 10:30:00, 10:30:30, 20, 10:30:00, 0, 10, 0.3, soundStaA, soundStaADeperture, 0.05, 5\n");
 			var expected1 = new List<TypeDescriber>{
 				TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
-					TypeDescriber.Create(NodeType.Sequence, new List<TypeDescriber>{
+					TypeDescriber.Create(NodeType.Invocation, new List<TypeDescriber>{
+				        TypeDescriber.Create(NodeType.Identifier, null),
 				    	TypeDescriber.Create(NodeType.Literal, null),		//staA
 				        TypeDescriber.Create(NodeType.Literal, null),		//A
 				        TypeDescriber.Create(NodeType.TimeLiteral, null),	//10:30:00
@@ -216,7 +259,7 @@ Track[2].Position(5.4, 0, 100, 0);",
 		[TestCase]
 		public void InitFileParser()
 		{
-			var parser = new InitFileParser("BveTs Vehicle Parameters 1.01", "Vehicle parameters");
+			var parser = new InitFileParser("BveTs Vehicle Parameters", "Vehicle parameters");
 			var stmt = parser.ParseOneStatement("[Cab]");
 			var expected1 = new List<TypeDescriber>{
 				TypeDescriber.Create(NodeType.SectionStmt, new List<TypeDescriber>{

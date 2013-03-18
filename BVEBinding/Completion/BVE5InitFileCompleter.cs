@@ -39,7 +39,8 @@ namespace BVE5Binding.Completion
 				editor.ShowCompletionWindow(list);
 				return Tuple.Create(true, CodeCompletionKeyPressResult.Completed);
 			}else if(char.IsLetter(ch)){
-				var tree = parser.Parse(editor.Document.GetText(0, editor.Caret.Offset), "<string>");
+				var caret_line_num = editor.Caret.Line;
+				var tree = parser.Parse(editor.Document.GetText(0, editor.Document.PositionToOffset(caret_line_num, 1)), "<string>");
 				var section_stmts = tree.FindNodes(node => node.Type == NodeType.SectionStmt).OfType<SectionStatement>();	//retrieve all section statements up to the current caret position
 				var context_stmt = section_stmts.LastOrDefault();
 				

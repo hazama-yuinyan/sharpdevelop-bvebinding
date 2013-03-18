@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using BVE5Language.Ast;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
@@ -19,16 +20,17 @@ using ICSharpCode.NRefactory.TypeSystem;
 namespace BVE5Language.Parser
 {
 	/// <summary>
-	/// Description of InitFileParser.
+	/// Parser for BVE5 init files.
 	/// </summary>
 	public class InitFileParser
 	{
 		static object parse_lock = new object();
 		
-		readonly string[] HeaderStringSplit;
 		readonly string FileTypeName;
+		readonly Regex MetaHeaderRegexp;
 		
 		ErrorReportPrinter error_report_printer = new ErrorReportPrinter(null);
+		bool has_error_reported = false, enable_strict_parsing = true;
 
 		public bool HasErrors {
 			get {
@@ -66,6 +68,7 @@ namespace BVE5Language.Parser
 		void AddError(ErrorCode errorCode, int line, int column, string message, List<string> extraInfos = null)
 		{
 			error_report_printer.Print(new ErrorMessage((int)errorCode, new TextLocation(line, column), message, extraInfos));
+			has_error_reported = true;
 		}
 		
 		/// <summary>
@@ -75,7 +78,7 @@ namespace BVE5Language.Parser
 		/// <param name="fileTypeName">The file type name of which the file is. This will be used for displaying type-specific errors.</param>
 		public InitFileParser(string headerString, string fileTypeName)
 		{
-			HeaderStringSplit = headerString.Split(' ');
+			MetaHeaderRegexp = new Regex(headerString + @"\s*([\d.]+)", RegexOptions.Compiled);
 			FileTypeName = fileTypeName;
 		}
 		
@@ -88,6 +91,7 @@ namespace BVE5Language.Parser
 		/// </param>
 		public SyntaxTree Parse(string filePath)
 		{
+			enable_strict_parsing = true;
 			return ParseImpl(File.ReadAllText(filePath).Replace(Environment.NewLine, "\n"), filePath, true);
 		}
 
@@ -102,6 +106,7 @@ namespace BVE5Language.Parser
 		/// </param>
 		public SyntaxTree Parse(string programSrc, string fileName = "")
 		{
+			enable_strict_parsing = true;
 			return ParseImpl(programSrc.Replace(Environment.NewLine, "\n"), fileName, false);
 		}
 
@@ -116,6 +121,7 @@ namespace BVE5Language.Parser
 		/// </param>
 		public SyntaxTree Parse(Stream stream, string fileName = "")
 		{
+			enable_strict_parsing = true;
 			using(var reader = new StreamReader(stream)){
 				return ParseImpl(reader.ReadToEnd().Replace(Environment.NewLine, "\n"), fileName, true);
 			}
@@ -129,10 +135,11 @@ namespace BVE5Language.Parser
 		/// Source string.
 		/// </param>
         /// <param name="returnAsSyntaxTree">
-        /// Flag determining whether the method should return the result as a SyntaxTree or not.
+        /// Whether the method should return the result as a SyntaxTree or not.
         /// </param>
 		public AstNode ParseOneStatement(string src, bool returnAsSyntaxTree = false)
 		{
+			enable_strict_parsing = false;
 			var tree = ParseImpl(src.Replace(Environment.NewLine, "\n"), "<string>", false);
             if(!returnAsSyntaxTree){
 				var res = tree.Body.First();
@@ -153,28 +160,37 @@ namespace BVE5Language.Parser
 				
 				using(var reader = new StringReader(src)){
 					var lexer = new InitFileLexer(reader);
+					lexer.Advance();
+					
+					string version_str = "unknown";
 					if(parseHeader){
 						int cur_line = lexer.CurrentLine;
-						var tokens = new List<Token>();
+						var meta_header = new StringBuilder();
 						while(lexer.Current != Token.EOF && lexer.CurrentLine == cur_line){
+							meta_header.Append(lexer.Current.Literal);
 							lexer.Advance();
-							tokens.Add(lexer.Current);
 						}
-						if(tokens.Count != 3 || tokens[0].Literal != HeaderStringSplit[0] || tokens[1].Literal != HeaderStringSplit[1] ||
-						   tokens[2].Literal != HeaderStringSplit[2])
-							throw new BVE5ParserException(1, 1, "Invalid " + FileTypeName + " file!");
-					}else{
-						lexer.Advance();
+						var meta_header_match = MetaHeaderRegexp.Match(meta_header.ToString());
+						if(!meta_header_match.Success)
+							AddError(ErrorCode.InvalidFileHeader, 1, 1, "Invalid " + FileTypeName + " file!");
+						else
+							version_str = meta_header_match.Groups[1].Value;
 					}
+					if(lexer.Current.Kind == TokenKind.EOL)
+						lexer.Advance();
 
 					BVE5Language.Ast.Statement stmt = null;
 					var stmts = new List<BVE5Language.Ast.Statement>();
 					while(lexer.Current != Token.EOF){
 						stmt = ParseStatement(lexer);
-						stmts.Add(stmt);
+						if(enable_strict_parsing && !has_error_reported || !enable_strict_parsing)
+							stmts.Add(stmt);
+						
+						if(has_error_reported)
+							has_error_reported = false;
 					}
 
-					return AstNode.MakeSyntaxTree(stmts, fileName, new TextLocation(1, 1), stmt.EndLocation);
+					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, new TextLocation(1, 1), stmts.Last().EndLocation);
 				}
 			}
 		}
@@ -195,16 +211,23 @@ namespace BVE5Language.Parser
 			}
 			
 			token = lexer.Current;
-			if(token.Kind != TokenKind.EOL)
+			if(token.Kind != TokenKind.EOL){
 				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected EOL but got " + token.Literal + ".");
+				if(enable_strict_parsing)
+					return null;
+			}else{
+				lexer.Advance();
+			}
 			
-			lexer.Advance();
-			return AstNode.MakeStatement(expr, expr.StartLocation, lexer.Current.StartLoc);
+			token = lexer.Current;
+			return AstNode.MakeStatement(expr, expr.StartLocation, token.StartLoc);
 		}
 		
 		// '[' identifier ']' '\n'
 		SectionStatement ParseSectionStatement(InitFileLexer lexer)
 		{
+			if(has_error_reported) return null;
+			
 			Token token = lexer.Current;
 			var start_loc = token.StartLoc;
 			Debug.Assert(token.Literal == "[", "Really meant a section statement?");
@@ -212,15 +235,23 @@ namespace BVE5Language.Parser
 			lexer.Advance();
 			Identifier ident = ParseIdent(lexer);
 			token = lexer.Current;
-			if(token.Literal != "]")
+			if(token.Literal != "]"){
 				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected ']' but got " + token.Literal + ".");
+				if(enable_strict_parsing)
+					return null;
+			}else{
+				lexer.Advance();
+			}
 			
-			lexer.Advance();
 			token = lexer.Current;
-			if(token.Kind != TokenKind.EOL)
+			if(token.Kind != TokenKind.EOL){
 				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected EOL but got " + token.Literal + ".");
+				if(enable_strict_parsing)
+					return null;
+			}else{
+				lexer.Advance();
+			}
 			
-			lexer.Advance();
 			token = lexer.Current;
 			return AstNode.MakeSectionStatement(ident, start_loc, token.StartLoc);
 		}
@@ -228,16 +259,22 @@ namespace BVE5Language.Parser
 		// identifier '=' sequence
 		DefinitionExpression ParseDefinition(InitFileLexer lexer)
 		{
+			if(has_error_reported) return null;
+			
 			Identifier lhs = ParseIdent(lexer);
 			Token token = lexer.Current;
-			if(token.Literal != "=")
+			if(token.Literal != "="){
 				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected '=' but got " + token.Literal + ".");
+				if(enable_strict_parsing)
+					return null;
+			}else{
+				lexer.Advance();
+			}
 			
-			lexer.Advance();
 			SequenceExpression rhs = ParseSequence(lexer);
 			Expression expr = rhs;
-			if(rhs.Expressions.Count() == 1){
-				var tmp = rhs.Expressions.First();
+			if(rhs.Expressions.Count() == 1){		//Here, we'll simplify a list of one expression to a solo expression.
+				var tmp = rhs.Expressions.First();	//This is needed because some definitions have more than one right-hand-side expressions.
 				tmp.Remove();
 				expr = tmp;
 			}
@@ -247,6 +284,8 @@ namespace BVE5Language.Parser
 		// expr {',' expr}
 		SequenceExpression ParseSequence(InitFileLexer lexer)
 		{
+			if(has_error_reported) return null;
+			
 			Token token = lexer.Current;
 			var start_loc = token.StartLoc;
 			Expression expr = null;

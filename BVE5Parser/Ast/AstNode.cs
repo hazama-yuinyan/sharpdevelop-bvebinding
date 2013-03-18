@@ -531,9 +531,9 @@ namespace BVE5Language.Ast
 			return new LetStatement(expr, start, end);
 		}
 
-		internal static SyntaxTree MakeSyntaxTree(List<Statement> body, string name, TextLocation start, TextLocation end)
+		internal static SyntaxTree MakeSyntaxTree(List<Statement> body, string name, string version, TextLocation start, TextLocation end)
 		{
-			return new SyntaxTree(body, name, start, end);
+			return new SyntaxTree(body, name, version, start, end);
 		}
 
 		internal static TimeFormatLiteral MakeTimeFormat(int hour, int min, int sec, TextLocation start, TextLocation end)

@@ -17,7 +17,7 @@ namespace BVE5Language.Parser
 		KeywordToken,
 
 		/// <summary>
-		/// Represents an identifier.
+		/// Represents an identifier token.
 		/// </summary>
 		/// <remarks>
 		/// The diffrence between the identifier and the string literal is that identifiers must start with a letter.

@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using BVE5Language.Ast;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Editor.CodeCompletion;
@@ -24,6 +26,7 @@ namespace BVE5Binding.Completion
 	public class BVE5RouteFileCompleter : ICodeCompleter
 	{
 		string current_context_type = null;
+		static readonly Regex CodeSnippetFinder = new Regex(@"([a-zA-Z]+)(?:\[.+?\])?\.([a-zA-Z0-9]+)", RegexOptions.Compiled);
 		
 		public Tuple<bool, CodeCompletionKeyPressResult> TryComplete(ITextEditor editor, char ch, IInsightWindowHandler insightWindowHandler)
 		{
@@ -31,6 +34,14 @@ namespace BVE5Binding.Completion
 			if(ch == '['){
 				var line = editor.Document.GetLineForOffset(cursor_offset);
 				current_context_type = line.Text.Trim();
+				var provider = new UserDefinedNameCompletionItemProvider(current_context_type);
+				var list = provider.Provide(editor);
+				if(list != null){
+					editor.ShowCompletionWindow(list);
+					return Tuple.Create(true, CodeCompletionKeyPressResult.Completed);
+				}else{
+					return Tuple.Create(false, CodeCompletionKeyPressResult.None);
+				}
 			}else if(ch == ',' && CodeCompletionOptions.InsightRefreshOnComma && CodeCompletionOptions.InsightEnabled){
 				IInsightWindow insight_window;
 				if(insightWindowHandler.InsightRefreshOnComma(editor, ch, out insight_window))
@@ -45,7 +56,8 @@ namespace BVE5Binding.Completion
 					if(type_def.Name == type_name){
 						var names = type_def.Members
 							.Where(member => member.Name != "indexer")
-							.Select(m => m.Name);
+							.Select(m => m.Name)
+							.Distinct();
 						var list = CompletionDataHelper.CreateListFromString(names);
 						editor.ShowCompletionWindow(list);
 						result = CodeCompletionKeyPressResult.Completed;
@@ -77,13 +89,14 @@ namespace BVE5Binding.Completion
 		internal IInsightItem[] ProvideInsight(ITextEditor editor)
 		{
 			var line = editor.Document.GetLineForOffset(editor.Caret.Offset);
-			var snippets = line.Text.Trim().Split('.');
-			var type_name = snippets[0].Split('[');
-			var annots = BVE5ResourceManager.GetRouteFileMemberAnnotation(type_name[0], snippets[1]);
+			var match = CodeSnippetFinder.Match(line.Text);
+			var type_name = match.Groups[1].Value;
+			var command_name = match.Groups[2].Value;
+			var annots = BVE5ResourceManager.GetRouteFileMemberAnnotation(type_name, command_name);
 			
 			var res = new List<IInsightItem>();
 			foreach(var annot in annots){
-				var item = new CommandInsightItem(CreateHeaderText(type_name[0], snippets[1], annot.Args), BVE5ResourceManager.GetDocumentationString(annot.Doc));
+				var item = new CommandInsightItem(CreateHeaderText(type_name, command_name, annot.Args), BVE5ResourceManager.GetDocumentationString(annot.Doc));
 				res.Add(item);
 			}
 			return res.ToArray();

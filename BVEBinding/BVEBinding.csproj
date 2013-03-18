@@ -81,6 +81,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -113,6 +114,7 @@
     <Compile Include="Completion\CommandInsightItem.cs" />
     <Compile Include="Completion\CompletionDataHelper.cs" />
     <Compile Include="Completion\ICodeCompleter.cs" />
+    <Compile Include="Completion\UserDefinedNameCompletionItemProvider.cs" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="Dialogs\CalculateCantDialog.xaml.cs">
       <DependentUpon>CalculateCantDialog.xaml</DependentUpon>

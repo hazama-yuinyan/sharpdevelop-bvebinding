@@ -84,17 +84,17 @@ namespace BVE5Language.Ast
 	{
 		TResult Walk(BinaryExpression binary);
 		TResult Walk(DefinitionExpression def);
-		TResult Walk(Identifier node);
-		TResult Walk(IndexerExpression node);
-		TResult Walk(InvocationExpression node);
+		TResult Walk(Identifier ident);
+		TResult Walk(IndexerExpression indexer);
+		TResult Walk(InvocationExpression invocation);
 		TResult Walk(LetStatement letStmt);
-		TResult Walk(LiteralExpression node);
-		TResult Walk(MemberReferenceExpression node);
+		TResult Walk(LiteralExpression literal);
+		TResult Walk(MemberReferenceExpression memRef);
 		TResult Walk(SectionStatement secStmt);
 		TResult Walk(SequenceExpression sequence);
-		TResult Walk(Statement node);
-		TResult Walk(SyntaxTree node);
-		TResult Walk(TimeFormatLiteral node);
+		TResult Walk(Statement stmt);
+		TResult Walk(SyntaxTree tree);
+		TResult Walk(TimeFormatLiteral timeLiteral);
 		TResult Walk(UnaryExpression unary);
 	}
 }

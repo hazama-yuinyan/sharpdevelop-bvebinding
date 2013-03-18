@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using BVE5Binding.Completion;
 using BVE5Language.TypeSystem;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
@@ -62,6 +63,30 @@ namespace BVE5Binding
 		{
 			project = new BVE5ProjectContent().AddAssemblyReferences(BVEBuiltins.GetBuiltinAssembly()) as BVE5ProjectContent;
 			compilation = project.CreateCompilation() as BVE5Compilation;
+		}
+		
+		internal static BVE5FileKind GetFileKindFromTypeName(string typeName)
+		{
+			switch(typeName){
+			case "Structure":
+				return BVE5FileKind.StructureList;
+				
+			case "Station":
+				return BVE5FileKind.StationList;
+				
+			case "Signal":
+				return BVE5FileKind.SignalAspectsList;
+				
+			case "Sound":
+			case "Sound3D":
+				return BVE5FileKind.SoundList;
+				
+			case "Train":
+				return BVE5FileKind.TrainFile;
+				
+			default:
+				throw new ArgumentException("Unknown type name!");
+			}
 		}
 		
 		public BVE5LanguageBinding()

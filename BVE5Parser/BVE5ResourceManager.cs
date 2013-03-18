@@ -77,7 +77,7 @@ namespace BVE5Language
 		public static readonly Dictionary<string, CommonFileCommandInfo> CommonFileSemanticInfos;
 		public static readonly Dictionary<string, InitFileSemanticInfo> InitFileSemanticInfos;
 		static readonly Dictionary<string, string> Documentations;
-		static readonly Regex variable_name_searcher = new Regex(@"\$(.+)", RegexOptions.Compiled);
+		static readonly Regex VariableNameFinder = new Regex(@"\$(.+)", RegexOptions.Compiled);
 		
 		static BVE5ResourceManager()
 		{
@@ -146,7 +146,7 @@ namespace BVE5Language
         
         public static string GetDocumentationString(string docName)
         {
-        	var match = variable_name_searcher.Match(docName);
+        	var match = VariableNameFinder.Match(docName);
         	if(!match.Success)
         		throw new InvalidOperationException("Unknown type of input! Variables must begin with a '$'!");
         	

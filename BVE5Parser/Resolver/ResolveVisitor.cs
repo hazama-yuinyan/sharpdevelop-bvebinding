@@ -370,6 +370,7 @@ namespace BVE5Language.Resolver
 		}
 		#endregion
 		
+		#region Statement types
 		public ResolveResult Walk(LetStatement letStmt)
 		{
 			return null; //TODO: implement it
@@ -391,19 +392,19 @@ namespace BVE5Language.Resolver
                 StoreResult(stmt.Expr, result);
                 return result;
             }else{
-            	StoreResult(stmt.Expr, child_rr);
             	return null;
             }
 		}
+		#endregion
 
 		public ResolveResult Walk(SyntaxTree unit)
 		{
             BVE5Resolver previous_resolver = resolver;
             try{
-            	if(unresolved_file != null){
+            	if(unresolved_file != null)
             		resolver = resolver.WithCurrentTypeDefinition(toplevel_type_name);
-            	}
-                ScanChildren(unit);
+
+            	ScanChildren(unit);
                 return VoidResult;
             }
             finally{
