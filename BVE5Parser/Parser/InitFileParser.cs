@@ -75,10 +75,10 @@ namespace BVE5Language.Parser
 		/// Initializes a new instance of <see cref="BVE5Language.Parser.InitFileParser"/>.
 		/// </summary>
 		/// <param name="headerString">The header text that will be verified if parseHeader option is specified.</param>
-		/// <param name="fileTypeName">The file type name of which the file is. This will be used for displaying type-specific errors.</param>
+		/// <param name="fileTypeName">The file type name which the parser is supposed to parse. This will be used for displaying type-specific errors.</param>
 		public InitFileParser(string headerString, string fileTypeName)
 		{
-			MetaHeaderRegexp = new Regex(headerString + @"\s*([\d.]+)", RegexOptions.Compiled);
+			MetaHeaderRegexp = new Regex(headerString + @"\s*([\d.]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 			FileTypeName = fileTypeName;
 		}
 		
@@ -104,10 +104,13 @@ namespace BVE5Language.Parser
 		/// <param name='fileName'>
 		/// File name. This is used for the SyntaxTree node.
 		/// </param>
-		public SyntaxTree Parse(string programSrc, string fileName = "")
+		/// <param name='parseHeader'>
+		/// Whether it should parse the meta header.
+		/// </param>
+		public SyntaxTree Parse(string programSrc, string fileName = "", bool parseHeader = false)
 		{
 			enable_strict_parsing = true;
-			return ParseImpl(programSrc.Replace(Environment.NewLine, "\n"), fileName, false);
+			return ParseImpl(programSrc.Replace(Environment.NewLine, "\n"), fileName, parseHeader);
 		}
 
 		/// <summary>
@@ -164,17 +167,19 @@ namespace BVE5Language.Parser
 					
 					string version_str = "unknown";
 					if(parseHeader){
-						int cur_line = lexer.CurrentLine;
 						var meta_header = new StringBuilder();
-						while(lexer.Current != Token.EOF && lexer.CurrentLine == cur_line){
+						while(lexer.Current != Token.EOF && lexer.Current.Kind != TokenKind.EOL){
 							meta_header.Append(lexer.Current.Literal);
+							meta_header.Append(' ');
 							lexer.Advance();
 						}
 						var meta_header_match = MetaHeaderRegexp.Match(meta_header.ToString());
-						if(!meta_header_match.Success)
+						if(!meta_header_match.Success){
 							AddError(ErrorCode.InvalidFileHeader, 1, 1, "Invalid " + FileTypeName + " file!");
-						else
+							return null;
+						}else{
 							version_str = meta_header_match.Groups[1].Value;
+						}
 					}
 					if(lexer.Current.Kind == TokenKind.EOL)
 						lexer.Advance();
@@ -190,7 +195,7 @@ namespace BVE5Language.Parser
 							has_error_reported = false;
 					}
 
-					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, new TextLocation(1, 1), stmts.Last().EndLocation);
+					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, new TextLocation(1, 1), stmts.Last().EndLocation, Errors.ToList());
 				}
 			}
 		}
@@ -208,6 +213,16 @@ namespace BVE5Language.Parser
 			}else{
 				AddError(ErrorCode.SyntaxError, token.Line, token.Column,
 					     "A statement must start with an identifier or the sign '['.");
+				while(token.Kind != TokenKind.EOL){
+					if(token.Kind == TokenKind.EOF){
+						AddError(ErrorCode.UnexpectedEOF, token.Line, token.Column, "Unexpected EOF!");
+						return null;
+					}
+					lexer.Advance();
+					token = lexer.Current;
+				}
+				lexer.Advance();
+				return null;
 			}
 			
 			token = lexer.Current;
@@ -295,8 +310,10 @@ namespace BVE5Language.Parser
 				case TokenKind.Identifier:
 					if(token.Literal.Contains("."))
 						expr = ParsePathLiteral(lexer);
-					else
+					else if(token.Literal.StartsWith("#"))
 						expr = ParseColorLiteral(lexer);
+					else
+						expr = ParseLiteral(lexer);
 					
 					break;
 					
@@ -339,6 +356,13 @@ namespace BVE5Language.Parser
             var sb = new StringBuilder();
 
             while(token.Kind != TokenKind.EOL && token.Literal != ","){
+            	if(token.Kind == TokenKind.EOF){
+            		AddError(ErrorCode.UnexpectedEOF, token.Line, token.Column, "Unexpected EOF!");
+            		if(enable_strict_parsing)
+            			return null;
+            		else
+            			break;
+            	}
                 sb.Append(token.Literal);
                 lexer.Advance();
                 token = lexer.Current;
@@ -355,16 +379,18 @@ namespace BVE5Language.Parser
         	return AstNode.MakeLiteral(token.Literal, token.StartLoc, lexer.Current.StartLoc);
         }
 
-		// number
+		// number | any-string
 		LiteralExpression ParseLiteral(InitFileLexer lexer)
 		{
 			Token token = lexer.Current;
-			Debug.Assert(token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral, "Really meant a literal?");
+			Debug.Assert(token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral || token.Kind == TokenKind.Identifier, "Really meant a literal?");
 			lexer.Advance();
 			if(token.Kind == TokenKind.FloatLiteral)
 				return AstNode.MakeLiteral(Convert.ToDouble(token.Literal), token.StartLoc, token.EndLoc);
-			else
+			else if(token.Kind == TokenKind.IntegerLiteral)
 				return AstNode.MakeLiteral(Convert.ToInt32(token.Literal), token.StartLoc, token.EndLoc);
+			else
+				return AstNode.MakeLiteral(token.Literal, token.StartLoc, token.EndLoc);
 		}
 		#endregion
 	}

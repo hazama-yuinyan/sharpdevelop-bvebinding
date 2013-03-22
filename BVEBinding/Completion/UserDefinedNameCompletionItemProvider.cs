@@ -67,9 +67,6 @@ namespace BVE5Binding.Completion
 		ICompletionItemList ProvideImpl(ITextEditor editor, UserDefinedNameCollector collector)
 		{
 			var tree = ParserFactory.CreateRouteParser().Parse(editor.Document.Text, editor.FileName, true);
-			if(tree.Errors.Any())
-				return null;
-			
 			var names = tree.AcceptWalker(collector);
 			var list = CompletionDataHelper.CreateListFromString(names);
 			return list;

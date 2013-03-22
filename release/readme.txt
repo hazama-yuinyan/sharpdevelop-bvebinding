@@ -1,6 +1,6 @@
-BVE5 Language Binding for SharpDevelop alpha release
+BVE5 Language Binding for SharpDevelop beta release
 
-3/07/2013
+3/22/2013
 (C) HAZAMA
 
 
@@ -14,6 +14,8 @@ I only have tested on the SharpDevelop alpha release version(4.3.0.9338). So I s
 
 --History--
 3/07/2013 alpha version released
+
+3/22/2013 beta version released
 
 Happy coding for BVE5 routes!
 

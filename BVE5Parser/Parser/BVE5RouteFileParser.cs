@@ -98,7 +98,7 @@ namespace BVE5Language.Parser
 	{
 		internal static object parse_lock = new object();
 
-		readonly Regex MetaHeaderRegexp = new Regex(@"BveTs Map\s*([\d.]+)", RegexOptions.Compiled);
+		readonly Regex MetaHeaderRegexp = new Regex(@"BveTs Map\s*([\d.]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		ErrorReportPrinter error_report_printer = new ErrorReportPrinter(null);
 		bool has_error_reported = false, enable_strict_parsing = true;
 
@@ -139,6 +139,19 @@ namespace BVE5Language.Parser
 		{
 			error_report_printer.Print(new ErrorMessage((int)errorCode, new TextLocation(line, column), message, extraInfos));
 			has_error_reported = true;
+		}
+		
+		void TryRecovery(BVE5RouteFileLexer lexer)
+		{
+			var start_line = lexer.CurrentLine;
+			Token token = lexer.Current;
+			while(token.Kind != TokenKind.EOF){
+				if(lexer.CurrentLine != start_line)
+					return;
+				
+				lexer.Advance();
+				token = lexer.Current;
+			}
 		}
 
 		#region public surface
@@ -227,13 +240,16 @@ namespace BVE5Language.Parser
 						var meta_header = new StringBuilder();
 						while(lexer.Current != Token.EOF && lexer.CurrentLine == cur_line){
 							meta_header.Append(lexer.Current.Literal);
+							meta_header.Append(' ');
 							lexer.Advance();
 						}
 						var meta_header_match = MetaHeaderRegexp.Match(meta_header.ToString());
-						if(!meta_header_match.Success)
+						if(!meta_header_match.Success){
 							AddError(ErrorCode.InvalidFileHeader, 1, 1, "Invalid Map file!");
-						else
+							return null;
+						}else{
 							version_str = meta_header_match.Groups[1].Value;
+						}
 					}
 
 					BVE5Language.Ast.Statement stmt = null;
@@ -247,7 +263,7 @@ namespace BVE5Language.Parser
 							has_error_reported = false;
 					}
 
-					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, new TextLocation(1, 1), stmts.Last().EndLocation);
+					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, new TextLocation(1, 1), stmts.Last().EndLocation, Errors.ToList());
 				}
 			}
 		}
@@ -283,6 +299,7 @@ namespace BVE5Language.Parser
 				
 			default:
 				AddError(ErrorCode.SyntaxError, token.Line, token.Column, "A statement must start with a keyword, an integer literal or an identifier.");
+				TryRecovery(lexer);
 				return null;
 			}
 
@@ -479,6 +496,13 @@ namespace BVE5Language.Parser
             var sb = new StringBuilder();
 
             while(token.Literal != "," && token.Literal != ")"){
+            	if(token.Kind == TokenKind.EOF){
+            		AddError(ErrorCode.UnexpectedEOF, token.Line, token.Column, "Unexpected EOF!");
+            		if(enable_strict_parsing)
+            			return null;
+            		else
+            			break;
+            	}
                 sb.Append(token.Literal);
                 lexer.Advance();
                 token = lexer.Current;
@@ -515,20 +539,30 @@ namespace BVE5Language.Parser
 			Token start_token = lexer.Current;
 
 			for(int i = 0; i < 3; ++i){
-				if(token.Kind == TokenKind.EOF)
+				if(token.Kind == TokenKind.EOF){
 					AddError(ErrorCode.UnexpectedEOF, token.Line, token.Column, "Unexpected EOF!");
-
+					if(enable_strict_parsing)
+						return null;
+					else
+						break;
+				}
+				
 				nums[i] = Convert.ToInt32(token.Literal);
 
 				lexer.Advance();
 				if(i == 2) break;
 				
 				token = lexer.Current;
-				if(token.Kind == TokenKind.EOF)
+				if(token.Kind == TokenKind.EOF){
 					AddError(ErrorCode.UnexpectedEOF, token.Line, token.Column, "Unexpected EOF!");
-				else if(token.Literal != ":")
+					if(enable_strict_parsing)
+						return null;
+					else
+						break;
+				}else if(token.Literal != ":"){
 					AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected ':' but got " + token.Literal);
-
+				}
+				
 				lexer.Advance();
 				token = lexer.Current;
 			}

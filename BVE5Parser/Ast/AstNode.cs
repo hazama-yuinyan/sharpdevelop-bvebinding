@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace BVE5Language.Ast
 {
@@ -531,9 +532,9 @@ namespace BVE5Language.Ast
 			return new LetStatement(expr, start, end);
 		}
 
-		internal static SyntaxTree MakeSyntaxTree(List<Statement> body, string name, string version, TextLocation start, TextLocation end)
+		internal static SyntaxTree MakeSyntaxTree(List<Statement> body, string name, string version, TextLocation start, TextLocation end, List<Error> errors)
 		{
-			return new SyntaxTree(body, name, version, start, end);
+			return new SyntaxTree(body, name, version, start, end, errors);
 		}
 
 		internal static TimeFormatLiteral MakeTimeFormat(int hour, int min, int sec, TextLocation start, TextLocation end)

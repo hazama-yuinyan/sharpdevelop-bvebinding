@@ -39,10 +39,10 @@ namespace BVE5Language.Ast
 	public class SyntaxTree : AstNode
 	{
 		readonly string name, version;
-		List<Error> errors = new List<Error>();
+		List<Error> errors;
 		
-		public List<Error> Errors {
-			get { return errors; }
+		public List<Error> Errors{
+			get{return errors;}
 		}
 
 		public IEnumerable<Statement> Body{
@@ -66,7 +66,7 @@ namespace BVE5Language.Ast
 			}
 		}
 
-		public SyntaxTree(List<Statement> body, string treeName, string versionString, TextLocation startLoc, TextLocation endLoc)
+		public SyntaxTree(List<Statement> body, string treeName, string versionString, TextLocation startLoc, TextLocation endLoc, List<Error> errors)
 			: base(startLoc, endLoc)
 		{
 			foreach(var stmt in body)
@@ -74,6 +74,7 @@ namespace BVE5Language.Ast
 			
 			name = treeName;
 			version = versionString;
+			this.errors = errors;
 		}
 
 		public override void AcceptWalker(AstWalker walker)

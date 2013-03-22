@@ -8,7 +8,9 @@
 	</Manifest>
 	
 	<Runtime>
-		<Import assembly="BVE5Binding.dll"/>
+		<Import assembly="BVE5Binding.dll">
+			<ConditionEvaluator name="BVE5HeaderVerifier" class="BVE5Binding.BVEHeaderConditionEvaluator"/>
+		</Import>
 		<Import assembly="BVE5Language.dll"/>
 		<Import assembly="ICSharpCode.NRefactory.dll"/>
 		<Import assembly="Mono.CSharp.dll"/>
@@ -52,7 +54,7 @@
 	<Path name="/SharpDevelop/Workbench/MainMenu">
 		<Condition name="TextContent" textcontent="BVE5">
 			<MenuItem id="BVE5Route" label="BVE5" type="Menu">
-				<Condition name = "WindowActive" activewindow="ICSharpCode.SharpDevelop.Editor.ITextEditorProvider" action="Disable">
+				<Condition name = "BVE5HeaderVerifier" headercontent="bvets map\s+[\d.]+" ignore_case="true" action="Disable">
 					<MenuItem id="ShiftPositions"
 							  label="${res:BVE5Menu.ShiftPositionsEntry}"
 							  class="BVE5Binding.Commands.ShiftPositionsCommand"/>

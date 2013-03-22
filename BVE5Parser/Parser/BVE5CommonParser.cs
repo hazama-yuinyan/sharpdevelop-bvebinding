@@ -77,7 +77,7 @@ namespace BVE5Language.Parser
 		/// <param name="fileKindName">The file type name of which the file is. This will be used for displaying type-specific errors.</param>
 		public BVE5CommonParser(string headerString, string fileKindName)
 		{
-			MetaHeaderRegexp = new Regex(headerString + @"\s+([\d.]+)", RegexOptions.Compiled);
+			MetaHeaderRegexp = new Regex(headerString + @"\s+([\d.]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 			FileKindName = fileKindName;
 		}
 		
@@ -103,10 +103,13 @@ namespace BVE5Language.Parser
 		/// <param name='fileName'>
 		/// File name. This is used for the SyntaxTree node.
 		/// </param>
-		public SyntaxTree Parse(string programSrc, string fileName = "")
+		/// <param name="parseHeader">
+		/// Whether it should parse the meta header.
+		/// </param>
+		public SyntaxTree Parse(string programSrc, string fileName = "", bool parseHeader = false)
 		{
 			enable_strict_parsing = true;
-			return ParseImpl(programSrc.Replace(Environment.NewLine, "\n"), fileName, false);
+			return ParseImpl(programSrc.Replace(Environment.NewLine, "\n"), fileName, parseHeader);
 		}
 
 		/// <summary>
@@ -167,10 +170,12 @@ namespace BVE5Language.Parser
 						lexer.Advance();
 						
 						var meta_header_match = MetaHeaderRegexp.Match(token.Literal);
-						if(!meta_header_match.Success)
+						if(!meta_header_match.Success){
 							AddError(ErrorCode.InvalidFileHeader, 1, 1, "Invalid " + FileKindName + " file!");
-						else
+							return null;
+						}else{
 							version_str = meta_header_match.Groups[1].Value;
+						}
 					}
 					
 					if(lexer.Current.Kind == TokenKind.EOL)
@@ -187,7 +192,7 @@ namespace BVE5Language.Parser
 							has_error_reported = false;
 					}
 
-					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, new TextLocation(1, 1), stmts.Last().EndLocation);
+					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, new TextLocation(1, 1), stmts.Last().EndLocation, Errors.ToList());
 				}
 			}
 		}
@@ -281,20 +286,32 @@ namespace BVE5Language.Parser
 			Token start_token = lexer.Current;
 
 			for(int i = 0; i < 3; ++i){
-				if(token.Kind == TokenKind.EOF)
+				if(token.Kind == TokenKind.EOF){
 					AddError(ErrorCode.UnexpectedEOF, token.Line, token.Column, "Unexpected EOF!");
-
+					if(enable_strict_parsing)
+						return null;
+					else
+						break;
+				}
+				
 				nums[i] = Convert.ToInt32(token.Literal);
 
 				lexer.Advance();
 				if(i == 2) break;
 				
 				token = lexer.Current;
-				if(token.Kind == TokenKind.EOF)
+				if(token.Kind == TokenKind.EOF){
 					AddError(ErrorCode.UnexpectedEOF, token.Line, token.Column, "Unexpected EOF!");
-				else if(token.Literal != ":")
+					if(enable_strict_parsing)
+						return null;
+					else
+						break;
+				}else if(token.Literal != ":"){
 					AddError(ErrorCode.SyntaxError, token.Line, token.Column, "Expected ':' but got " + token.Literal);
-
+					if(enable_strict_parsing)
+						return null;
+				}
+				
 				lexer.Advance();
 				token = lexer.Current;
 			}

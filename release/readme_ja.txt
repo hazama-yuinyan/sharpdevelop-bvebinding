@@ -1,6 +1,6 @@
-BVE5 Language Binding for SharpDevelop alpha release
+BVE5 Language Binding for SharpDevelop beta release
 
-2013/3/07
+2013/3/22
 (C) HAZAMA
 
 
@@ -17,6 +17,8 @@ BVE5 Language Binding for SharpDevelopアドインをダウンロードしていただき、ありが
 
 --更新履歴--
 2013/3/07 アルファ版公開
+
+2013/3/22 ベータ版公開
 
 ブログURL: http://hazama1616.blogspot.com
 最新版公開所: https://github.com/hazama-yuinyan/sharpdevelop-bvebinding

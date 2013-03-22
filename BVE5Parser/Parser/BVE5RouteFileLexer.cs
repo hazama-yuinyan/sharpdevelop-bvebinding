@@ -59,7 +59,7 @@ namespace BVE5Language.Parser
 		public void SetInitialLocation(int line, int column)
 		{
 			if(token != null)
-				throw new InvalidOperationException("SetInitialLocation should not be called after Advance is called");
+				throw new InvalidOperationException("SetInitialLocation should not be called after Advance is called for the first time");
 			
 			line_num = line;
 			column_num = column;

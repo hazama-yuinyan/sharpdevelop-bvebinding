@@ -22,7 +22,6 @@ namespace BVE5Language.Ast
 		
 		public SectionStatement(Identifier sectionName, TextLocation start, TextLocation end) : base(sectionName, start, end)
 		{
-			AddChild(sectionName);
 		}
 		
 		public override NodeType Type {

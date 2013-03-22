@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="BVE5BracketSearcher.cs" />
     <Compile Include="BVE5LanguageBinding.cs" />
+    <Compile Include="BVEHeaderCondition.cs" />
     <Compile Include="Commands\CalculateCantCommand.cs" />
     <Compile Include="Commands\CantCalculator.cs" />
     <Compile Include="Completion\BVE5CommonFileCompleter.cs" />
