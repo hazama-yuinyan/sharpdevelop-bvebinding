@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-
+using ICSharpCode.NRefactory.Utils;
 using Newtonsoft.Json;
-
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
-
 using BVE5Language.TypeSystem;
 
 namespace BVE5Language.Resolver
@@ -55,11 +53,12 @@ namespace BVE5Language.Resolver
 				user_defined_name_lookup_cache = new Dictionary<string, ResolveResult>();
 		}
 		
-		public BVE5Resolver(BVE5Compilation compilation, SimpleTypeResolveContext context, Dictionary<string, ResolveResult> nameLookupCache)
+		public BVE5Resolver(BVE5Compilation compilation, SimpleTypeResolveContext context, Dictionary<string, ResolveResult> nameLookupCache, ImmutableStack<IVariable> stack)
 		{
 			this.compilation = compilation;
 			this.context = context;
 			user_defined_name_lookup_cache = nameLookupCache;
+			local_variable_stack = stack;
 		}
 		#endregion
 		
@@ -72,12 +71,36 @@ namespace BVE5Language.Resolver
 		
 		public BVE5Resolver WithCurrentTypeDefinition(string newTypeDefName)
 		{
-			if(context.CurrentTypeDefinition.Name == newTypeDefName)
+			var type_def = GetBuiltinTypeDefinition(newTypeDefName);
+			if(type_def != null && context.CurrentTypeDefinition == type_def)
 				return this;
 			
-			var type_def = GetBuiltinTypeDefinition(newTypeDefName);
 			Dictionary<string, ResolveResult> new_name_lookup_cache = (type_def != null) ? new Dictionary<string, ResolveResult>() : null;
-			return new BVE5Resolver(compilation, (SimpleTypeResolveContext)context.WithCurrentTypeDefinition(type_def), new_name_lookup_cache);
+			return new BVE5Resolver(compilation, (SimpleTypeResolveContext)context.WithCurrentTypeDefinition(type_def), new_name_lookup_cache, local_variable_stack);
+		}
+		#endregion
+		
+		#region Local reference management
+		readonly ImmutableStack<IVariable> local_variable_stack = ImmutableStack<IVariable>.Empty;
+		
+		BVE5Resolver WithLocalVariableStack(ImmutableStack<IVariable> stack)
+		{
+			return new BVE5Resolver(compilation, context, user_defined_name_lookup_cache, stack);
+		}
+		
+		/// <summary>
+		/// Adds a new variable or lambda parameter to the current block.
+		/// </summary>
+		public BVE5Resolver AddVariable(IVariable variable)
+		{
+			if(variable == null)
+				throw new ArgumentNullException("variable");
+			
+			return WithLocalVariableStack(local_variable_stack.Push(variable));
+		}
+		
+		public IEnumerable<IVariable> LocalVariables{
+			get{return local_variable_stack;}
 		}
 		#endregion
 		
@@ -144,7 +167,7 @@ namespace BVE5Language.Resolver
 
             return new ErrorResolveResult(targetResult.Type);
         }
-
+        
         #region Resolve invocation
         public ResolveResult ResolveInvocation(ResolveResult targetResult, ResolveResult[] arguments)
         {
@@ -204,15 +227,15 @@ namespace BVE5Language.Resolver
         #region Resolve Primitive
         public ResolveResult ResolvePrimitive(object value)
         {
-            TypeCode typeCode = Type.GetTypeCode(value.GetType());
-            IType type = compilation.FindType(typeCode);
+            TypeCode type_code = Type.GetTypeCode(value.GetType());
+            IType type = compilation.FindType(type_code);
             return new ConstantResolveResult(type, value);
         }
         #endregion
         
         public ResolveResult ResolveTypeName(string typeName)
         {
-        	if(!BVE5ResourceManager.IsBuiltinTypeName(typeName) && !BVE5ResourceManager.IsBuiltinTypeName(typeName))	//First try to match in case-sensitive way and then in case-insensitive way
+        	if(!BVE5ResourceManager.IsBuiltinTypeName(typeName))	//Try to match in case-insensitive way
         		return ErrorResult;
         	
         	var type_name = new TopLevelTypeName("global", typeName, 0);

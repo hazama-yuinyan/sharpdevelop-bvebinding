@@ -26,7 +26,7 @@ namespace BVE5Language.Parser
 	{
 		static object parse_lock = new object();
 		
-		readonly string FileTypeName;
+		readonly BVE5FileKind FileKind;
 		readonly Regex MetaHeaderRegexp;
 		
 		ErrorReportPrinter error_report_printer = new ErrorReportPrinter(null);
@@ -75,11 +75,11 @@ namespace BVE5Language.Parser
 		/// Initializes a new instance of <see cref="BVE5Language.Parser.InitFileParser"/>.
 		/// </summary>
 		/// <param name="headerString">The header text that will be verified if parseHeader option is specified.</param>
-		/// <param name="fileTypeName">The file type name which the parser is supposed to parse. This will be used for displaying type-specific errors.</param>
-		public InitFileParser(string headerString, string fileTypeName)
+		/// <param name="fileKind">The file type which the parser is supposed to parse. This will be used for displaying type-specific errors.</param>
+		public InitFileParser(string headerString, BVE5FileKind fileKind)
 		{
 			MetaHeaderRegexp = new Regex(headerString + @"\s*([\d.]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-			FileTypeName = fileTypeName;
+			FileKind = fileKind;
 		}
 		
 		#region public surface
@@ -175,7 +175,7 @@ namespace BVE5Language.Parser
 						}
 						var meta_header_match = MetaHeaderRegexp.Match(meta_header.ToString());
 						if(!meta_header_match.Success){
-							AddError(ErrorCode.InvalidFileHeader, 1, 1, "Invalid " + FileTypeName + " file!");
+							AddError(ErrorCode.InvalidFileHeader, 1, 1, "Invalid " + FileKind + " file!");
 							return null;
 						}else{
 							version_str = meta_header_match.Groups[1].Value;
@@ -195,7 +195,7 @@ namespace BVE5Language.Parser
 							has_error_reported = false;
 					}
 
-					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, new TextLocation(1, 1), stmts.Last().EndLocation, Errors.ToList());
+					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, FileKind, new TextLocation(1, 1), stmts.Last().EndLocation, Errors.ToList());
 				}
 			}
 		}

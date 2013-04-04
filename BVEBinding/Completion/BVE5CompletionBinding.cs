@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using BVE5Language;
+using BVE5Language.Ast;
 using BVE5Language.Resolver;
 using BVE5Language.TypeSystem;
 using ICSharpCode.Core;

@@ -55,7 +55,7 @@ namespace BVE5Language.Resolver
 			initial_resolver_state = new BVE5Resolver(compilation);
 			root_node = syntaxTree;
 			unresolved_file = unresolvedFile;
-			resolve_visitor = new ResolveVisitor(initial_resolver_state, unresolvedFile);
+			resolve_visitor = new ResolveVisitor(initial_resolver_state, unresolvedFile, FileKindHelper.GetTypeNameFromFileKind(syntaxTree.Kind));
 		}
 		
 		/// <summary>
@@ -87,7 +87,7 @@ namespace BVE5Language.Resolver
 			initial_resolver_state = resolver;
 			root_node = rootNode;
 			unresolved_file = unresolvedFile;
-			resolve_visitor = new ResolveVisitor(initial_resolver_state, unresolvedFile);
+			resolve_visitor = new ResolveVisitor(initial_resolver_state, unresolvedFile, unresolvedFile.FileName);
 		}
 		
 		/// <summary>

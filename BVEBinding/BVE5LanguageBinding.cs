@@ -9,6 +9,7 @@
 using System;
 using BVE5Binding.Completion;
 using BVE5Language.TypeSystem;
+using BVE5Language.Ast;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor;

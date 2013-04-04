@@ -108,7 +108,6 @@
     <Compile Include="Completion\BVE5CommonFileInsightWindowHandler.cs" />
     <Compile Include="Completion\BVE5CompletionBinding.cs" />
     <Compile Include="Commands\ShiftPositionsCommand.cs" />
-    <Compile Include="Completion\BVE5FileKind.cs" />
     <Compile Include="Completion\BVE5InitFileCompleter.cs" />
     <Compile Include="Completion\BVE5RouteFileInsightWindowHandler.cs" />
     <Compile Include="Completion\BVE5RouteFileCompleter.cs" />
@@ -127,12 +126,14 @@
     </Compile>
     <Compile Include="Formatting\BVE5FormattingStrategy.cs" />
     <Compile Include="ParserFactory.cs" />
+    <Compile Include="Tooltips\BVE5TooltipProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Formatting" />
     <Folder Include="Completion" />
     <Folder Include="Commands" />
     <Folder Include="Dialogs" />
+    <Folder Include="Tooltips" />
     <Folder Include="Refactoring" />
     <Folder Include="Resources" />
     <Folder Include="Templates" />

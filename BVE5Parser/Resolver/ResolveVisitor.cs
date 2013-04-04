@@ -17,11 +17,11 @@ namespace BVE5Language.Resolver
 	/// Traverses the DOM and resolves expressions.
 	/// </summary>
 	/// <remarks>
-	/// The ResolveVisitor does two jobs at the same time: it tracks the resolve context (properties on CSharpResolver)
+	/// The ResolveVisitor does two jobs at the same time: it tracks the resolve context (properties on BVE5Resolver)
 	/// and it resolves the expressions visited.
     /// To allow using the context tracking without having to resolve every expression in the file (e.g. when you want to resolve
     /// only a single node deep within the DOM), you can use the <see cref="IResolveVisitorNavigator"/> interface.
-    /// The navigator allows you to switch the between scanning mode and resolving mode.
+    /// The navigator allows you to switch between the scanning mode and resolving mode.
     /// In scanning mode, the context is tracked (local variables registered etc.), but nodes are not resolved.
     /// While scanning, the navigator will get asked about every node that the resolve visitor is about to enter.
     /// This allows the navigator whether to keep scanning, whether switch to resolving mode, or whether to completely skip the
@@ -147,7 +147,7 @@ namespace BVE5Language.Resolver
 
             case ResolveVisitorNavigationMode.Scan:
                 bool old_resolver_enabled = resolver_enabled;
-                var oldResolver = resolver;
+                var old_resolver = resolver;
                 resolver_enabled = false;
                 StoreCurrentState(node);
                 ResolveResult result = node.AcceptWalker(this);
@@ -158,7 +158,7 @@ namespace BVE5Language.Resolver
                     // guaranteed to get called only once.
                     // This is used for lambda registration.
                     StoreResult(node, result);
-                    if(resolver != oldResolver){
+                    if(resolver != old_resolver){
                         // The node changed the resolver state:
                         resolver_after_dict.Add(node, resolver);
                     }
@@ -191,22 +191,22 @@ namespace BVE5Language.Resolver
 			if(node == null)
 				return RrrorResult;
 
-			bool oldResolverEnabled = resolver_enabled;
+			bool old_resolver_enabled = resolver_enabled;
 			resolver_enabled = true;
 			ResolveResult result;
 
 			if(!resolve_result_cache.TryGetValue(node, out result)){
 				cancellation_token.ThrowIfCancellationRequested();
 				StoreCurrentState(node);
-				var oldResolver = resolver;
+				var old_resolver = resolver;
 				result = node.AcceptWalker(this) ?? RrrorResult;
 				StoreResult(node, result);
-				if(resolver != oldResolver){
+				if(resolver != old_resolver){
 					// The node changed the resolver state:
 					resolver_after_dict.Add(node, resolver);
 				}
 			}
-			resolver_enabled = oldResolverEnabled;
+			resolver_enabled = old_resolver_enabled;
 			return result;
 		}
 		#endregion
@@ -256,6 +256,19 @@ namespace BVE5Language.Resolver
             for(AstNode child = parent.FirstChild; child != null; child = child.NextSibling)
                 Scan(child);
         }
+        
+        DomRegion MakeRegion(AstNode node)
+		{
+			if (unresolved_file != null)
+				return new DomRegion(unresolved_file.FileName, node.StartLocation, node.EndLocation);
+			else
+				return node.GetRegion();
+		}
+        
+        IVariable MakeVariable(IType type, Identifier name)
+        {
+        	return new SimpleVariable(MakeRegion(name), type, name.Name);
+        }
 
 		#region AstWalker members
 		public ResolveResult Walk(BinaryExpression binary)
@@ -270,7 +283,14 @@ namespace BVE5Language.Resolver
 		
 		public ResolveResult Walk(DefinitionExpression def)
 		{
-			return null; //TODO: implement it
+			var expr_rr = Resolve(def.Rhs);
+			if(expr_rr != null){
+				StoreCurrentState(def);
+				StoreResult(def, expr_rr);
+				return expr_rr;
+			}
+			
+			return null;
 		}
 		
 		public ResolveResult Walk(IndexerExpression indexingExpr)
@@ -373,12 +393,19 @@ namespace BVE5Language.Resolver
 		#region Statement types
 		public ResolveResult Walk(LetStatement letStmt)
 		{
-			return null; //TODO: implement it
+			StoreCurrentState(letStmt);
+			IType type = Resolve(letStmt.Definition.Rhs).Type;
+			var v = MakeVariable(type, letStmt.Definition.Lhs);
+			resolver.AddVariable(v);
+			
+			Scan(letStmt.Definition);
+			return VoidResult;
 		}
 
 		public ResolveResult Walk(SectionStatement secStmt)
 		{
-			return null; //TODO: implement it
+			ScanChildren(secStmt);
+			return VoidResult;
 		}
 		
 		public ResolveResult Walk(Statement stmt)
@@ -392,7 +419,8 @@ namespace BVE5Language.Resolver
                 StoreResult(stmt.Expr, result);
                 return result;
             }else{
-            	return null;
+            	StoreResult(stmt.Expr, child_rr);
+            	return VoidResult;
             }
 		}
 		#endregion
@@ -432,6 +460,47 @@ namespace BVE5Language.Resolver
 		}
         #endregion
         #endregion
+        
+        class SimpleVariable : IVariable
+		{
+			readonly DomRegion region;
+			readonly IType type;
+			readonly string name;
+			
+			public SimpleVariable(DomRegion region, IType type, string name)
+			{
+				Debug.Assert(type != null);
+				Debug.Assert(name != null);
+				this.region = region;
+				this.type = type;
+				this.name = name;
+			}
+			
+			public string Name {
+				get { return name; }
+			}
+			
+			public DomRegion Region {
+				get { return region; }
+			}
+			
+			public IType Type {
+				get { return type; }
+			}
+			
+			public virtual bool IsConst {
+				get { return false; }
+			}
+			
+			public virtual object ConstantValue {
+				get { return null; }
+			}
+			
+			public override string ToString()
+			{
+				return type.ToString() + " " + name + ";";
+			}
+		}
     }
 }
 

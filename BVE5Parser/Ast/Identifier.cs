@@ -30,7 +30,7 @@ using ICSharpCode.NRefactory;
 namespace BVE5Language.Ast
 {
 	/// <summary>
-	/// Represents an identifer.
+	/// Represents an identifier.
 	/// </summary>
 	public class Identifier : Expression
 	{

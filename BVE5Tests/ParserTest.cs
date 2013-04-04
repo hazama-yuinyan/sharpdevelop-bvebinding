@@ -241,7 +241,7 @@ Sound.Load(sounds\a.wav);", "<string>", true);
 		[TestCase]
 		public void CommonParser()
 		{
-			var parser = new BVE5CommonParser("BveTs Station List", "Station list");
+			var parser = new BVE5CommonParser("BveTs Station List", BVE5FileKind.StationList);
 			var stmt = parser.ParseOneStatement("staA, A, 10:30:00, 10:30:30, 20, 10:30:00, 0, 10, 0.3, soundStaA, soundStaADeperture, 0.05, 5\n");
 			var expected1 = new List<TypeDescriber>{
 				TypeDescriber.Create(NodeType.Statement, new List<TypeDescriber>{
@@ -270,7 +270,7 @@ Sound.Load(sounds\a.wav);", "<string>", true);
 		[TestCase]
 		public void MetaHeader()
 		{
-			var parser = new BVE5CommonParser("BveTs Station List", "Station List");
+			var parser = new BVE5CommonParser("BveTs Station List", BVE5FileKind.StationList);
 			var tree = parser.Parse(@"BveTs Station List 1.00
 staA, A, 10:00:00, 10:01:00, 20, 10:00:30, 0, 10, 0.3, soundStaA, soundStaADeperture, 0.05, 5
 ", "<string>", true);
@@ -303,7 +303,7 @@ staA, A, 10:00:00, 10:01:00, 20, 10:00:30, 0, 10, 0.3, soundStaA, soundStaADeper
 		[TestCase]
 		public void Invalid()
 		{
-			var parser = new BVE5CommonParser("BveTs Station List", "Station List");
+			var parser = new BVE5CommonParser("BveTs Station List", BVE5FileKind.StationList);
 			var tree = parser.Parse("bvets steition list 0.01\n", "<invalid header>", true);
 			Assert.IsTrue(parser.HasErrors && parser.Errors.Count() == 1);
 			Assert.IsNull(tree);
@@ -316,7 +316,7 @@ staA, A, 10:00:00, 10:01:00, 20, 10:00:30, 0, 10, 0.3, soundStaA, soundStaADeper
 		[TestCase]
 		public void InitFileParser()
 		{
-			var parser = new InitFileParser("BveTs Vehicle Parameters", "Vehicle parameters");
+			var parser = new InitFileParser("BveTs Vehicle Parameters", BVE5FileKind.VehicleParametersFile);
 			var stmt = parser.ParseOneStatement("[Cab]");
 			var expected1 = new List<TypeDescriber>{
 				TypeDescriber.Create(NodeType.SectionStmt, new List<TypeDescriber>{
@@ -370,7 +370,7 @@ DayTimeImage = imgs\test.png
 		[TestCase]
 		public void MetaHeader()
 		{
-			var parser = new InitFileParser("BveTs Vehicle Parameters", "Vehicle Parameters");
+			var parser = new InitFileParser("BveTs Vehicle Parameters", BVE5FileKind.VehicleParametersFile);
 			var tree = parser.Parse(@"BveTs Vehicle Parameters 1.00
 [Cab]
 Color = #ff0066
@@ -403,12 +403,12 @@ DayTimeImage = imgs\test.png
 		[TestCase]
 		public void Invalid()
 		{
-			var parser = new InitFileParser("BveTs Vehicle Parameters", "Vehicle Parameters");
+			var parser = new InitFileParser("BveTs Vehicle Parameters", BVE5FileKind.VehicleParametersFile);
 			var tree = parser.Parse("bvets vihecle params 1.00\n", "<invalid header>", true);
 			Assert.IsTrue(parser.HasErrors && parser.Errors.Count() == 1);
 			Assert.IsNull(tree);
 			
-			var parser2 = new InitFileParser("BveTs Vehicle Parameters", "Vehicle Parameters");
+			var parser2 = new InitFileParser("BveTs Vehicle Parameters", BVE5FileKind.VehicleParametersFile);
 			var stmt = parser2.ParseOneStatement("[Cab\n");
 			Assert.IsTrue(parser2.HasErrors && parser2.Errors.Count() == 1);
 		}

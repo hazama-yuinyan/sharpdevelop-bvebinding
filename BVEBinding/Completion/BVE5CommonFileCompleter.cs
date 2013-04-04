@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BVE5Language;
+using BVE5Language.Ast;
 using BVE5Language.Parser;
 using BVE5Language.Resolver;
 using ICSharpCode.SharpDevelop;

@@ -1,9 +1,8 @@
 using System;
-
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
-
 using BVE5Language.Ast;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace BVE5Language.TypeSystem
 {
@@ -13,18 +12,7 @@ namespace BVE5Language.TypeSystem
 	public class TypeSystemConvertWalker : DepthFirstAstWalker<IUnresolvedEntity>
 	{
 		readonly BVE5UnresolvedFile unresolved_file;
-		
-		/// <summary>
-		/// Creates a new TypeSystemConvertVisitor.
-		/// </summary>
-		/// <param name="fileName">The file name (used for DomRegions).</param>
-		public TypeSystemConvertWalker(string fileName)
-		{
-			if(fileName == null)
-				throw new ArgumentNullException("fileName");
-
-			this.unresolved_file = new BVE5UnresolvedFile(fileName);
-		}
+		DefaultUnresolvedTypeDefinition type_def;
 		
 		/// <summary>
 		/// Creates a new TypeSystemConvertVisitor and initializes it with a given context.
@@ -52,7 +40,7 @@ namespace BVE5Language.TypeSystem
 		DomRegion MakeRegion(AstNode node)
 		{
 			if(node == null)
-				return DomRegion.Empty;
+				return node.GetRegion();
 			else
 				return MakeRegion(node.StartLocation, node.EndLocation);
 		}
@@ -61,6 +49,9 @@ namespace BVE5Language.TypeSystem
 		public override IUnresolvedEntity Walk(SyntaxTree unit)
 		{
 			unresolved_file.Errors = unit.Errors;
+			if(type_def == null)
+				type_def = new DefaultUnresolvedTypeDefinition("global", FileKindHelper.GetTypeNameFromFileKind(unit.Kind));
+			
 			return base.Walk(unit);
 		}
 

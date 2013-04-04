@@ -31,7 +31,7 @@
 	
 	<Path name="/SharpDevelop/ViewContent/AvalonEdit/SyntaxModes">
 		<SyntaxMode id="BVE5.SyntaxMode"
-		            extensions=".txt;.bvert"
+		   	        extensions=".txt;.bvert"
 		            name="BVE5"
 		            resource="BVE5Binding.Resources.BVE5.xshd"/>
 	</Path>
@@ -50,6 +50,10 @@
 	<Path name="/AddIns/DefaultTextEditor/CodeCompletion">
 		<CodeCompletionBinding id="BVE5Route" extensions=".txt;.bvert" class="BVE5Binding.Completion.BVE5CodeCompletionBinding" />
 	</Path>
+	
+	<!--<Path name="/SharpDevelop/ViewContent/DefaultTextEditor/ToolTips">
+		<Class id="BVE5TooltipProvider" class="BVE5Binding.Tooltips.BVE5TooltipProvider" insertafter="DefaultDebuggerTooltips"/>
+	</Path>-->
 
 	<Path name="/SharpDevelop/Workbench/MainMenu">
 		<Condition name="TextContent" textcontent="BVE5">

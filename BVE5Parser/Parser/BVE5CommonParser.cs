@@ -25,7 +25,7 @@ namespace BVE5Language.Parser
 	{
 		static object parse_lock = new object();
 		
-		readonly string FileKindName;
+		readonly BVE5FileKind FileKind;
 		readonly Regex MetaHeaderRegexp;
 		
 		ErrorReportPrinter error_report_printer = new ErrorReportPrinter(null);
@@ -74,11 +74,11 @@ namespace BVE5Language.Parser
 		/// Initializes a new instance of <see cref="BVE5Language.Parser.CommonParser"/>.
 		/// </summary>
 		/// <param name="headerString">The header text that will be verified if parseHeader option is specified.</param>
-		/// <param name="fileKindName">The file type name of which the file is. This will be used for displaying type-specific errors.</param>
-		public BVE5CommonParser(string headerString, string fileKindName)
+		/// <param name="fileKind">The file type of which the file is. This will be used for displaying type-specific errors.</param>
+		public BVE5CommonParser(string headerString, BVE5FileKind fileKind)
 		{
 			MetaHeaderRegexp = new Regex(headerString + @"\s+([\d.]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-			FileKindName = fileKindName;
+			FileKind = fileKind;
 		}
 		
 		#region public surface
@@ -171,7 +171,7 @@ namespace BVE5Language.Parser
 						
 						var meta_header_match = MetaHeaderRegexp.Match(token.Literal);
 						if(!meta_header_match.Success){
-							AddError(ErrorCode.InvalidFileHeader, 1, 1, "Invalid " + FileKindName + " file!");
+							AddError(ErrorCode.InvalidFileHeader, 1, 1, "Invalid " + FileKind + " file!");
 							return null;
 						}else{
 							version_str = meta_header_match.Groups[1].Value;
@@ -192,7 +192,7 @@ namespace BVE5Language.Parser
 							has_error_reported = false;
 					}
 
-					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, new TextLocation(1, 1), stmts.Last().EndLocation, Errors.ToList());
+					return AstNode.MakeSyntaxTree(stmts, fileName, version_str, FileKind, new TextLocation(1, 1), stmts.Last().EndLocation, Errors.ToList());
 				}
 			}
 		}
@@ -229,7 +229,7 @@ namespace BVE5Language.Parser
 				}
 			}
 			
-			return AstNode.MakeInvoke(AstNode.MakeIdent(FileKindName, start_loc, start_loc), children, start_loc, token.StartLoc);
+			return AstNode.MakeInvoke(AstNode.MakeIdent(FileKind.ToString(), start_loc, start_loc), children, start_loc, token.StartLoc);
 		}
 		
 		// literal

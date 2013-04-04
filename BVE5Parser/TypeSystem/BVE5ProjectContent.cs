@@ -214,7 +214,13 @@ namespace BVE5Language.TypeSystem
         }
 
         public IEnumerable<IUnresolvedTypeDefinition> TopLevelTypeDefinitions{
-            get { return Files.SelectMany(f => f.TopLevelTypeDefinitions); }
+            get{
+        		return Files.SelectMany(f => f.TopLevelTypeDefinitions)
+        			.Concat(
+        				AssemblyReferences.Cast<IUnresolvedAssembly>()
+        			        .SelectMany(r => r.TopLevelTypeDefinitions)
+        			);
+        	}
         }
         #endregion
 

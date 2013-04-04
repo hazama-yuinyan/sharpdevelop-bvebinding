@@ -66,6 +66,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Ast\AstNode.cs" />
     <Compile Include="Ast\BinaryExpression.cs" />
+    <Compile Include="Ast\BVE5FileKind.cs" />
     <Compile Include="Ast\DefinitionExpression.cs" />
     <Compile Include="Ast\DepthFirstAstWalker.cs" />
     <Compile Include="Ast\LetStatement.cs" />

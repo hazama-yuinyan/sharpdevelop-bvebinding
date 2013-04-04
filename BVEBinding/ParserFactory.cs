@@ -8,6 +8,7 @@
  */
 using System;
 using BVE5Binding.Completion;
+using BVE5Language.Ast;
 using BVE5Language.Parser;
 
 namespace BVE5Binding
@@ -28,7 +29,7 @@ namespace BVE5Binding
 				(kind == BVE5FileKind.StationList) ? "BveTs Station List" :
 				(kind == BVE5FileKind.SignalAspectsList) ? "BveTs Signal Aspects List" :
 				(kind == BVE5FileKind.SoundList) ? "BveTs Sound List" : null;
-			return new BVE5CommonParser(header_str, kind.ToString());
+			return new BVE5CommonParser(header_str, kind);
 		}
 		
 		internal static InitFileParser CreateInitFileParser(BVE5FileKind kind)
@@ -37,7 +38,7 @@ namespace BVE5Binding
 				(kind == BVE5FileKind.VehicleParametersFile) ? "BveTs Vehicle Parameters" :
 				(kind == BVE5FileKind.InstrumentPanelFile) ? "Version" :
 				(kind == BVE5FileKind.VehicleSoundFile) ? "Bvets Vehicle Sound" : null;
-			return new InitFileParser(header_str, kind.ToString());
+			return new InitFileParser(header_str, kind);
 		}
 	}
 }

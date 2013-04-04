@@ -478,6 +478,18 @@ namespace BVE5Language.Ast
 			return result;
 		}
 		#endregion
+		
+		/// <summary>
+		/// Gets the region from StartLocation to EndLocation for this node.
+		/// The file name of the region is set based on the parent SyntaxTree's file name.
+		/// If this node is not connected to a whole compilation, the file name will be null.
+		/// </summary>
+		public ICSharpCode.NRefactory.TypeSystem.DomRegion GetRegion()
+		{
+			var syntaxTree = (this.Ancestors.LastOrDefault() ?? this) as SyntaxTree;
+			string fileName = (syntaxTree != null ? syntaxTree.Name : null);
+			return new ICSharpCode.NRefactory.TypeSystem.DomRegion(fileName, this.StartLocation, this.EndLocation);
+		}
 		#endregion
 
 		#region Node factories
@@ -527,14 +539,14 @@ namespace BVE5Language.Ast
 			return new Statement(expr, start, end);
 		}
 		
-		internal static LetStatement MakeLetStatement(Expression expr, TextLocation start, TextLocation end)
+		internal static LetStatement MakeLetStatement(DefinitionExpression expr, TextLocation start, TextLocation end)
 		{
 			return new LetStatement(expr, start, end);
 		}
 
-		internal static SyntaxTree MakeSyntaxTree(List<Statement> body, string name, string version, TextLocation start, TextLocation end, List<Error> errors)
+		internal static SyntaxTree MakeSyntaxTree(List<Statement> body, string name, string version, BVE5FileKind kind, TextLocation start, TextLocation end, List<Error> errors)
 		{
-			return new SyntaxTree(body, name, version, start, end, errors);
+			return new SyntaxTree(body, name, version, kind, start, end, errors);
 		}
 
 		internal static TimeFormatLiteral MakeTimeFormat(int hour, int min, int sec, TextLocation start, TextLocation end)

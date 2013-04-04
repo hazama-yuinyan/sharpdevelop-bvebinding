@@ -16,7 +16,11 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class LetStatement : Statement
 	{
-		public LetStatement(Expression expr, TextLocation start, TextLocation end)
+		public DefinitionExpression Definition{
+			get{return (DefinitionExpression)Expr;}
+		}
+		
+		public LetStatement(DefinitionExpression expr, TextLocation start, TextLocation end)
 			: base(expr, start, end)
 		{
 		}

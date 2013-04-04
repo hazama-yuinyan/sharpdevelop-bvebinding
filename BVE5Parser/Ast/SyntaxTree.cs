@@ -25,11 +25,10 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
-
 using BVE5Language.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace BVE5Language.Ast
 {
@@ -39,6 +38,7 @@ namespace BVE5Language.Ast
 	public class SyntaxTree : AstNode
 	{
 		readonly string name, version;
+		readonly BVE5FileKind kind;
 		List<Error> errors;
 		
 		public List<Error> Errors{
@@ -59,6 +59,10 @@ namespace BVE5Language.Ast
 		public string Version{
 			get{return version;}
 		}
+		
+		public BVE5FileKind Kind{
+			get{return kind;}
+		}
 
 		public override NodeType Type {
 			get {
@@ -66,7 +70,7 @@ namespace BVE5Language.Ast
 			}
 		}
 
-		public SyntaxTree(List<Statement> body, string treeName, string versionString, TextLocation startLoc, TextLocation endLoc, List<Error> errors)
+		public SyntaxTree(List<Statement> body, string treeName, string versionString, BVE5FileKind fileKind, TextLocation startLoc, TextLocation endLoc, List<Error> errors)
 			: base(startLoc, endLoc)
 		{
 			foreach(var stmt in body)
@@ -74,6 +78,7 @@ namespace BVE5Language.Ast
 			
 			name = treeName;
 			version = versionString;
+			kind = fileKind;
 			this.errors = errors;
 		}
 
@@ -93,7 +98,7 @@ namespace BVE5Language.Ast
 
 		public override string GetText()
 		{
-			return "<SyntaxTree>";
+			return "<SyntaxTree: " + kind.ToString() + ">";
 		}
 
 		/// <summary>
@@ -104,7 +109,8 @@ namespace BVE5Language.Ast
 			if(string.IsNullOrEmpty(name))
 				throw new InvalidOperationException("Cannot use ToTypeSystem() on a syntax tree without file name.");
 
-			var walker = new TypeSystemConvertWalker(name);
+			var type_def = new DefaultUnresolvedTypeDefinition("global", FileKindHelper.GetTypeNameFromFileKind(kind));
+			var walker = new TypeSystemConvertWalker(new BVE5UnresolvedFile(name, type_def, null));
 			walker.Walk(this);
 			return walker.UnresolvedFile;
 		}

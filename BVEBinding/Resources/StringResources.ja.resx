@@ -158,7 +158,7 @@
   </data>
   <data name="CalculateCantDialog.ResultTemplate" xml:space="preserve">
     <value>カント: {0} mm
-適切か？(whether the train would not be off the track): {1}(h * tan(theta) &lt;= d / 6 ここでhは重心までの高さ、dは軌間、thetaは軌道面の傾き)
+適切か？(脱線しないかどうか): {1}(h * tan(theta) &lt;= d / 6 ここでhは重心までの高さ、dは軌間、thetaは軌道面の傾き)
 使用可能か？: {2}(軌間: {3}mm)</value>
   </data>
   <data name="CommonStrings.TextYes" xml:space="preserve">
