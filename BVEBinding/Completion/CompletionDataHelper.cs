@@ -12,6 +12,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor.CodeCompletion;
 
 namespace BVE5Binding.Completion
@@ -21,11 +22,15 @@ namespace BVE5Binding.Completion
 	/// </summary>
 	internal static class CompletionDataHelper
 	{
-		internal static ICompletionItemList CreateListFromString(IEnumerable<string> data)
+		internal static ICompletionItemList GenerateCompletionList(IList<string> texts, IList<string> descriptions = null, IList<IImage> images = null)
 		{
 			var list = new DefaultCompletionItemList();
-			foreach(var a_data in data)
-				list.Items.Add(new DefaultCompletionItem(a_data));
+			for(int i = 0; i < texts.Count; ++i){
+				var item = new DefaultCompletionItem(texts[i]);
+				item.Description = (descriptions != null) ? descriptions[i] : "";
+				item.Image = (images != null) ? images[i] : null;
+				list.Items.Add(item);
+			}
 			
 			list.SortItems();
 			return list;

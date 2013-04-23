@@ -13,20 +13,20 @@ using ICSharpCode.Core;
 namespace BVE5Binding.Commands
 {
 	/// <summary>
-	/// Description of CantCalculator.
+	/// The cant calculator.
 	/// </summary>
 	public class CantCalculator
 	{
 		const double HeightCenterOfMass = 1.65;
-		const double MaxCantStandard = 180.0;
-		const double MaxCantNarrow = 105.0;
+		const double MaxCantStandard = 0.180;
+		const double MaxCantNarrow = 0.105;
 		
 		internal AbstractCalculateCantStrategy Strategy{
 			get; set;
 		}
 		
 		/// <summary>
-		/// Gets the cant calculated in millimeters.
+		/// Gets the cant calculated in meters.
 		/// </summary>
 		public double Cant{
 			get; private set;
@@ -48,7 +48,7 @@ namespace BVE5Binding.Commands
 			if(double.IsNaN(cant))
 				return "";
 			
-			string resource_name_suitable = IsSuitable(cant) ? "${res:CalculateCantDialog.TextSatisfied}" :
+			string resource_name_suitable = IsSuitable(cant, Strategy.Gauge) ? "${res:CalculateCantDialog.TextSatisfied}" :
 				"${res:CalculateCantDialog.TextNotSatisfied}";
 			string text_suitable = StringParser.Parse(resource_name_suitable);
 			
@@ -72,17 +72,15 @@ namespace BVE5Binding.Commands
 		/// </remarks>
 		/// <param name="cant">The value of cant</param>
 		/// <returns>true, if it satisfies the condition; otherwise false</returns>
-		private bool IsSuitable(double cant)
+		internal static bool IsSuitable(double cant, double gauge)
 		{
 			//TODO: Rewrite the "remarks" section in English
-			var cant_in_meters = cant / 1000.0;
-			return HeightCenterOfMass * cant_in_meters <= Strategy.Gauge * Strategy.Gauge / 6.0;
+			return HeightCenterOfMass * cant <= gauge * gauge / 6.0;
 		}
 	}
 	
 	internal abstract class AbstractCalculateCantStrategy
 	{
-		public const double GravitationalAcceleration = 9.80665;
 		protected uint radius, speed, gauge_in_int;
 		protected double gauge;
 		
@@ -137,23 +135,5 @@ namespace BVE5Binding.Commands
 		}
 		
 		internal abstract double Calculate();
-	}
-	
-	/// <summary>
-	/// Calculates cant in terms of Physics. That is, it calculates the cant where the passengers don't feel any forces.
-	/// </summary>
-	internal class IdealCantCalculateStrategy : AbstractCalculateCantStrategy
-	{
-		internal override double Calculate()
-		{
-			if(speed == 0 || radius == 0 || double.IsNaN(gauge)) return double.NaN;
-			double speed_in_double = (double)speed * 1000.0 / (60.0 * 60.0);	//speed_in_double is in the unit of meters per second
-			double radius_in_double = (double)radius;							//radius_in_double is in the unit of meters
-			double denom = Math.Sqrt(Math.Pow(speed_in_double, 4.0) + GravitationalAcceleration * GravitationalAcceleration * radius_in_double * radius_in_double);
-			double nom = gauge * speed_in_double * speed_in_double;
-			
-			double cant = nom / denom;	//cant is in the unit of meters
-			return cant * 1000.0;		//convert the unit of cant to millimeters
-		}
 	}
 }

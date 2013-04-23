@@ -34,8 +34,8 @@ namespace BVE5Language.Ast
 	/// </summary>
 	public class IndexerExpression : Expression
 	{
-		public Expression Target{
-			get{return (Expression)FirstChild;}
+		public Identifier Target{
+			get{return (Identifier)FirstChild;}
 		}
 
 		public LiteralExpression Index{
@@ -48,7 +48,7 @@ namespace BVE5Language.Ast
 			}
 		}
 
-		public IndexerExpression(Expression target, LiteralExpression index, TextLocation startLoc, TextLocation endLoc)
+		public IndexerExpression(Identifier target, LiteralExpression index, TextLocation startLoc, TextLocation endLoc)
 			: base(startLoc, endLoc)
 		{
 			AddChild(target);

@@ -35,7 +35,7 @@ namespace BVE5Language.TypeSystem
 	public class BVE5UnresolvedFile : IUnresolvedFile
 	{
 		readonly string file_name;
-		readonly IUnresolvedTypeDefinition file_scope_type_def;
+		readonly List<IUnresolvedTypeDefinition> toplevel_type_defs;
 		List<Error> errors;
 
 		public BVE5UnresolvedFile(string fileName)
@@ -46,19 +46,19 @@ namespace BVE5Language.TypeSystem
 		public BVE5UnresolvedFile(string fileName, IUnresolvedTypeDefinition unresolvedTypeDef, List<Error> errorList)
 		{
 			file_name = fileName;
-			file_scope_type_def = unresolvedTypeDef;
+			toplevel_type_defs = new List<IUnresolvedTypeDefinition>{unresolvedTypeDef};
 			errors = errorList;
 		}
 
 		#region IUnresolvedFile implementation
 		public IUnresolvedTypeDefinition GetTopLevelTypeDefinition(TextLocation location)
 		{
-			return file_scope_type_def;
+			return toplevel_type_defs[0];
 		}
 
 		public IUnresolvedTypeDefinition GetInnermostTypeDefinition(TextLocation location)
 		{
-			return file_scope_type_def;
+			return toplevel_type_defs[0];
 		}
 
 		public IUnresolvedMember GetMember(TextLocation location)
@@ -109,7 +109,7 @@ namespace BVE5Language.TypeSystem
 
 		public IList<IUnresolvedTypeDefinition> TopLevelTypeDefinitions {
 			get {
-				return new List<IUnresolvedTypeDefinition>{file_scope_type_def};
+				return toplevel_type_defs;
 			}
 		}
 

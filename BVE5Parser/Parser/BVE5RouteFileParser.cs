@@ -268,7 +268,7 @@ namespace BVE5Language.Parser
 			}
 		}
 
-		// let-statement | [\d]+ ';' | ident ['[' ident ']'] '.' ident '(' [args] ')' ';'
+		// let-statement | [\d]+ ';' | ident ['[' literal ']'] '.' ident '(' [args] ')' ';'
 		BVE5Language.Ast.Statement ParseStatement(BVE5RouteFileLexer lexer)
 		{
 			Token token = lexer.Current;
@@ -280,9 +280,8 @@ namespace BVE5Language.Parser
 				break;
 				
 			case TokenKind.Identifier:
-				expr = ParseIdent(lexer);
-				if(lexer.Current.Literal == "[")
-					expr = ParseIndexExpr(lexer, expr);
+				var ident = ParseIdent(lexer);
+				expr = (lexer.Current.Literal == "[") ? (Expression)ParseIndexExpr(lexer, ident) : (Expression)ident;
 
 				token = lexer.Current;
 				if(token.Literal != "."){
@@ -373,7 +372,7 @@ namespace BVE5Language.Parser
 		}
 		
 		// ident '[' ident ']'
-		IndexerExpression ParseIndexExpr(BVE5RouteFileLexer lexer, BVE5Language.Ast.Expression target)
+		IndexerExpression ParseIndexExpr(BVE5RouteFileLexer lexer, Identifier target)
 		{
 			Token token = lexer.Current;
 			Debug.Assert(token.Literal == "[", "Really meant an index reference?");

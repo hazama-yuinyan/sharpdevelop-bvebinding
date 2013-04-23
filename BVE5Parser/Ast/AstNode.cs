@@ -363,9 +363,14 @@ namespace BVE5Language.Ast
         		}
         		
         		if(node.next_sibling != null){
-        			queue.Enqueue(node);
+        			if(node.first_child != null)
+        				queue.Enqueue(node);
+        			
         			node = node.next_sibling;
         		}else{
+        			if(queue.Any() && node.first_child != null)
+        				queue.Enqueue(node);
+        			
         			var next_parent = queue.Any() ? queue.Dequeue() : node;
         			node = next_parent.first_child;
         		}
@@ -498,7 +503,7 @@ namespace BVE5Language.Ast
 			return new Identifier(name, start, end);
 		}
 
-		internal static IndexerExpression MakeIndexExpr(Expression target, LiteralExpression key, TextLocation start, TextLocation end)
+		internal static IndexerExpression MakeIndexExpr(Identifier target, LiteralExpression key, TextLocation start, TextLocation end)
 		{
 			return new IndexerExpression(target, key, start, end);
 		}

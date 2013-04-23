@@ -239,11 +239,10 @@ namespace BVE5Language.Resolver
         		return ErrorResult;
         	
         	var type_name = new TopLevelTypeName("global", typeName, 0);
-        	foreach(var asm in compilation.ReferencedAssemblies){
-        		var type_def = asm.GetTypeDefinition(type_name);
-        		if(type_def != null)
-        			return new TypeResolveResult(type_def);
-        	}
+        	var type_def = compilation.MainAssembly.GetTypeDefinition(type_name);
+        	if(type_def != null)
+        		return new TypeResolveResult(type_def);
+        	
         	return ErrorResult;
         }
 

@@ -185,4 +185,89 @@ IsAllowed: {2}(Gauge: {3}mm)</value>
   <data name="BVE5Binding.BVE5Files" xml:space="preserve">
     <value>BVE5 Files</value>
   </data>
+  <data name="Template.Description.Curve" xml:space="preserve">
+    <value>Inserts a series of curves(including transition curves).</value>
+  </data>
+  <data name="Template.Text.Curve" xml:space="preserve">
+    <value>${TransitionStartPosition};
+${TabCharacter}Curve.BeginTransition();     //Start of transition curve
+${CurvePosition};
+${TabCharacter}Curve.BeginCircular(${Radius}, ${Cant});
+${CurveEndPosition};
+${TabCharacter}Curve.BeginTransition();
+${TransitionEndPosition};
+${TabCharacter}Curve.End();</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.CurvePosition" xml:space="preserve">
+    <value>Start position:</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.LengthCurve" xml:space="preserve">
+    <value>CCL:</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.LengthTransitionBefore" xml:space="preserve">
+    <value>TCL(before):</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.LengthTransitionAfter" xml:space="preserve">
+    <value>TCL(after):</value>
+  </data>
+  <data name="CommonStrings.TextNonInteger" xml:space="preserve">
+    <value>{0} is not an integer!</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.Radius" xml:space="preserve">
+    <value>Radius:</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.Cant" xml:space="preserve">
+    <value>Cant:</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.ErrorInserting" xml:space="preserve">
+    <value>Couldn't insert a curve template since some of the text boxes are left empty, or have invalid values.</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.CurvePosition" xml:space="preserve">
+    <value>The position where the circle curve starts.</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.Cant" xml:space="preserve">
+    <value>The height of the cant. If it is negative, it will be automatically calculated using the CalculateCantDialog.</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.LengthTransitionAfter" xml:space="preserve">
+    <value>The length of the transition curve after the real curve. If it is negative, it will be automatically calculated.</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.LengthTransitionBefore" xml:space="preserve">
+    <value>The length of the transition curve before the circle curve. If it is negative, it will be automatically calculated.</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.Radius" xml:space="preserve">
+    <value>The radius of the curve. If it is negative, that means the curve goes left, and if it is positive the curve goes right.</value>
+  </data>
+  <data name="Template.Description.Gradient" xml:space="preserve">
+    <value>Inserts a series of slopes(including transition gradients)</value>
+  </data>
+  <data name="GradientTemplateDialog.Text.Position" xml:space="preserve">
+    <value>Gradient position:</value>
+  </data>
+  <data name="GradientTemplateDialog.Text.Gradient" xml:space="preserve">
+    <value>Gradient:</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.LengthCurve" xml:space="preserve">
+    <value>The length of the circle curve.</value>
+  </data>
+  <data name="Template.Text.Gradient" xml:space="preserve">
+    <value>${TransitionStartPosition};
+${TabCharacter}Gradient.BeginTransition();
+${GradientPosition};
+${TabCharacter}Gradient.BeginConst(${Gradient});</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.Speed" xml:space="preserve">
+    <value>Speed:</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.Speed" xml:space="preserve">
+    <value>The speed at which the train is supposed to pass the curve. It will be used to calculate the cant or the transition curve length.</value>
+  </data>
+  <data name="CurveTemplateDialog.Msg.SpeedNotEntered" xml:space="preserve">
+    <value>The speed textbox is empty! Can't continue the calculation!</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.Gauge" xml:space="preserve">
+    <value>Gauge:</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.Gauge" xml:space="preserve">
+    <value>The width of the gauge. That is, the distance between the two rails.</value>
+  </data>
 </root>

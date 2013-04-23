@@ -21,9 +21,9 @@
 			<ColumnDefinition Width="60" />
 		</Grid.ColumnDefinitions>
 		<TextBox
-			Name="speed_textbox"
+			Name="SpeedTextbox"
 			ToolTip="{core:Localize CalculateCantDialog.SpeedTextboxTooltip}"
-			TextChanged="SpeedTextboxTextChanged"
+			TextChanged="TextBox_TextChaned"
 			Grid.Column="1"
 			Grid.Row="0"
 			VerticalAlignment="Top"
@@ -62,9 +62,9 @@
 			Width="45"
 			Height="28" />
 		<TextBox
-			Name="radius_textbox"
+			Name="RadiusTextbox"
 			ToolTip="{core:Localize CalculateCantDialog.RadiusTextboxTooltip}"
-			TextChanged="RadiusTextboxTextChanged"
+			TextChanged="TextBox_TextChaned"
 			Grid.Column="1"
 			Grid.Row="1"
 			HorizontalAlignment="Stretch"
@@ -81,9 +81,9 @@
 			Width="45"
 			Height="27" />
 		<TextBox
-			Name="gauge_textbox"
+			Name="GaugeTextbox"
 			ToolTip="{core:Localize CalculateCantDialog.GaugeTextboxTooltip}"
-			TextChanged="GaugeTextboxTextChanged"
+			TextChanged="TextBox_TextChaned"
 			Grid.Column="1"
 			Grid.Row="2"
 			HorizontalAlignment="Stretch"
@@ -100,7 +100,7 @@
 			Width="45"
 			Height="27" />
 		<TextBox
-			Name="result_textbox"
+			Name="ResultTextbox"
 			IsUndoEnabled="False"
 			InputMethod.IsInputMethodEnabled="False"
 			ContextMenuService.IsEnabled="False"

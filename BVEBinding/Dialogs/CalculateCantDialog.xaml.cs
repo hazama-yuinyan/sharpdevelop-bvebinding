@@ -32,7 +32,7 @@ namespace BVE5Binding.Dialogs
 		public CalculateCantDialog()
 		{
 			InitializeComponent();
-			calculator = new CantCalculator(new IdealCantCalculateStrategy());
+			calculator = new CantCalculator(new EquilibriumCantCalculateStrategy());
 		}
 		
 		void InsertButtonClick(object sender, RoutedEventArgs e)
@@ -52,43 +52,32 @@ namespace BVE5Binding.Dialogs
 			Close();
 		}
 		
-		void SpeedTextboxTextChanged(object sender, TextChangedEventArgs e)
+		void TextBox_TextChaned(object sender, TextChangedEventArgs e)
 		{
-			uint speed;
-			if(!uint.TryParse(speed_textbox.Text, out speed)){
-				MessageBox.Show(string.Format(StringParser.Parse("${res:CalculateCantDialog.ErrorMsgNegativeInteger}"), "speed"), "Error",
+			var text_box = (TextBox)sender;
+			string prop_name = text_box.Name.Substring(0, text_box.Name.Length - 7);
+			uint val;
+			if(!uint.TryParse(text_box.Text, out val)){
+				MessageBox.Show(string.Format(StringParser.Parse("${res:CalculateCantDialog.ErrorMsgNegativeInteger}"), prop_name), "Error",
 				                MessageBoxButton.OK, MessageBoxImage.Error);
 				return;
 			}
 			
-			calculator.Strategy.Speed = speed;
-			result_textbox.Text = calculator.AttemptCalculation();
-		}
-		
-		void RadiusTextboxTextChanged(object sender, TextChangedEventArgs e)
-		{
-			uint radius;
-			if(!uint.TryParse(radius_textbox.Text, out radius)){
-				MessageBox.Show(string.Format(StringParser.Parse("${res:CalculateCantDialog.ErrorMsgNegativeInteger}"), "radius"), "Error",
-				                MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
+			switch(prop_name){
+			case "Speed":
+				calculator.Strategy.Speed = val;
+				break;
+				
+			case "Radius":
+				calculator.Strategy.CurveRadius = val;
+				break;
+				
+			case "Gauge":
+				calculator.Strategy.SetGauge(val);
+				break;
 			}
 			
-			calculator.Strategy.CurveRadius = radius;
-			result_textbox.Text = calculator.AttemptCalculation();
-		}
-		
-		void GaugeTextboxTextChanged(object sender, TextChangedEventArgs e)
-		{
-			uint gauge;
-			if(!uint.TryParse(gauge_textbox.Text, out gauge)){
-				MessageBox.Show(string.Format(StringParser.Parse("${res:CalculateCantDialog.ErrorMsgNegativeInteger}"), "gauge"), "Error",
-				                MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
-			}
-			
-			calculator.Strategy.SetGauge(gauge);
-			result_textbox.Text = calculator.AttemptCalculation();
+			ResultTextbox.Text = calculator.AttemptCalculation();
 		}
 	}
 }

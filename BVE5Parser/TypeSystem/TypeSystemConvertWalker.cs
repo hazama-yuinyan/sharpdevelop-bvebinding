@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
 using BVE5Language.Ast;
@@ -12,7 +14,9 @@ namespace BVE5Language.TypeSystem
 	public class TypeSystemConvertWalker : DepthFirstAstWalker<IUnresolvedEntity>
 	{
 		readonly BVE5UnresolvedFile unresolved_file;
-		DefaultUnresolvedTypeDefinition type_def;
+		BVE5FileKind target_file_kind;
+		List<string> cur_member_names;
+		Dictionary<string, List<string>> member_name_defs;
 		
 		/// <summary>
 		/// Creates a new TypeSystemConvertVisitor and initializes it with a given context.
@@ -45,50 +49,83 @@ namespace BVE5Language.TypeSystem
 				return MakeRegion(node.StartLocation, node.EndLocation);
 		}
 		
+		IUnresolvedMember CreateField(IUnresolvedTypeDefinition declaringType, string literal)
+		{
+			var field = new DefaultUnresolvedField(declaringType, literal);
+			return field;
+		}
+		
 		#region DepthFirstAstWalker implementation
 		public override IUnresolvedEntity Walk(SyntaxTree unit)
 		{
 			unresolved_file.Errors = unit.Errors;
-			if(type_def == null)
-				type_def = new DefaultUnresolvedTypeDefinition("global", FileKindHelper.GetTypeNameFromFileKind(unit.Kind));
+			target_file_kind = unit.Kind;
+			if(cur_member_names == null && unit.Kind != BVE5FileKind.RouteFile)
+				cur_member_names = new List<string>();
+			else if(unit.Kind == BVE5FileKind.RouteFile)
+				member_name_defs = new Dictionary<string, List<string>>();
 			
-			return base.Walk(unit);
+			base.Walk(unit);
+			
+			if(cur_member_names != null){
+				var type_def = new DefaultUnresolvedTypeDefinition("global", FileKindHelper.GetTypeNameFromFileKind(unit.Kind));
+				foreach(var name in cur_member_names.Distinct())
+					type_def.Members.Add(CreateField(type_def, name));
+				
+				unresolved_file.TopLevelTypeDefinitions.Add(type_def);
+			}else{
+				foreach(KeyValuePair<string, List<string>> members in member_name_defs){
+					var type_def = new DefaultUnresolvedTypeDefinition("global", members.Key);
+					foreach(var name in members.Value.Distinct())
+						type_def.Members.Add(CreateField(type_def, name));
+					
+					unresolved_file.TopLevelTypeDefinitions.Add(type_def);
+				}
+			}
+			return null;
 		}
 
-		/*public IUnresolvedEntity Walk(Identifier node)
+		public override IUnresolvedEntity Walk(Identifier ident)
 		{
-			throw new NotImplementedException ();
+			return base.Walk(ident);
 		}
 
-		public IUnresolvedEntity Walk(IndexerExpression node)
+		public override IUnresolvedEntity Walk(IndexerExpression indexerExpr)
 		{
-			throw new NotImplementedException ();
+			if(target_file_kind == BVE5FileKind.RouteFile){
+				var type_ident = indexerExpr.Target as Identifier;
+				if(type_ident != null){
+					if(!member_name_defs.ContainsKey(type_ident.Name))
+						member_name_defs.Add(type_ident.Name, new List<string>());
+					
+					member_name_defs[type_ident.Name].Add(indexerExpr.Index.Value.ToString());
+				}
+			}
+			return base.Walk(indexerExpr);
 		}
 
-		public IUnresolvedEntity Walk(InvocationExpression node)
+		public override IUnresolvedEntity Walk(InvocationExpression invoke)
 		{
-			throw new NotImplementedException ();
+			if(target_file_kind != BVE5FileKind.RouteFile){
+				var key_literal = invoke.Arguments.First() as LiteralExpression;
+				if(key_literal != null)
+					cur_member_names.Add(key_literal.Value.ToString());
+			}
+			return base.Walk(invoke);
 		}
 
-		public IUnresolvedEntity Walk(LiteralExpression node)
+		public override IUnresolvedEntity Walk(MemberReferenceExpression memRef)
 		{
-			throw new NotImplementedException ();
+			return memRef.Target.AcceptWalker(this);
 		}
 
-		public IUnresolvedEntity Walk(MemberReferenceExpression node)
+		public override IUnresolvedEntity Walk(Statement stmt)
 		{
-			throw new NotImplementedException ();
+			if(stmt.Expr is InvocationExpression)
+				stmt.Expr.AcceptWalker(this);
+			
+			return null;
 		}
-
-		public IUnresolvedEntity Walk(Statement node)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public IUnresolvedEntity Walk(TimeFormatLiteral node)
-		{
-			throw new NotImplementedException ();
-		}*/
 		#endregion
 	}
 }

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using BVE5Language.Ast;
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Editor.CodeCompletion;
@@ -49,23 +50,28 @@ namespace BVE5Binding.Completion
 			}else if(ch == '.'){
 				var line = editor.Document.GetLineForOffset(cursor_offset);
 				var type_name = (current_context_type != null) ? current_context_type : line.Text.Trim();
-				var builtin_asm = BVEBuiltins.GetBuiltinAssembly();
+				var semantic_infos = BVE5ResourceManager.RouteFileSemanticInfos;
 				var result = CodeCompletionKeyPressResult.None;
-				
-				foreach(var type_def in builtin_asm.TopLevelTypeDefinitions){
-					if(type_def.Name == type_name){
-						var names = type_def.Members
-							.Where(member => member.Name != "indexer")
-							.Select(m => m.Name)
-							.Distinct();
-						var list = CompletionDataHelper.CreateListFromString(names);
-						editor.ShowCompletionWindow(list);
-						result = CodeCompletionKeyPressResult.Completed;
-						break;
-					}
+				if(semantic_infos.ContainsKey(type_name)){
+					var type_semantic_info = semantic_infos[type_name];
+					
+					var names = type_semantic_info
+						.Where(member => member.Key != "indexer")
+						.Select(m => m.Key)
+						.Distinct()
+						.ToList();
+					var descriptions = type_semantic_info
+						.Where(member => member.Key != "indexer")
+						.Select(m => BVE5ResourceManager.GetDocumentationString(m.Value[0].Doc))
+						.ToList();
+					
+					var list = CompletionDataHelper.GenerateCompletionList(names, descriptions);
+					editor.ShowCompletionWindow(list);
+					result = CodeCompletionKeyPressResult.Completed;
 				}
 				
 				if(current_context_type != null) current_context_type = null;
+				
 				return Tuple.Create(result != CodeCompletionKeyPressResult.None, result);
 			}else if(ch == '(' && CodeCompletionOptions.InsightEnabled){
 				var insight_window = editor.ShowInsightWindow(ProvideInsight(editor));
@@ -78,7 +84,8 @@ namespace BVE5Binding.Completion
 			
 			if(char.IsLetter(ch) && CodeCompletionOptions.CompleteWhenTyping){
 				var builtin_type_names = BVE5ResourceManager.GetAllTypeNames();
-				var list = CompletionDataHelper.CreateListFromString(builtin_type_names);
+				var list = CompletionDataHelper.GenerateCompletionList(builtin_type_names);
+				list = AddTemplateCompletionItems(editor, list, ch);
 				editor.ShowCompletionWindow(list);
 				return Tuple.Create(true, CodeCompletionKeyPressResult.CompletedIncludeKeyInCompletion);
 			}
@@ -114,6 +121,20 @@ namespace BVE5Binding.Completion
 			}
 			sb.Replace(", ", ")", sb.Length - 2, 2);
 			return sb.ToString();
+		}
+		
+		static ICompletionItemList AddTemplateCompletionItems(ITextEditor editor, ICompletionItemList list, char ch)
+		{
+			if(list == null) return null;
+			
+			if(ch == 'c' || ch == 'C'){
+				var res = new DefaultCompletionItemList();
+				res.Items.AddRange(list.Items);
+				res.Items.Add(new CurveTemplateCompletionItem(editor));
+				return res;
+			}
+			
+			return null;
 		}
 	}
 }

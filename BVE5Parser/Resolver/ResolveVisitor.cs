@@ -38,7 +38,7 @@ namespace BVE5Language.Resolver
 	/// </remarks>
 	internal sealed class ResolveVisitor : IAstWalker<ResolveResult>
 	{
-		static readonly ResolveResult RrrorResult = ErrorResolveResult.UnknownError;
+		static readonly ResolveResult ErrorResult = ErrorResolveResult.UnknownError;
 		
 		BVE5Resolver resolver;
 		readonly BVE5UnresolvedFile unresolved_file;
@@ -189,7 +189,7 @@ namespace BVE5Language.Resolver
 		internal ResolveResult Resolve(AstNode node)
 		{
 			if(node == null)
-				return RrrorResult;
+				return ErrorResult;
 
 			bool old_resolver_enabled = resolver_enabled;
 			resolver_enabled = true;
@@ -199,7 +199,7 @@ namespace BVE5Language.Resolver
 				cancellation_token.ThrowIfCancellationRequested();
 				StoreCurrentState(node);
 				var old_resolver = resolver;
-				result = node.AcceptWalker(this) ?? RrrorResult;
+				result = node.AcceptWalker(this) ?? ErrorResult;
 				StoreResult(node, result);
 				if(resolver != old_resolver){
 					// The node changed the resolver state:
@@ -295,11 +295,12 @@ namespace BVE5Language.Resolver
 		
 		public ResolveResult Walk(IndexerExpression indexingExpr)
 		{
-            ResolveResult target_rr = indexingExpr.Target.AcceptWalker(this);
+			StoreCurrentState(indexingExpr.Target);
+			var target_rr = resolver.ResolveTypeName(indexingExpr.Target.Name);
+			StoreResult(indexingExpr.Target, target_rr);
+			
             if(target_rr != null){
-            	StoreCurrentState(indexingExpr);
             	var result = resolver.ResolveIndexer(target_rr, indexingExpr.Index.Value.ToString());
-                StoreResult(indexingExpr, result);
                 return result;
             }
 
@@ -410,7 +411,10 @@ namespace BVE5Language.Resolver
 		
 		public ResolveResult Walk(Statement stmt)
 		{
+			var old_resolver_enabled = resolver_enabled;
+			resolver_enabled = true;
             var child_rr = stmt.Expr.AcceptWalker(this);	//manually call the AcceptWalker method so that literal expressions that is the only child of statements
+            resolver_enabled = old_resolver_enabled;
             StoreCurrentState(stmt.Expr);					//will be resolved to position statements
             
             if(child_rr is ConstantResolveResult){  //Statements consisting only of a literal expression are considered to representing a route location

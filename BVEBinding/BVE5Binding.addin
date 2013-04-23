@@ -15,6 +15,7 @@
 		<Import assembly="ICSharpCode.NRefactory.dll"/>
 		<Import assembly="Mono.CSharp.dll"/>
 		<Import assembly="Newtonsoft.Json.dll"/>
+		<Import assembly="ICSharpCode.AvalonEdit.dll"/>
 		<Import assembly=":ICSharpCode.SharpDevelop"/>
 		<Import assembly=":ICSharpCode.SharpDevelop.Dom"/>
 	</Runtime>

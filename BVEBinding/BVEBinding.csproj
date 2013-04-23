@@ -51,6 +51,9 @@
     <StartProgram>..\..\SharpDevelop\bin\SharpDevelop.exe</StartProgram>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.AvalonEdit">
+      <HintPath>..\..\..\..\..\..\Program Files %28x86%29\SharpDevelop\4.3\bin\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.Core">
       <HintPath>..\Refs\ICSharpCode.Core.dll</HintPath>
       <Private>False</Private>
@@ -80,6 +83,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
@@ -87,6 +92,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\BitmapResources.resx" />
     <EmbeddedResource Include="Resources\StringResources.ja.resx" />
     <EmbeddedResource Include="Resources\StringResources.resx" />
     <None Include="AddInWritingHelp.txt" />
@@ -104,6 +110,9 @@
     <Compile Include="BVEHeaderCondition.cs" />
     <Compile Include="Commands\CalculateCantCommand.cs" />
     <Compile Include="Commands\CantCalculator.cs" />
+    <Compile Include="Commands\EquilibriumCantCalculateStrategy.cs" />
+    <Compile Include="Commands\SineTCLCalculateStrategy.cs" />
+    <Compile Include="Commands\TCLCalculation.cs" />
     <Compile Include="Completion\BVE5CommonFileCompleter.cs" />
     <Compile Include="Completion\BVE5CommonFileInsightWindowHandler.cs" />
     <Compile Include="Completion\BVE5CompletionBinding.cs" />
@@ -113,11 +122,21 @@
     <Compile Include="Completion\BVE5RouteFileCompleter.cs" />
     <Compile Include="Completion\CommandInsightItem.cs" />
     <Compile Include="Completion\CompletionDataHelper.cs" />
+    <Compile Include="Completion\GradientTemplateCompletionItem.cs" />
     <Compile Include="Completion\ICodeCompleter.cs" />
+    <Compile Include="Completion\CurveTemplateCompletionItem.cs" />
     <Compile Include="Completion\UserDefinedNameCompletionItemProvider.cs" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="Dialogs\CalculateCantDialog.xaml.cs">
       <DependentUpon>CalculateCantDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dialogs\CurveTemplateDialog.xaml.cs">
+      <DependentUpon>CurveTemplateDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dialogs\GradientTemplateDialog.xaml.cs">
+      <DependentUpon>GradientTemplateDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dialogs\ShiftPositionDialog.xaml.cs">
@@ -125,6 +144,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Formatting\BVE5FormattingStrategy.cs" />
+    <Compile Include="Other\PhysicalConstants.cs" />
     <Compile Include="ParserFactory.cs" />
     <Compile Include="Tooltips\BVE5TooltipProvider.cs" />
   </ItemGroup>
@@ -133,6 +153,7 @@
     <Folder Include="Completion" />
     <Folder Include="Commands" />
     <Folder Include="Dialogs" />
+    <Folder Include="Other" />
     <Folder Include="Tooltips" />
     <Folder Include="Refactoring" />
     <Folder Include="Resources" />
@@ -146,6 +167,8 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Dialogs\CalculateCantDialog.xaml" />
+    <Page Include="Dialogs\CurveTemplateDialog.xaml" />
+    <Page Include="Dialogs\GradientTemplateDialog.xaml" />
     <Page Include="Dialogs\ShiftPositionDialog.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

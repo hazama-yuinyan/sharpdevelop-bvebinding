@@ -35,7 +35,9 @@ namespace BVE5Binding.Completion
 		{
 			int cursor_offset = editor.Caret.Offset;
 			if(ch == '['){
-				var list = CompletionDataHelper.CreateListFromString(SemanticInfo.Keys);
+				var list = CompletionDataHelper.GenerateCompletionList(SemanticInfo.Keys.ToList(),
+				                                                       SemanticInfo.Select(info => BVE5ResourceManager.GetDocumentationString(info.Value.Doc)).ToList(),
+				                                                      null);
 				editor.ShowCompletionWindow(list);
 				return Tuple.Create(true, CodeCompletionKeyPressResult.Completed);
 			}else if(char.IsLetter(ch)){
@@ -47,7 +49,9 @@ namespace BVE5Binding.Completion
 				//if the context statement is null, it must be in a vehicle parameters file
 				var section_name = (context_stmt != null) ? context_stmt.SectionName.Name : "Global";
 				var section_semantic_info = SemanticInfo[section_name];
-				var list = CompletionDataHelper.CreateListFromString(section_semantic_info.Keys.Select(key => key.Name));
+				var list = CompletionDataHelper.GenerateCompletionList(section_semantic_info.Keys.Select(key => key.Name).ToList(),
+				                                                       section_semantic_info.Keys.Select(key => BVE5ResourceManager.GetDocumentationString(key.Doc)).ToList(),
+				                                                      null);
 				editor.ShowCompletionWindow(list);
 				return Tuple.Create(true, CodeCompletionKeyPressResult.CompletedIncludeKeyInCompletion);
 			}

@@ -64,11 +64,12 @@ namespace BVE5Binding.Completion
 			}
 		}
 		
+		#region Implementation details
 		ICompletionItemList ProvideImpl(ITextEditor editor, UserDefinedNameCollector collector)
 		{
 			var tree = ParserFactory.CreateRouteParser().Parse(editor.Document.Text, editor.FileName, true);
-			var names = tree.AcceptWalker(collector);
-			var list = CompletionDataHelper.CreateListFromString(names);
+			var names = tree.AcceptWalker(collector).ToList();
+			var list = CompletionDataHelper.GenerateCompletionList(names);
 			return list;
 		}
 		
@@ -79,8 +80,8 @@ namespace BVE5Binding.Completion
 			if(header_tree.Errors.Any())
 				return null;
 			
-			var names = header_tree.AcceptWalker(fetcher);
-			var list = CompletionDataHelper.CreateListFromString(names);
+			var names = header_tree.AcceptWalker(fetcher).ToList();
+			var list = CompletionDataHelper.GenerateCompletionList(names);
 			return list;
 		}
 		
@@ -93,7 +94,7 @@ namespace BVE5Binding.Completion
 			
 			var load_stmt_finder = new LoadStatementFinder(type_name);
 			header_tree.AcceptWalker(load_stmt_finder);
-			var list = CompletionDataHelper.CreateListFromString(load_stmt_finder.Names);
+			var list = CompletionDataHelper.GenerateCompletionList(load_stmt_finder.Names.ToList());
 			return list;
 		}
 		
@@ -433,5 +434,6 @@ namespace BVE5Binding.Completion
 				throw new NotImplementedException();
 			}
 		}
+		#endregion
 	}
 }

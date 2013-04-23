@@ -126,11 +126,14 @@ namespace BVE5Language
 			Assert.IsFalse(rr.IsError);
 		}
 		
-		// TODO: test it
 		[TestCase]
 		public void ReferenceIndexer()
 		{
-			
+			var rr = Resolve<MemberResolveResult>(@"Track[1].Position(100, 100);
+$Track[1]$.Position(200, 200);");
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual("global.Track", rr.TargetResult.Type.FullName);
+			Assert.AreEqual("global.Track.1", rr.Member.FullName);
 		}
 	}
 }

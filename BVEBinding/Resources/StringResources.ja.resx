@@ -185,4 +185,86 @@
   <data name="BVE5Binding.BVE5Files" xml:space="preserve">
     <value>BVE5ファイル</value>
   </data>
+  <data name="Template.Text.Curve" xml:space="preserve">
+    <value>${TransitionStartPosition};
+${TabCharacter}Curve.BeginTransition();     //緩和曲線開始
+${CurvePosition};
+${TabCharacter}Curve.BeginCircular(${Radius}, ${Cant});
+${CurveEndPosition};
+${TabCharacter}Curve.BeginTransition();
+${TransitionEndPosition};
+${TabCharacter}Curve.End();</value>
+  </data>
+  <data name="Template.Description.Curve" xml:space="preserve">
+    <value>緩和曲線を含むカーブを挿入します。</value>
+  </data>
+  <data name="CommonStrings.TextNonInteger" xml:space="preserve">
+    <value>{0}は整数ではありません！</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.Radius" xml:space="preserve">
+    <value>半径:</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.Cant" xml:space="preserve">
+    <value>カント:</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.CurvePosition" xml:space="preserve">
+    <value>円曲線の開始位置:</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.LengthTransitionAfter" xml:space="preserve">
+    <value>TCL(出口):</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.LengthCurve" xml:space="preserve">
+    <value>TCL:</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.LengthTransitionBefore" xml:space="preserve">
+    <value>TCL(入口):</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.ErrorInserting" xml:space="preserve">
+    <value>空のテキストボックスがあるか、不正な値が入ったテキストボックスがあるため、カーブ構文のテンプレートを挿入できませんでした。</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.CurvePosition" xml:space="preserve">
+    <value>円曲線の開始位置を設定します。</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.Radius" xml:space="preserve">
+    <value>円曲線の半径を設定します。負数ならば、左カーブ、正数ならば右カーブになります。</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.Cant" xml:space="preserve">
+    <value>カントの高さを設定します。負数が入力されると、自動的にカントの値を算出します。</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.LengthTransitionAfter" xml:space="preserve">
+    <value>円曲線の後の緩和曲線の長さを設定します。負数を設定した場合は自動的に適当な値を算出します。</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.LengthTransitionBefore" xml:space="preserve">
+    <value>円曲線の前の緩和曲線の長さを設定します。負数を設定した場合は自動的に適当な値を算出します。</value>
+  </data>
+  <data name="Template.Description.Gradient" xml:space="preserve">
+    <value>縦曲線を含む勾配構文を挿入します。</value>
+  </data>
+  <data name="Template.Text.Gradient" xml:space="preserve">
+    <value>${TransitionStartPosition};
+${TabCharacter}Gradient.BeginTransition();
+${GradientPosition};
+${TabCharacter}Gradient.BeginConst(${Gradient});</value>
+  </data>
+  <data name="GradientTemplateDialog.Text.Position" xml:space="preserve">
+    <value>勾配開始位置:</value>
+  </data>
+  <data name="GradientTemplateDialog.Text.Gradient" xml:space="preserve">
+    <value>勾配:</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.Speed" xml:space="preserve">
+    <value>速度:</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.Speed" xml:space="preserve">
+    <value>列車の曲線通過速度。カントと緩和曲線長を算出する際に使用されます。</value>
+  </data>
+  <data name="CurveTemplateDialog.Msg.SpeedNotEntered" xml:space="preserve">
+    <value>速度が入力されていないため、計算を継続出来ません！</value>
+  </data>
+  <data name="CurveTemplateDialog.Tooltip.Gauge" xml:space="preserve">
+    <value>軌間。実際の値は、鉄道構造令に従って入力された値に65mmを足したものになります。</value>
+  </data>
+  <data name="CurveTemplateDialog.Text.Gauge" xml:space="preserve">
+    <value>軌間:</value>
+  </data>
 </root>
